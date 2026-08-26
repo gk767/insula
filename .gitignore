@@ -1,0 +1,51 @@
+# Secrets, keys, credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.p12
+*.p8
+*.key
+*.cer
+*.crt
+*.mobileprovision
+*.provisionprofile
+AuthKey_*.p8
+id_rsa
+id_rsa.pub
+id_ed25519
+id_ed25519.pub
+credentials.json
+secrets.json
+GoogleService-Info.plist
+google-services.json
+
+# Xcode user data and build junk
+xcuserdata/
+DerivedData/
+*.xcuserstate
+*.moved-aside
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Compiled apps, disks, archives (source only in git)
+*.app/
+*.dmg
+*.zip
+*.ipa
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Local notes / leftover folders (not product source)
+проикт/
+ДЛЯ_НОВОГО_ЧАТА.md
+
+# Editor
+.cursor/
+*.swp
+*~

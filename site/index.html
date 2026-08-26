@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Island — для Mac</title>
+  <meta name="description" content="У камеры Mac. Музыка, таймер и буфер. Бесплатно.">
+  <meta name="theme-color" content="#f5f5f7">
+  <meta name="color-scheme" content="light">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="site.css?v=menubar1">
+  <style>
+    html { background: #f5f5f7; }
+    body.booting { overflow: hidden; background: #f5f5f7; }
+  </style>
+  <noscript>
+    <style>
+      html, body { background: #07080b !important; }
+      .gate { display: none !important; }
+      .menubar, .rise, .rise-stay { opacity: 1 !important; transform: none !important; }
+    </style>
+  </noscript>
+</head>
+<body class="booting">
+  <div class="gate" id="gate" aria-hidden="true">
+    <div class="gate-veil"></div>
+  </div>
+  <div class="sea" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+
+  <div class="page">
+    <header class="menubar">
+      <svg class="apple" viewBox="0 0 14 17" aria-hidden="true"><path fill="currentColor" d="M11.4 9.1c0-2.1 1.7-3.1 1.8-3.2-1-1.4-2.5-1.6-3-1.6-1.3-.1-2.5.8-3.1.8-.7 0-1.7-.7-2.8-.7-1.4 0-2.8.9-3.5 2.2-1.5 2.6-.4 6.5 1.1 8.6.7 1 1.6 2.2 2.7 2.1 1.1 0 1.5-.7 2.8-.7s1.7.7 2.8.7c1.2 0 1.9-1 2.6-2 .8-1.2 1.2-2.3 1.2-2.4-.1 0-2.3-.9-2.3-3.5zM9.5 2.6c.6-.7 1-1.7.9-2.6-.8 0-1.9.6-2.5 1.3-.5.6-1 1.6-.9 2.5.9.1 1.9-.5 2.5-1.2z"/></svg>
+      <span class="brand" data-i="title">Island</span>
+      <nav>
+        <a href="#map" data-i="navMap">Карта</a>
+        <a href="#get" data-i="navGet">Скачать</a>
+      </nav>
+      <div class="menubar-right">
+        <div class="langs" role="group" aria-label="Language">
+          <button class="lang-btn" type="button" data-lang="ja" aria-pressed="false">JA</button>
+          <button class="lang-btn" type="button" data-lang="zh" aria-pressed="false">中文</button>
+          <button class="lang-btn" type="button" data-lang="en" aria-pressed="false">EN</button>
+          <button class="lang-btn" type="button" data-lang="es" aria-pressed="false">ES</button>
+          <button class="lang-btn" type="button" data-lang="pt" aria-pressed="false">PT</button>
+          <button class="lang-btn" type="button" data-lang="ru" aria-pressed="true">RU</button>
+        </div>
+        <div class="clock"></div>
+      </div>
+    </header>
+
+    <div class="island-slot">
+      <span class="mac-notch" aria-hidden="true"><i class="mac-cam"></i></span>
+      <div class="island-wrap">
+        <div class="island live-island wraps-notch" tabindex="0" aria-label="Island">
+          <div class="island-glass"></div>
+          <div class="island-collapsed">
+            <span class="mini-left">
+              <svg class="mini-ring" viewBox="0 0 12 12" aria-hidden="true">
+                <circle class="mini-ring-bg" cx="6" cy="6" r="4.5"/>
+                <circle class="mini-ring-fg js-ring" cx="6" cy="6" r="4.5"/>
+              </svg>
+              <span class="mini-title js-title">Night Harbor</span>
+              <span class="mini-time js-now">1:24</span>
+            </span>
+            <span class="mini-gap" aria-hidden="true"></span>
+            <span class="mini-timer">
+              <svg width="10" height="10" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="4.5" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M6 3.5v2.7l1.8 1" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+              <span class="js-timer">12:00</span>
+            </span>
+          </div>
+          <div class="island-open">
+            <div class="ears">
+              <div class="wheels" data-spot="timer">
+                <button type="button" class="wheel" data-unit="h" aria-label="Hours"></button>
+                <button type="button" class="wheel" data-unit="m" aria-label="Minutes"></button>
+                <button type="button" class="wheel" data-unit="s" aria-label="Seconds"></button>
+              </div>
+              <div class="right-ear">
+                <button type="button" class="chip" data-act="edit" title="Edit">
+                  <svg viewBox="0 0 12 12"><path d="M8.2 1.8l2 2L4 10H2V8z"/></svg>
+                </button>
+                <button type="button" class="chip" data-act="guide" title="Guide">
+                  <svg viewBox="0 0 12 12"><circle cx="6" cy="6" r="4.4"/><path d="M4.7 4.6a1.4 1.4 0 011.5-1.2c.9 0 1.5.5 1.5 1.3 0 .8-.5 1.1-1.1 1.4-.5.3-.6.6-.6 1.2"/><path d="M6 9.1h.01"/></svg>
+                </button>
+                <button type="button" class="chip" data-act="mic" title="Mic">
+                  <svg class="mic-on" viewBox="0 0 12 12"><rect x="4.2" y="1.6" width="3.6" height="5.2" rx="1.8"/><path d="M2.8 6.2a3.2 3.2 0 006.4 0M6 9.4V11"/></svg>
+                  <svg class="mic-off-ico" viewBox="0 0 12 12"><rect x="4.2" y="1.6" width="3.6" height="5.2" rx="1.8"/><path d="M2.8 6.2a3.2 3.2 0 006.4 0M6 9.4V11M2 2l8 8"/></svg>
+                </button>
+                <button type="button" class="chip" data-act="clip" title="Clipboard">
+                  <svg viewBox="0 0 12 12"><rect x="3" y="3.2" width="6.2" height="7.2" rx="1.2"/><path d="M4.4 3.2V2.4h3.4v.8"/><path d="M5 6h3.2M5 8h2.2"/></svg>
+                </button>
+              </div>
+            </div>
+            <div class="media-row">
+              <button type="button" class="art js-art" data-spot="media" aria-label="Artwork"></button>
+              <div class="meta">
+                <strong class="js-title">Night Harbor</strong>
+                <small class="js-artist">Local</small>
+              </div>
+              <div class="transport">
+                <button type="button" class="icon-btn" data-act="prev" aria-label="Previous">
+                  <svg viewBox="0 0 12 12"><path d="M10 2.2L5.2 6 10 9.8zM3.4 2.2v7.6"/></svg>
+                </button>
+                <button type="button" class="icon-btn" data-act="play" aria-label="Play">
+                  <svg class="play-ico" viewBox="0 0 12 12"><path d="M3.4 2.2l7 3.8-7 3.8z"/></svg>
+                  <svg class="pause-ico" viewBox="0 0 12 12"><path d="M3.2 2.2h2.1v7.6H3.2zm3.5 0h2.1v7.6H6.7z"/></svg>
+                </button>
+                <button type="button" class="icon-btn" data-act="next" aria-label="Next">
+                  <svg viewBox="0 0 12 12"><path d="M2 2.2L6.8 6 2 9.8zM8.6 2.2v7.6"/></svg>
+                </button>
+                <div class="outs" role="group" aria-label="Output">
+                  <button type="button" class="out" data-route="speakers" title="Speakers">
+                    <svg viewBox="0 0 12 12"><path d="M2.2 4.6h2.2L7.2 2.4v7.2L4.4 7.4H2.2z"/><path d="M8.4 4.6a2.4 2.4 0 010 2.8M9.7 3.4a4 4 0 010 5.2" fill="none"/></svg>
+                  </button>
+                  <button type="button" class="out is-on" data-route="headphones" title="Headphones">
+                    <svg viewBox="0 0 12 12"><path d="M2.4 6.6A3.6 3.6 0 019.6 6.6" fill="none"/><path d="M2.4 6.6v2.2a1.2 1.2 0 001.2 1.2h.8V6.6zm5.2 0v3.4h.8A1.2 1.2 0 009.6 8.8V6.6z"/></svg>
+                  </button>
+                  <button type="button" class="out" data-route="mac" title="MacBook">
+                    <svg viewBox="0 0 12 12"><path d="M2.4 3.2h7.2v5.2H2.4z"/><path d="M1.6 8.8h8.8v1.2H1.6z"/></svg>
+                  </button>
+                </div>
+                <button type="button" class="icon-btn" data-act="lyrics" title="Lyrics">
+                  <svg viewBox="0 0 12 12"><path d="M2.4 3.2h7.2v5.2H5.2L3 9.8V8.4H2.4z" fill="none"/></svg>
+                </button>
+                <button type="button" class="icon-btn" data-act="playlist" title="Playlist">
+                  <svg viewBox="0 0 12 12"><path d="M2 3.2h6.4M2 6h6.4M2 8.8h4.2" fill="none"/><path d="M9.2 7.1v3.2l2.2-1.6z"/></svg>
+                </button>
+              </div>
+            </div>
+            <div class="clip-list js-clip">
+              <button type="button">14:00 standup</button>
+              <button type="button">https://island.local</button>
+              <button type="button">from Safari</button>
+            </div>
+            <div class="side-panel js-lyrics">Glass on the water · hold the line · night harbor</div>
+            <div class="side-panel js-playlist">
+              <button type="button" data-track="0">Night Harbor</button>
+              <button type="button" data-track="1">Glass Road</button>
+              <button type="button" data-track="2">Quiet Room</button>
+            </div>
+            <div class="progress" data-spot="progress">
+              <span class="js-now">1:24</span>
+              <button type="button" class="bar js-bar" aria-label="Progress"><i></i></button>
+              <span class="js-dur">3:42</span>
+            </div>
+          </div>
+        </div>
+        <p class="hint" data-i="hover">наведите на остров</p>
+      </div>
+    </div>
+
+    <section class="hero">
+      <h1 class="rise" style="--d:0" data-i="title">Island</h1>
+      <p class="kicker rise" style="--d:1" data-i="kicker">для Mac</p>
+      <p class="lede rise" style="--d:2" data-i="lede">У камеры Mac. Музыка, таймер и буфер — без отдельного окна и без кружка в Dock.</p>
+      <div class="cta-row rise" style="--d:3">
+        <a class="download" href="downloads/Island.dmg">
+          <svg viewBox="0 0 14 14" aria-hidden="true"><path fill="currentColor" d="M7 1.5v7.2M4.2 6.4L7 9.2l2.8-2.8M2 12h10"/></svg>
+          <span data-i="download">Скачать для Mac</span>
+        </a>
+        <span class="win" data-i="win">Windows — в планах</span>
+      </div>
+      <p class="note"></p>
+      <section class="notch-row" aria-label="с челкой и без">
+        <figure class="lid lid-notch rise" style="--d:0">
+          <div class="lid-screen">
+            <div class="lid-bar" aria-hidden="true">
+              <span class="lid-menus">
+                <svg class="lid-apple" viewBox="0 0 14 17" aria-hidden="true"><path fill="currentColor" d="M11.4 9.1c0-2.1 1.7-3.1 1.8-3.2-1-1.4-2.5-1.6-3-1.6-1.3-.1-2.5.8-3.1.8-.7 0-1.7-.7-2.8-.7-1.4 0-2.8.9-3.5 2.2-1.5 2.6-.4 6.5 1.1 8.6.7 1 1.6 2.2 2.7 2.1 1.1 0 1.5-.7 2.8-.7s1.7.7 2.8.7c1.2 0 1.9-1 2.6-2 .8-1.2 1.2-2.3 1.2-2.4-.1 0-2.3-.9-2.3-3.5zM9.5 2.6c.6-.7 1-1.7.9-2.6-.8 0-1.9.6-2.5 1.3-.5.6-1 1.6-.9 2.5.9.1 1.9-.5 2.5-1.2z"/></svg>
+                Finder File
+              </span>
+              <span>21:14</span>
+            </div>
+            <span class="mac-notch" aria-hidden="true"><i class="mac-cam"></i></span>
+            <div class="lid-cap wraps-notch">
+              <span class="lid-l"><i class="ring"></i> Night Harbor <em>1:24</em></span>
+              <span class="lid-gap"></span>
+              <span class="lid-r">12:00</span>
+            </div>
+          </div>
+          <figcaption data-i="lidNotch">с челкой</figcaption>
+        </figure>
+        <figure class="lid lid-float rise" style="--d:1">
+          <div class="lid-screen">
+            <div class="lid-bar" aria-hidden="true">
+              <span class="lid-menus">
+                <svg class="lid-apple" viewBox="0 0 14 17" aria-hidden="true"><path fill="currentColor" d="M11.4 9.1c0-2.1 1.7-3.1 1.8-3.2-1-1.4-2.5-1.6-3-1.6-1.3-.1-2.5.8-3.1.8-.7 0-1.7-.7-2.8-.7-1.4 0-2.8.9-3.5 2.2-1.5 2.6-.4 6.5 1.1 8.6.7 1 1.6 2.2 2.7 2.1 1.1 0 1.5-.7 2.8-.7s1.7.7 2.8.7c1.2 0 1.9-1 2.6-2 .8-1.2 1.2-2.3 1.2-2.4-.1 0-2.3-.9-2.3-3.5zM9.5 2.6c.6-.7 1-1.7.9-2.6-.8 0-1.9.6-2.5 1.3-.5.6-1 1.6-.9 2.5.9.1 1.9-.5 2.5-1.2z"/></svg>
+                Finder File <span class="lid-extra">Edit View Window Help</span>
+              </span>
+              <div class="lid-cap">
+                <span class="lid-l">Night Harbor</span>
+                <span class="lid-r">12:00</span>
+              </div>
+              <span class="lid-clock">
+                <svg class="lid-wifi" viewBox="0 0 16 12" aria-hidden="true"><path fill="currentColor" d="M8 9.2a1.6 1.6 0 110 3.2 1.6 1.6 0 010-3.2zm0-3.4c1.5 0 2.9.5 4 1.5l-1.1 1.1A4.1 4.1 0 008 7.3c-1.1 0-2.1.4-2.9 1.1L4 7.3A5.7 5.7 0 018 5.8zm0-3.6c2.5 0 4.8.9 6.6 2.5L13.5 6A7.8 7.8 0 008 3.6 7.8 7.8 0 002.5 6L1.4 4.7A10.3 10.3 0 018 2.2z"/></svg>
+                <i class="lid-batt"></i>
+                21:14
+              </span>
+            </div>
+            <div class="lid-window" aria-hidden="true">
+              <div class="lid-titlebar">
+                <i class="tl tl-r"></i><i class="tl tl-y"></i><i class="tl tl-g"></i>
+                <span>Documents</span>
+              </div>
+            </div>
+          </div>
+          <figcaption data-i="lidNone">без челки</figcaption>
+        </figure>
+      </section>
+    </section>
+
+    <section class="map" id="map">
+      <div class="map-head rise" style="--d:0">
+        <h2 data-i="mapTitle">Что на острове</h2>
+        <p data-i="mapLede">Развёрнутый остров. Стрелка к тому, что уже есть — без ролика.</p>
+      </div>
+      <div class="chart">
+        <svg class="leaders rise-stay" aria-hidden="true"></svg>
+        <div class="chart-island rise-stay">
+          <span class="mac-notch" aria-hidden="true"><i class="mac-cam"></i></span>
+            <div class="island is-open" aria-hidden="true">
+            <div class="island-glass"></div>
+            <div class="island-open">
+              <div class="ears">
+                <div class="wheels">
+                  <div class="wheel"><span>11</span><span class="on">12</span><span>13</span></div>
+                  <div class="wheel"><span>59</span><span class="on">00</span><span>01</span></div>
+                  <div class="wheel"><span>59</span><span class="on">00</span><span>01</span></div>
+                </div>
+                <div class="right-ear">
+                  <span class="chip"><svg viewBox="0 0 12 12"><path d="M8.2 1.8l2 2L4 10H2V8z"/></svg></span>
+                  <span class="chip"><svg viewBox="0 0 12 12"><circle cx="6" cy="6" r="4.4"/><path d="M4.7 4.6a1.4 1.4 0 011.5-1.2c.9 0 1.5.5 1.5 1.3 0 .8-.5 1.1-1.1 1.4-.5.3-.6.6-.6 1.2"/><path d="M6 9.1h.01"/></svg></span>
+                  <span class="chip"><svg viewBox="0 0 12 12"><rect x="4.2" y="1.6" width="3.6" height="5.2" rx="1.8"/><path d="M2.8 6.2a3.2 3.2 0 006.4 0M6 9.4V11"/></svg></span>
+                  <span class="chip"><svg viewBox="0 0 12 12"><rect x="3" y="3.2" width="6.2" height="7.2" rx="1.2"/><path d="M4.4 3.2V2.4h3.4v.8"/><path d="M5 6h3.2M5 8h2.2"/></svg></span>
+                </div>
+              </div>
+              <div class="media-row">
+                <div class="art"></div>
+                <div class="meta">
+                  <strong data-i="song">Night Harbor</strong>
+                  <small data-i="artist">Local</small>
+                </div>
+                <div class="transport">
+                  <span class="icon-btn"><svg viewBox="0 0 12 12"><path d="M10 2.2L5.2 6 10 9.8zM3.4 2.2v7.6"/></svg></span>
+                  <span class="icon-btn"><svg viewBox="0 0 12 12"><path d="M3.2 2.2h2.1v7.6H3.2zm3.5 0h2.1v7.6H6.7z"/></svg></span>
+                  <span class="icon-btn"><svg viewBox="0 0 12 12"><path d="M2 2.2L6.8 6 2 9.8zM8.6 2.2v7.6"/></svg></span>
+                  <div class="outs">
+                    <span class="out"><svg viewBox="0 0 12 12"><path d="M2.2 4.6h2.2L7.2 2.4v7.2L4.4 7.4H2.2z"/><path d="M8.4 4.6a2.4 2.4 0 010 2.8M9.7 3.4a4 4 0 010 5.2" fill="none"/></svg></span>
+                    <span class="out is-on"><svg viewBox="0 0 12 12"><path d="M2.4 6.6A3.6 3.6 0 019.6 6.6" fill="none"/><path d="M2.4 6.6v2.2a1.2 1.2 0 001.2 1.2h.8V6.6zm5.2 0v3.4h.8A1.2 1.2 0 009.6 8.8V6.6z"/></svg></span>
+                    <span class="out"><svg viewBox="0 0 12 12"><path d="M2.4 3.2h7.2v5.2H2.4z"/><path d="M1.6 8.8h8.8v1.2H1.6z"/></svg></span>
+                  </div>
+                  <span class="icon-btn"><svg viewBox="0 0 12 12"><path d="M2.4 3.2h7.2v5.2H5.2L3 9.8V8.4H2.4z" fill="none"/></svg></span>
+                  <span class="icon-btn"><svg viewBox="0 0 12 12"><path d="M2 3.2h6.4M2 6h6.4M2 8.8h4.2" fill="none"/><path d="M9.2 7.1v3.2l2.2-1.6z"/></svg></span>
+                </div>
+              </div>
+              <div class="progress">
+                <span data-now>1:24</span>
+                <span class="bar"><i></i></span>
+                <span>3:42</span>
+              </div>
+            </div>
+          </div>
+          <div class="tray">
+            <span class="spark" data-spot="anim">
+              <svg viewBox="0 0 12 12"><path d="M6 1.4l.7 2.6L9.2 5 6.7 6l-.7 2.6L5.3 6 2.8 5l2.5-1z"/></svg>
+            </span>
+            <span class="tray-empty" data-i="allOn">All on the island</span>
+            <span class="done" data-i="done">Done</span>
+          </div>
+        </div>
+        <div class="legend">
+          <div class="label rise" style="--d:0" data-spot="timer">
+            <strong data-i="timer">Таймер</strong>
+            <span data-i="timerHow">Левое ухо: часы, минуты, секунды.</span>
+          </div>
+          <div class="label end rise" style="--d:1" data-spot="edit">
+            <strong data-i="edit">Редакт</strong>
+            <span data-i="editHow">Карандаш у выреза.</span>
+          </div>
+          <div class="label end rise" style="--d:2" data-spot="guide">
+            <strong data-i="guide">Гайд</strong>
+            <span data-i="guideHow">Тур поверх экрана.</span>
+          </div>
+          <div class="label end rise" style="--d:3" data-spot="clipboard">
+            <strong data-i="clipboard">Буфер</strong>
+            <span data-i="clipboardHow">Последние пять текстов.</span>
+          </div>
+          <div class="label rise" style="--d:1" data-spot="media">
+            <strong data-i="media">Медиа</strong>
+            <span data-i="mediaHow">Обложка, название, назад / пауза / дальше. Куда звук: колонки, наушники, Mac.</span>
+          </div>
+          <div class="label end rise" style="--d:2" data-spot="playlist">
+            <strong data-i="playlist">Плейлист</strong>
+            <span data-i="playlistHow">Только если Music отдал очередь.</span>
+          </div>
+          <div class="label rise" style="--d:3" data-spot="progress">
+            <strong data-i="progress">Прогресс</strong>
+            <span data-i="progressHow">Полоса внизу. Можно перетащить.</span>
+          </div>
+          <div class="label end rise" style="--d:4" data-spot="anim">
+            <strong data-i="anim">Анимации</strong>
+            <span data-i="animHow">Искра в лотке, не на острове.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="lyrics-demo" id="lyrics">
+      <div class="lyrics-copy rise">
+        <h2 data-i="lyricsTitle">Субтитры</h2>
+        <p data-i="lyricsLede">Текст на остров не влезает. Пузырёк открывает стеклянную панель рядом. Тащить можно за само стекло — не за крестик и не за белый кружок в углу.</p>
+        <button type="button" class="play-anim rise" data-play="lyrics"><span data-i="playAnim">Смотреть</span></button>
+      </div>
+      <div class="lyrics-stage demo-stage rise-stay" data-scene="lyrics">
+        <div class="lyrics-desk mac-screen" aria-hidden="true">
+          <div class="desk-bar" aria-hidden="true"><span>Finder File</span><span>21:14</span></div>
+          <span class="mac-notch" aria-hidden="true"><i class="mac-cam"></i></span>
+          <div class="lyrics-island wraps-notch">
+            <span class="lid-l"><i class="ring"></i> Night Harbor <em>1:24</em></span>
+            <span class="lid-gap"></span>
+            <span class="lid-r">12:00</span>
+          </div>
+          <div class="lyrics-card">
+            <span class="lyrics-close"></span>
+            <div class="lyrics-stack">
+              <p class="lyrics-line">the night is open</p>
+              <p class="lyrics-line is-prev">Glass on the water</p>
+              <p class="lyrics-line is-on">hold the line</p>
+              <p class="lyrics-line is-next">night harbor</p>
+              <p class="lyrics-line">wait for the tide</p>
+              <p class="lyrics-line">keep it quiet</p>
+              <p class="lyrics-line">lights on the shore</p>
+            </div>
+            <span class="lyrics-resize" title="size"></span>
+            <svg class="lyrics-cursor demo-cursor" viewBox="0 0 12 19" aria-hidden="true">
+              <path class="c-out" d="M.2.2v16.6l4.35-4.2 2.7 6.45 2.35-1-2.7-6.45h5.9L.2.2z"/>
+              <path class="c-in" d="M1.25 2.15v11.4l3.45-3.35 2.6 6.2 1.1-.46-2.6-6.2h4.35L1.25 2.15z"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="edit-demo" id="edit">
+      <div class="lyrics-copy rise">
+        <h2 data-i="editTitle">Редакт</h2>
+        <p data-i="editLede">Карандаш в правом ухе, у выреза. Кнопки, которыми не пользуешься, снимаются в лоток под островом — они не пропадают. Тап по фишке в лотке возвращает её на остров. Done или снова карандаш — выход. Медиа и вырез снять нельзя.</p>
+        <button type="button" class="play-anim rise" data-play="edit"><span data-i="playAnim">Смотреть</span></button>
+      </div>
+      <div class="edit-stage demo-stage rise-stay" data-scene="edit">
+        <div class="edit-desk mac-screen" aria-hidden="true">
+          <div class="desk-bar" aria-hidden="true"><span>Finder File</span><span>21:14</span></div>
+          <span class="mac-notch" aria-hidden="true"><i class="mac-cam"></i></span>
+          <div class="edit-stack">
+            <div class="island is-open edit-island">
+              <div class="island-glass"></div>
+              <div class="island-open">
+                <div class="ears">
+                  <div class="wheels">
+                    <div class="wheel"><span>11</span><span class="on">12</span><span>13</span></div>
+                    <div class="wheel"><span>59</span><span class="on">00</span><span>01</span></div>
+                    <div class="wheel"><span>59</span><span class="on">00</span><span>01</span></div>
+                    <i class="edit-minus"></i>
+                  </div>
+                  <div class="right-ear">
+                    <span class="chip edit-pencil is-on">
+                      <svg viewBox="0 0 12 12"><path d="M8.2 1.8l2 2L4 10H2V8z"/></svg>
+                    </span>
+                    <span class="chip">
+                      <svg viewBox="0 0 12 12"><circle cx="6" cy="6" r="4.4"/><path d="M4.7 4.6a1.4 1.4 0 011.5-1.2c.9 0 1.5.5 1.5 1.3 0 .8-.5 1.1-1.1 1.4-.5.3-.6.6-.6 1.2"/><path d="M6 9.1h.01"/></svg>
+                      <i class="edit-minus"></i>
+                    </span>
+                    <span class="chip edit-mic-on">
+                      <svg viewBox="0 0 12 12"><rect x="4.2" y="1.6" width="3.6" height="5.2" rx="1.8"/><path d="M2.8 6.2a3.2 3.2 0 006.4 0M6 9.4V11"/></svg>
+                      <i class="edit-minus"></i>
+                    </span>
+                    <span class="chip">
+                      <svg viewBox="0 0 12 12"><rect x="3" y="3.2" width="6.2" height="7.2" rx="1.2"/><path d="M4.4 3.2V2.4h3.4v.8"/><path d="M5 6h3.2M5 8h2.2"/></svg>
+                      <i class="edit-minus"></i>
+                    </span>
+                  </div>
+                </div>
+                <div class="media-row">
+                  <div class="art"></div>
+                  <div class="meta">
+                    <strong>Night Harbor</strong>
+                    <small>Local</small>
+                  </div>
+                  <div class="transport">
+                    <span class="icon-btn"><svg viewBox="0 0 12 12"><path d="M10 2.2L5.2 6 10 9.8zM3.4 2.2v7.6"/></svg></span>
+                    <span class="icon-btn"><svg viewBox="0 0 12 12"><path d="M3.2 2.2h2.1v7.6H3.2zm3.5 0h2.1v7.6H6.7z"/></svg></span>
+                    <span class="icon-btn"><svg viewBox="0 0 12 12"><path d="M2 2.2L6.8 6 2 9.8zM8.6 2.2v7.6"/></svg></span>
+                    <div class="outs">
+                      <span class="out"><svg viewBox="0 0 12 12"><path d="M2.2 4.6h2.2L7.2 2.4v7.2L4.4 7.4H2.2z"/><path d="M8.4 4.6a2.4 2.4 0 010 2.8M9.7 3.4a4 4 0 010 5.2" fill="none"/></svg></span>
+                      <span class="out is-on"><svg viewBox="0 0 12 12"><path d="M2.4 6.6A3.6 3.6 0 019.6 6.6" fill="none"/><path d="M2.4 6.6v2.2a1.2 1.2 0 001.2 1.2h.8V6.6zm5.2 0v3.4h.8A1.2 1.2 0 009.6 8.8V6.6z"/></svg></span>
+                      <span class="out"><svg viewBox="0 0 12 12"><path d="M2.4 3.2h7.2v5.2H2.4z"/><path d="M1.6 8.8h8.8v1.2H1.6z"/></svg></span>
+                      <i class="edit-minus"></i>
+                    </div>
+                    <span class="icon-btn">
+                      <svg viewBox="0 0 12 12"><path d="M2.4 3.2h7.2v5.2H5.2L3 9.8V8.4H2.4z" fill="none"/></svg>
+                      <i class="edit-minus"></i>
+                    </span>
+                    <span class="icon-btn">
+                      <svg viewBox="0 0 12 12"><path d="M2 3.2h6.4M2 6h6.4M2 8.8h4.2" fill="none"/><path d="M9.2 7.1v3.2l2.2-1.6z"/></svg>
+                      <i class="edit-minus"></i>
+                    </span>
+                  </div>
+                </div>
+                <div class="progress">
+                  <span>1:24</span>
+                  <span class="bar"><i></i></span>
+                  <span>3:42</span>
+                </div>
+              </div>
+            </div>
+            <div class="edit-tray-wrap">
+              <span class="edit-cap" data-i="editTrayLab">лоток</span>
+              <div class="tray edit-tray">
+                <span class="spark">
+                  <svg viewBox="0 0 12 12"><path d="M6 1.4l.7 2.6L9.2 5 6.7 6l-.7 2.6L5.3 6 2.8 5l2.5-1z"/></svg>
+                </span>
+                <span class="edit-mic-off">
+                  <svg viewBox="0 0 12 12"><rect x="4.2" y="1.6" width="3.6" height="5.2" rx="1.8"/><path d="M2.8 6.2a3.2 3.2 0 006.4 0M6 9.4V11"/></svg>
+                </span>
+                <span class="tray-empty edit-allon" data-i="allOn">All on the island</span>
+                <span class="done" data-i="done">Done</span>
+              </div>
+            </div>
+            <svg class="edit-cursor demo-cursor" viewBox="0 0 12 19" aria-hidden="true">
+              <path class="c-out" d="M.2.2v16.6l4.35-4.2 2.7 6.45 2.35-1-2.7-6.45h5.9L.2.2z"/>
+              <path class="c-in" d="M1.25 2.15v11.4l3.45-3.35 2.6 6.2 1.1-.46-2.6-6.2h4.35L1.25 2.15z"/>
+            </svg>
+          </div>
+          <span class="edit-fly">
+            <svg viewBox="0 0 12 12"><rect x="4.2" y="1.6" width="3.6" height="5.2" rx="1.8"/><path d="M2.8 6.2a3.2 3.2 0 006.4 0M6 9.4V11"/></svg>
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <section class="move-demo" id="move">
+      <div class="lyrics-copy rise">
+        <h2 data-i="moveTitle">Перенос</h2>
+        <p data-i="moveLede">Не наведение. Три клика за полторы секунды — остров едет за курсором и липнет к краю. Сбоку — карточка у стены. Снизу — пилюля. У камеры кнопка: тап — домой.</p>
+        <button type="button" class="play-anim rise" data-play="move"><span data-i="playAnim">Смотреть</span></button>
+      </div>
+      <div class="move-stage demo-stage rise-stay" data-scene="move">
+        <div class="move-desk mac-screen" aria-hidden="true">
+          <div class="desk-bar" aria-hidden="true"><span>Finder File</span><span>21:14</span></div>
+          <span class="mac-notch move-cam" aria-hidden="true"><i class="mac-cam"></i></span>
+          <div class="move-house">
+            <svg viewBox="0 0 16 16"><path d="M2.5 7.2L8 2.6l5.5 4.6V13a1 1 0 01-1 1H9.2v-3.2H6.8V14H3.5a1 1 0 01-1-1z"/></svg>
+            <span data-i="moveHouse">домой</span>
+          </div>
+          <div class="move-body">
+            <div class="move-pill">
+              <span class="lid-l"><span class="bars"><i></i><i></i><i></i><i></i></span> Night Harbor</span>
+              <span>12:00</span>
+            </div>
+            <div class="move-card">
+              <span class="art"></span>
+              <strong>Night Harbor</strong>
+              <small>12:00</small>
+            </div>
+            <span class="move-taps"><i></i><i></i><i></i></span>
+          </div>
+          <span class="move-tag move-tag-side" data-i="moveSide">сбоку</span>
+          <span class="move-tag move-tag-bot" data-i="moveBottom">снизу</span>
+          <span class="move-hint" data-i="moveClicks">три клика</span>
+          <svg class="move-cursor demo-cursor" viewBox="0 0 12 19" aria-hidden="true">
+            <path class="c-out" d="M.2.2v16.6l4.35-4.2 2.7 6.45 2.35-1-2.7-6.45h5.9L.2.2z"/>
+            <path class="c-in" d="M1.25 2.15v11.4l3.45-3.35 2.6 6.2 1.1-.46-2.6-6.2h4.35L1.25 2.15z"/>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <section class="shores">
+      <article class="shore rise" style="--d:0">
+        <h3 data-i="hoverWhy">Наведение, не клик</h3>
+        <p data-i="hoverBody">Раскрывается только если курсор на самом острове.</p>
+      </article>
+      <article class="shore rise" style="--d:1">
+        <h3 data-i="moveWhy">Перенос</h3>
+        <p data-i="moveBody">Три клика — остров едет за курсором.</p>
+      </article>
+      <article class="shore rise" style="--d:2">
+        <h3 data-i="micWhy">Микрофон на весь Mac</h3>
+        <p data-i="micBody">Один тап глушит вход для всех приложений.</p>
+      </article>
+      <article class="shore rise" style="--d:3">
+        <h3 data-i="lyricsWhy">Текст рядом</h3>
+        <p data-i="lyricsBody">Пузырёк открывает стеклянную панель.</p>
+      </article>
+      <article class="shore rise" style="--d:4">
+        <h3 data-i="editWhy">Своя раскладка</h3>
+        <p data-i="editBody">Карандаш открывает лоток.</p>
+      </article>
+    </section>
+
+    <section class="get rise" id="get">
+      <h2 data-i="getTitle">Бесплатно на Mac</h2>
+      <p data-i="getBody">macOS 14 и новее. Не из App Store — обычный диск.</p>
+      <a class="download" href="downloads/Island.dmg">
+        <svg viewBox="0 0 14 14" aria-hidden="true"><path fill="currentColor" d="M7 1.5v7.2M4.2 6.4L7 9.2l2.8-2.8M2 12h10"/></svg>
+        <span data-i="download">Скачать для Mac</span>
+      </a>
+    </section>
+
+    <footer class="foot rise">
+      <div>
+        <p data-i="donate">Донат появится здесь, когда будет ссылка.</p>
+        <p data-i="partner">Партнёрство — без формы на этой странице.</p>
+      </div>
+      <div class="foot-links">
+        <a href="privacy.html" data-i="privacy">Политика</a>
+      </div>
+    </footer>
+  </div>
+  <script src="site.js?v=lyrics3"></script>
+</body>
+</html>
