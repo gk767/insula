@@ -71,6 +71,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private let playlistWindowDelegate = PlaylistWindowDelegate()
     private let lyricsGap: CGFloat = 22
 
+    func applicationWillFinishLaunching(_ notification: Notification) {
+        guard let bundleID = Bundle.main.bundleIdentifier else { return }
+        let pid = ProcessInfo.processInfo.processIdentifier
+        let others = NSRunningApplication.runningApplications(withBundleIdentifier: bundleID)
+            .filter { $0.processIdentifier != pid }
+        guard let existing = others.first else { return }
+        existing.activate(options: [.activateIgnoringOtherApps])
+        exit(0)
+    }
+
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
         NotchGeometry.refreshCache()

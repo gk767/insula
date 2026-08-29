@@ -116,7 +116,12 @@ struct IslandView: View {
             }
             return height
         }
-        var content: CGFloat = showProgress ? 72 : 36
+        var content: CGFloat = {
+            if state.useOwnerLayout {
+                return showProgress ? 92 : 40
+            }
+            return showProgress ? 72 : 36
+        }()
         if !state.useOwnerLayout, showsEarRow {
             content += 56
         }
@@ -240,12 +245,11 @@ struct IslandView: View {
 
             miniPlayerRow
                 .padding(.horizontal, isSideDock ? 10 : 16)
-                .padding(.vertical, isSideDock ? 8 : 0)
-                .padding(.bottom, state.useOwnerLayout ? 6 : 0)
+                .padding(.vertical, isSideDock ? 8 : (state.useOwnerLayout ? 4 : 0))
                 .frame(
                     width: width,
                     height: height,
-                    alignment: isSideDock ? .center : (state.useOwnerLayout ? .bottom : .center)
+                    alignment: .center
                 )
                 .compositingGroup()
                 .opacity(expanded ? 0 : 1)
@@ -657,6 +661,7 @@ struct IslandView: View {
                             size: 12,
                             line: 1.5
                         )
+                        .padding(1)
                         .fixedSize()
                     } else if nowPlaying.isPlaying {
                         PlayingBars(barCount: 4, maxHeight: 10, paused: expanded)
@@ -895,7 +900,7 @@ struct IslandView: View {
             }
             .padding(.top, notchInset)
             .padding(.horizontal, 12)
-            .padding(.bottom, 14)
+            .padding(.bottom, showProgress ? 16 : 14)
         }
     }
 

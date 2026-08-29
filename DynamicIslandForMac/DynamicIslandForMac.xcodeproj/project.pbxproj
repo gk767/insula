@@ -257,6 +257,7 @@
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Insula;
 				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSAppleEventsUsageDescription = "Нужен доступ к Музыке и Spotify, чтобы показывать обложку и данные текущего трека.";
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Чтобы на острове показать, куда идёт звук: наушники, колонки или машина.";
@@ -296,6 +297,7 @@
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Insula;
 				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSAppleEventsUsageDescription = "Нужен доступ к Музыке и Spotify, чтобы показывать обложку и данные текущего трека.";
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Чтобы на острове показать, куда идёт звук: наушники, колонки или машина.";
