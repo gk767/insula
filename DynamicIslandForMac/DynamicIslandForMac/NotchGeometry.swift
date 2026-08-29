@@ -380,27 +380,55 @@ enum NotchGeometry {
         }
     }
 
-    static func mosesCursorInPill(
-        _ point: NSPoint,
+    static func approachReachRect(
         activity: Bool,
         on screen: NSScreen,
         placement: IslandPlacement = .home,
         along: CGFloat = 0.5
-    ) -> CGPoint? {
+    ) -> NSRect? {
         guard placement == .home else { return nil }
         let pill = collapsedPillFrame(activity: activity, on: screen, placement: .home, along: along)
-        let reach = NSRect(
+        return NSRect(
             x: pill.minX - 18,
             y: pill.minY - 36,
             width: pill.width + 36,
             height: pill.height + 40
         )
-        guard reach.contains(point) else { return nil }
-        if isDeepExpandZone(point, activity: activity, on: screen, placement: .home, along: along) { return nil }
-        let x = min(max(point.x - pill.minX, 18), pill.width - 18)
-        let yFromBottom = point.y - pill.minY
-        let swiftY = pill.height - yFromBottom
-        return CGPoint(x: x, y: swiftY)
+    }
+
+    static func isInApproachZone(
+        _ point: NSPoint,
+        activity: Bool,
+        on screen: NSScreen,
+        placement: IslandPlacement = .home,
+        along: CGFloat = 0.5
+    ) -> Bool {
+        guard let reach = approachReachRect(activity: activity, on: screen, placement: placement, along: along) else {
+            return false
+        }
+        return reach.contains(point)
+    }
+
+    static func approachSquish(
+        _ point: NSPoint,
+        activity: Bool,
+        on screen: NSScreen,
+        placement: IslandPlacement = .home,
+        along: CGFloat = 0.5
+    ) -> CGFloat {
+        guard placement == .home else { return 0 }
+        guard let reach = approachReachRect(activity: activity, on: screen, placement: placement, along: along) else {
+            return 0
+        }
+        guard reach.contains(point) else { return 0 }
+        if isDeepExpandZone(point, activity: activity, on: screen, placement: .home, along: along) { return 0 }
+        let pill = collapsedPillFrame(activity: activity, on: screen, placement: .home, along: along)
+        let fromBottom = point.y - pill.minY
+        let zoneStart: CGFloat = -36
+        let zoneEnd = pill.height / 3
+        let span = zoneEnd - zoneStart
+        guard span > 0 else { return 0 }
+        return min(1, max(0, (fromBottom - zoneStart) / span))
     }
 
     static func pillScreenFrame(

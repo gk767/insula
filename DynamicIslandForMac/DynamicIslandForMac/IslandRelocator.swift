@@ -198,7 +198,7 @@ final class IslandRelocator {
         state.magnet = nil
         state.isRelocating = true
         state.isHovering = false
-        state.mosesCursor = nil
+        state.approachSquish = 0
         state.shakeOffset = 0
         window?.ignoresMouseEvents = false
         startFollowTimer()

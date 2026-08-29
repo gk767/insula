@@ -1,6 +1,7 @@
 import AppKit
 import ApplicationServices
 import Combine
+import EventKit
 import UserNotifications
 
 final class PermissionGate: ObservableObject {
@@ -15,6 +16,8 @@ final class PermissionGate: ObservableObject {
     @Published var notifications: Status = .unknown
     @Published var music: Status = .unknown
     @Published var spotify: Status = .unknown
+    @Published var calendar: Status = .unknown
+    @Published var reminders: Status = .unknown
 
     private nonisolated static let musicID = "com.apple.Music"
     private nonisolated static let spotifyID = "com.spotify.client"
@@ -26,6 +29,7 @@ final class PermissionGate: ObservableObject {
 
     var needsAttention: Bool {
         notifications == .denied || music == .denied || spotify == .denied
+            || calendar == .denied || reminders == .denied
     }
 
     func requestEverything() {
@@ -49,6 +53,7 @@ final class PermissionGate: ObservableObject {
                     self.music = musicStatus
                     self.spotify = spotifyStatus
                     self.refreshNotificationStatus()
+                    self.refreshCalendarStatus()
                 }
             }
         }
@@ -70,6 +75,7 @@ final class PermissionGate: ObservableObject {
 
     func refreshQuietly() {
         refreshNotificationStatus()
+        refreshCalendarStatus()
         DispatchQueue.global(qos: .utility).async { [weak self] in
             guard let self else { return }
             let musicStatus = self.probeAutomation(bundleID: Self.musicID, prompt: false)
@@ -103,14 +109,65 @@ final class PermissionGate: ObservableObject {
         }
     }
 
+    func openCalendarSettings() {
+        let candidates = [
+            "x-apple.systempreferences:com.apple.settings.PrivacySecurity.extension?Privacy_Calendars",
+            "x-apple.systempreferences:com.apple.preference.security?Privacy_Calendars"
+        ]
+        for raw in candidates {
+            if let url = URL(string: raw), NSWorkspace.shared.open(url) { return }
+        }
+    }
+
+    func openRemindersSettings() {
+        let candidates = [
+            "x-apple.systempreferences:com.apple.settings.PrivacySecurity.extension?Privacy_Reminders",
+            "x-apple.systempreferences:com.apple.preference.security?Privacy_Reminders"
+        ]
+        for raw in candidates {
+            if let url = URL(string: raw), NSWorkspace.shared.open(url) { return }
+        }
+    }
+
+    func requestCalendarAccess(using store: EKEventStore, then: (() -> Void)? = nil) {
+        if #available(macOS 14.0, *) {
+            store.requestFullAccessToEvents { [weak self] _, _ in
+                DispatchQueue.main.async {
+                    self?.refreshCalendarStatus()
+                    then?()
+                }
+            }
+            store.requestFullAccessToReminders { [weak self] _, _ in
+                DispatchQueue.main.async {
+                    self?.refreshCalendarStatus()
+                    then?()
+                }
+            }
+        } else {
+            store.requestAccess(to: .event) { [weak self] _, _ in
+                DispatchQueue.main.async {
+                    self?.refreshCalendarStatus()
+                    then?()
+                }
+            }
+            store.requestAccess(to: .reminder) { [weak self] _, _ in
+                DispatchQueue.main.async {
+                    self?.refreshCalendarStatus()
+                    then?()
+                }
+            }
+        }
+    }
+
     private func showExplanation() {
         NSApp.activate(ignoringOtherApps: true)
         let alert = NSAlert()
         alert.messageText = "Нужны доступы для Insula"
         alert.informativeText = """
-        Чтобы показывать трек, обложки и уведомление таймера, macOS спросит несколько разрешений:
+        Чтобы показывать трек, обложки, уведомление таймера и расписание, macOS спросит несколько разрешений:
 
-        • Уведомления — когда таймер закончится
+        • Уведомления — когда таймер закончится или скоро встреча
+        • Календарь и Напоминания — что дальше сегодня
         • Музыка — название, прогресс и обложка текущего трека
         • Spotify — обложка, если слушаете там
 
@@ -128,6 +185,38 @@ final class PermissionGate: ObservableObject {
                 self?.refreshNotificationStatus()
                 then()
             }
+        }
+    }
+
+    private func refreshCalendarStatus() {
+        calendar = Self.status(for: EKEventStore.authorizationStatus(for: .event))
+        reminders = Self.status(for: EKEventStore.authorizationStatus(for: .reminder))
+    }
+
+    private static func status(for authorization: EKAuthorizationStatus) -> Status {
+        if #available(macOS 14.0, *) {
+            switch authorization {
+            case .fullAccess, .authorized:
+                return .allowed
+            case .denied, .restricted:
+                return .denied
+            case .writeOnly:
+                return .denied
+            case .notDetermined:
+                return .unknown
+            @unknown default:
+                return .unknown
+            }
+        }
+        switch authorization {
+        case .authorized:
+            return .allowed
+        case .denied, .restricted:
+            return .denied
+        case .notDetermined:
+            return .unknown
+        @unknown default:
+            return .unknown
         }
     }
 

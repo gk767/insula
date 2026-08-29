@@ -55,9 +55,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     let audioOutput = AudioOutputManager()
     let micMute = MicMuteManager()
     let guide = IslandGuide()
+    let scheduleManager = ScheduleManager()
+    let scheduleNotifier = ScheduleNotifier()
 
     var lyricsWindow: NSWindow?
     private var playlistWindow: NSWindow?
+    private var scheduleSettingsWindow: NSWindow?
     private var guideWindow: NSWindow?
     private var guideHost: GuideHostingView?
     private var lyricsCancellables = Set<AnyCancellable>()
@@ -87,6 +90,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             }
         }
 
+        scheduleManager.onNudge = { [weak self] title, body in
+            guard let self else { return }
+            self.islandState.pulse()
+            self.scheduleNotifier.postImmediate(title: title, body: body)
+        }
+        scheduleManager.refresh()
+        scheduleNotifier.reschedule(scheduleManager.notificationItems())
+
+        scheduleManager.objectWillChange
+            .debounce(for: .seconds(0.5), scheduler: RunLoop.main)
+            .sink { [weak self] _ in
+                guard let self else { return }
+                self.scheduleNotifier.reschedule(self.scheduleManager.notificationItems())
+            }
+            .store(in: &guideCancellables)
+
         lyrics.start(nowPlaying: nowPlaying)
         playlist.start(nowPlaying: nowPlaying)
         guide.bind(state: islandState, lyrics: lyrics, playlist: playlist, nowPlaying: nowPlaying, relocator: relocator)
@@ -94,6 +113,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         setupNotchWindow()
         setupLyricsWindow()
         setupPlaylistWindow()
+        setupScheduleSettingsWindow()
         setupGuideWindow()
         hoverMonitor.onHoveringChange = { [weak self] hovering in
             guard let self else { return }
@@ -138,6 +158,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             self?.repositionWindow()
         }
         permissions.requestEverything()
+        if islandState.shows(.schedule) {
+            scheduleManager.requestAccess()
+        }
     }
 
     private func setupStatusItem() {
@@ -165,11 +188,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
         menu.addItem(.separator())
 
-        let header = NSMenuItem(title: "Доступы для обложек и таймера", action: nil, keyEquivalent: "")
+        let header = NSMenuItem(title: "Доступы для обложек, таймера и расписания", action: nil, keyEquivalent: "")
         header.isEnabled = false
         menu.addItem(header)
 
         menu.addItem(statusLine("Уведомления", permissions.notifications))
+        menu.addItem(statusLine("Календарь", permissions.calendar))
+        menu.addItem(statusLine("Напоминания", permissions.reminders))
         menu.addItem(statusLine("Музыка", permissions.music))
         menu.addItem(statusLine("Spotify", permissions.spotify))
 
@@ -189,11 +214,27 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             menu.addItem(notify)
         }
 
+        if permissions.calendar == .denied {
+            let calendars = NSMenuItem(title: "Открыть настройки календаря…", action: #selector(openCalendarSettings), keyEquivalent: "")
+            calendars.target = self
+            menu.addItem(calendars)
+        }
+
+        if permissions.reminders == .denied {
+            let reminders = NSMenuItem(title: "Открыть настройки напоминаний…", action: #selector(openRemindersSettings), keyEquivalent: "")
+            reminders.target = self
+            menu.addItem(reminders)
+        }
+
         menu.addItem(.separator())
 
         let editItem = NSMenuItem(title: "Редакт Insula", action: #selector(beginIslandEdit), keyEquivalent: "")
         editItem.target = self
         menu.addItem(editItem)
+
+        let scheduleSettings = NSMenuItem(title: "Календари и напоминания…", action: #selector(openScheduleSettings), keyEquivalent: "")
+        scheduleSettings.target = self
+        menu.addItem(scheduleSettings)
 
         let stopGuide = NSMenuItem(title: "Закрыть гид", action: #selector(stopIslandGuide), keyEquivalent: ".")
         stopGuide.target = self
@@ -224,6 +265,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     @objc private func openNotificationSettings() {
         permissions.openNotificationSettings()
+    }
+
+    @objc private func openCalendarSettings() {
+        permissions.openCalendarSettings()
+    }
+
+    @objc private func openRemindersSettings() {
+        permissions.openRemindersSettings()
+    }
+
+    @objc private func openScheduleSettings() {
+        scheduleManager.isSettingsOpen = true
     }
 
     @objc private func beginIslandEdit() {
@@ -279,6 +332,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             state: islandState,
             nowPlaying: nowPlaying,
             timerManager: timerManager,
+            scheduleManager: scheduleManager,
             clipboard: clipboard,
             lyrics: lyrics,
             playlist: playlist,
@@ -638,6 +692,43 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             pill: pill,
             placement: islandState.dockedPlacement
         )
+    }
+
+    private func setupScheduleSettingsWindow() {
+        let hosting = NSHostingView(rootView: ScheduleSettingsView(schedule: scheduleManager))
+        let window = NSWindow(
+            contentRect: NSRect(x: 0, y: 0, width: 340, height: 420),
+            styleMask: [.titled, .closable],
+            backing: .buffered,
+            defer: false
+        )
+        window.title = "Расписание Insula"
+        window.contentView = hosting
+        window.isReleasedWhenClosed = false
+        window.center()
+        scheduleSettingsWindow = window
+
+        scheduleManager.$isSettingsOpen
+            .receive(on: RunLoop.main)
+            .sink { [weak self] open in
+                guard let self, let window = self.scheduleSettingsWindow else { return }
+                if open {
+                    window.center()
+                    NSApp.activate(ignoringOtherApps: true)
+                    window.makeKeyAndOrderFront(nil)
+                } else {
+                    window.orderOut(nil)
+                }
+            }
+            .store(in: &guideCancellables)
+
+        NotificationCenter.default.addObserver(
+            forName: NSWindow.willCloseNotification,
+            object: window,
+            queue: .main
+        ) { [weak self] _ in
+            self?.scheduleManager.isSettingsOpen = false
+        }
     }
 }
 

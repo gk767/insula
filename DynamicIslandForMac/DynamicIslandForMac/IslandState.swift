@@ -16,6 +16,7 @@ enum IslandModule: String, CaseIterable, Identifiable {
     case audioOutput
     case micMute
     case guide
+    case schedule
 
     var id: String { rawValue }
 
@@ -28,6 +29,7 @@ enum IslandModule: String, CaseIterable, Identifiable {
         case .audioOutput: return "Куда играет звук"
         case .micMute: return "Микрофон"
         case .guide: return "Guide"
+        case .schedule: return "Расписание"
         }
     }
 
@@ -40,8 +42,20 @@ enum IslandModule: String, CaseIterable, Identifiable {
         case .audioOutput: return "headphones"
         case .micMute: return "mic.fill"
         case .guide: return "questionmark"
+        case .schedule: return "calendar"
         }
     }
+
+    var isUtilityEar: Bool {
+        switch self {
+        case .schedule, .clipboard, .micMute, .guide:
+            return true
+        default:
+            return false
+        }
+    }
+
+    static let utilityEarModules: [IslandModule] = [.schedule, .clipboard, .micMute, .guide]
 }
 
 final class IslandState: ObservableObject {
@@ -49,7 +63,8 @@ final class IslandState: ObservableObject {
     @Published var collapsedSize: CGSize = NotchGeometry.defaultCollapsedSize
     @Published var showsActivity = false
     @Published var expandedHeight: CGFloat = 176
-    @Published var mosesCursor: CGPoint?
+    /// 0…1 — сжатие капсулы вверх при медленном подходе курсора снизу (только home).
+    @Published var approachSquish: CGFloat = 0
     @Published var transportAnimationsOn: Bool
     @Published var placement: IslandPlacement
     @Published var along: CGFloat
@@ -59,6 +74,7 @@ final class IslandState: ObservableObject {
     @Published var isEditing = false
     @Published var guideHold: GuideHold = .off
     @Published var modules: Set<IslandModule>
+    @Published var earSlots: [IslandModule?]
     @Published private(set) var pulseGeneration = 0
 
     var isExpanded: Bool { isHovering || isEditing || guideHold == .expanded || guideHold == .editing }
@@ -91,6 +107,7 @@ final class IslandState: ObservableObject {
         } else {
             modules = Set(IslandModule.allCases)
         }
+        earSlots = Self.loadEarSlots()
         if !UserDefaults.standard.bool(forKey: Self.audioOutputAddedKey) {
             modules.insert(.audioOutput)
             UserDefaults.standard.set(true, forKey: Self.audioOutputAddedKey)
@@ -106,6 +123,80 @@ final class IslandState: ObservableObject {
             UserDefaults.standard.set(true, forKey: Self.guideAddedKey)
             persistModules()
         }
+        if !UserDefaults.standard.bool(forKey: Self.scheduleAddedKey) {
+            modules.insert(.schedule)
+            UserDefaults.standard.set(true, forKey: Self.scheduleAddedKey)
+            persistModules()
+        }
+    }
+
+    func module(atEarSlot index: Int) -> IslandModule? {
+        guard earSlots.indices.contains(index) else { return nil }
+        guard let module = earSlots[index], modules.contains(module) else { return nil }
+        return module
+    }
+
+    func cycleEarSlot(at index: Int) {
+        guard earSlots.indices.contains(index) else { return }
+        let enabled = IslandModule.utilityEarModules.filter { modules.contains($0) }
+        guard !enabled.isEmpty else {
+            earSlots[index] = nil
+            persistEarSlots()
+            return
+        }
+        let current = earSlots[index]
+        if let current, enabled.contains(current), let idx = enabled.firstIndex(of: current) {
+            let next = idx + 1
+            if next >= enabled.count {
+                earSlots[index] = nil
+            } else {
+                assignEarSlot(at: index, module: enabled[next])
+            }
+        } else {
+            assignEarSlot(at: index, module: enabled[0])
+        }
+        persistEarSlots()
+    }
+
+    func assignEarSlot(at index: Int, module: IslandModule?) {
+        guard earSlots.indices.contains(index) else { return }
+        if let module {
+            for i in earSlots.indices where i != index && earSlots[i] == module {
+                earSlots[i] = nil
+            }
+            modules.insert(module)
+            earSlots[index] = module
+        } else {
+            earSlots[index] = nil
+        }
+        persistModules()
+        persistEarSlots()
+    }
+
+    private func firstEmptyEarSlot() -> Int? {
+        earSlots.firstIndex(where: { $0 == nil })
+    }
+
+    private static func loadEarSlots() -> [IslandModule?] {
+        guard let raw = UserDefaults.standard.array(forKey: earSlotsKey) as? [String?] else {
+            return [.schedule, .clipboard, .micMute]
+        }
+        let parsed = raw.prefix(3).map { value -> IslandModule? in
+            guard let value else { return nil }
+            return IslandModule(rawValue: value)
+        }
+        var slots = Array(parsed)
+        while slots.count < 3 {
+            slots.append(nil)
+        }
+        return Array(slots.prefix(3))
+    }
+
+    func persistEarSlots() {
+        UserDefaults.standard.set(
+            earSlots.map { $0?.rawValue },
+            forKey: Self.earSlotsKey
+        )
     }
 
     func shows(_ module: IslandModule) -> Bool {
@@ -116,7 +207,11 @@ final class IslandState: ObservableObject {
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
             self.modules.remove(module)
+            for index in self.earSlots.indices where self.earSlots[index] == module {
+                self.earSlots[index] = nil
+            }
             self.persistModules()
+            self.persistEarSlots()
         }
     }
 
@@ -124,13 +219,17 @@ final class IslandState: ObservableObject {
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
             self.modules.insert(module)
+            if module.isUtilityEar, !self.earSlots.compactMap({ $0 }).contains(module), let empty = self.firstEmptyEarSlot() {
+                self.earSlots[empty] = module
+                self.persistEarSlots()
+            }
             self.persistModules()
         }
     }
 
     func beginEditing() {
         guard !isRelocating else { return }
-        mosesCursor = nil
+        approachSquish = 0
         isHovering = true
         isEditing = true
     }
@@ -177,4 +276,6 @@ final class IslandState: ObservableObject {
     private static let audioOutputAddedKey = "island.modules.audioOutput.added"
     private static let micMuteAddedKey = "island.modules.micMute.added"
     private static let guideAddedKey = "island.modules.guide.added"
+    private static let scheduleAddedKey = "island.modules.schedule.added"
+    private static let earSlotsKey = "island.earSlots"
 }

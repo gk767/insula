@@ -5,6 +5,7 @@ struct IslandView: View {
     @ObservedObject var state: IslandState
     @ObservedObject var nowPlaying: NowPlayingManager
     @ObservedObject var timerManager: IslandTimerManager
+    @ObservedObject var scheduleManager: ScheduleManager
     @ObservedObject var clipboard: ClipboardHistory
     @ObservedObject var lyrics: LyricsManager
     @ObservedObject var playlist: PlaylistManager
@@ -27,17 +28,38 @@ struct IslandView: View {
     @State private var minutes = 0
     @State private var seconds = 0
     @State private var clipboardOpen = false
+    @State private var scheduleOpen = false
     @State private var openedClipboardID: UUID?
     @State private var copiedClipboardID: UUID?
 
     private var expanded: Bool { state.isExpanded }
     private var showProgress: Bool { nowPlaying.duration > 1 }
 
+    private var progressTickPaused: Bool {
+        isScrubbing ? false : !expanded || !showProgress
+    }
+
+    private var progressTickInterval: TimeInterval {
+        isScrubbing ? 1.0 / 24.0 : 1.0
+    }
+
+    private var collapsedProgressPaused: Bool {
+        expanded || (!showProgress && !nowPlaying.isPlaying)
+    }
+
     private var hasActivity: Bool {
         timerManager.isRunning
             || timerManager.didFinish
+            || scheduleManager.nextItem?.isUrgent == true
             || nowPlaying.isPlaying
             || !nowPlaying.title.isEmpty
+    }
+
+    private var schedulePanelHeight: CGFloat {
+        guard showsSchedulePanel else { return 0 }
+        if !scheduleManager.isAuthorized { return 36 }
+        let rows = max(scheduleManager.timelineItems.count, 1)
+        return CGFloat(rows) * 20 + 8
     }
 
     private var timerSeconds: Int {
@@ -58,6 +80,10 @@ struct IslandView: View {
 
     private var showsClipboardPanel: Bool {
         clipboardOpen && state.shows(.clipboard)
+    }
+
+    private var showsSchedulePanel: Bool {
+        scheduleOpen && state.shows(.schedule) && state.earSlots.compactMap({ $0 }).contains(.schedule) && expanded
     }
 
     private var showsEarRow: Bool {
@@ -85,6 +111,9 @@ struct IslandView: View {
                     height += CGFloat(lines) * 14 + 28
                 }
             }
+            if showsSchedulePanel {
+                height += schedulePanelHeight
+            }
             return height
         }
         var content: CGFloat = showProgress ? 72 : 36
@@ -97,6 +126,9 @@ struct IslandView: View {
                 let lines = min(8, max(2, (opened.text.count / 36) + opened.text.filter { $0.isNewline }.count + 1))
                 content += CGFloat(lines) * 14 + 28
             }
+        }
+        if showsSchedulePanel {
+            content += schedulePanelHeight
         }
         return content + (state.useOwnerLayout ? notchInset : 12)
     }
@@ -191,17 +223,13 @@ struct IslandView: View {
         let width = islandWidth
         let height = islandHeight
         let radius = islandRadius
-        let shape = MosesCapsule(cornerRadius: radius, cursor: expanded ? nil : state.mosesCursor)
+        let shape = RoundedRectangle(cornerRadius: radius, style: .continuous)
+        let squishFactor = expanded ? 1.0 : (1 - state.approachSquish * 0.32)
 
         return ZStack(alignment: .top) {
             Color.clear
                 .frame(width: width, height: height)
                 .islandGlass(shape)
-                .overlay {
-                    if !expanded, state.mosesCursor != nil {
-                        MosesWaterLook(shape: shape)
-                    }
-                }
 
             expandedContent
                 .frame(width: width, height: height, alignment: .top)
@@ -248,14 +276,14 @@ struct IslandView: View {
             .clipShape(shape)
             .allowsHitTesting(false)
         }
-        .scaleEffect(x: 1, y: 1 + 0.08 * pulseDown, anchor: pulseAnchor)
+        .scaleEffect(x: 1, y: squishFactor * (1 + 0.08 * pulseDown), anchor: pulseAnchor)
         .offset(x: state.shakeOffset)
         .guideTarget(.capsule)
         .animation(.spring(response: 0.42, dampingFraction: 0.86), value: expanded)
         .animation(.spring(response: 0.36, dampingFraction: 0.88), value: hasActivity)
         .animation(.spring(response: 0.32, dampingFraction: 0.9), value: expandedHeight)
         .animation(.spring(response: 0.42, dampingFraction: 0.86), value: isSideDock)
-        .animation(.interactiveSpring(response: 0.16, dampingFraction: 0.86), value: state.mosesCursor)
+        .animation(.interactiveSpring(response: 0.16, dampingFraction: 0.86), value: state.approachSquish)
     }
 
     @ViewBuilder
@@ -286,12 +314,7 @@ struct IslandView: View {
     private var guideButton: some View {
         let on = guide.isActive
         return Button {
-            if state.isEditing {
-                if on { guide.stop() }
-                state.hide(.guide)
-            } else {
-                guide.toggle()
-            }
+            guide.toggle()
         } label: {
             Image(systemName: "questionmark")
                 .font(.system(size: 11, weight: .semibold))
@@ -300,10 +323,7 @@ struct IslandView: View {
                 .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .overlay(alignment: .topTrailing) {
-            if state.isEditing { editMinus }
-        }
-        .help(state.isEditing ? "Remove from island" : "Guide")
+        .help("Guide")
         .guideTarget(.guide)
     }
 
@@ -436,6 +456,9 @@ struct IslandView: View {
         .onAppear {
             state.showsActivity = true
             state.expandedHeight = expandedHeight
+            if state.shows(.schedule) {
+                scheduleManager.refresh()
+            }
         }
         .onChange(of: expandedHeight) { _, value in
             state.expandedHeight = value
@@ -443,6 +466,7 @@ struct IslandView: View {
         .onChange(of: expanded) { _, isOn in
             if !isOn {
                 clipboardOpen = false
+                scheduleOpen = false
                 openedClipboardID = nil
                 copiedClipboardID = nil
             }
@@ -462,6 +486,9 @@ struct IslandView: View {
             if !state.shows(.guide) {
                 guide.stop()
             }
+            if !state.shows(.schedule) {
+                scheduleOpen = false
+            }
             state.expandedHeight = expandedHeight
         }
         .onChange(of: clipboardOpen) { _, isOn in
@@ -472,6 +499,21 @@ struct IslandView: View {
             state.expandedHeight = expandedHeight
         }
         .onChange(of: openedClipboardID) { _, _ in
+            state.expandedHeight = expandedHeight
+        }
+        .onChange(of: scheduleManager.nextItem?.id) { _, _ in
+            state.expandedHeight = expandedHeight
+        }
+        .onChange(of: scheduleManager.todayEvents.count) { _, _ in
+            state.expandedHeight = expandedHeight
+        }
+        .onChange(of: scheduleManager.todayReminders.count) { _, _ in
+            state.expandedHeight = expandedHeight
+        }
+        .onChange(of: scheduleOpen) { _, _ in
+            state.expandedHeight = expandedHeight
+        }
+        .onChange(of: state.earSlots) { _, _ in
             state.expandedHeight = expandedHeight
         }
         .onChange(of: state.pulseGeneration) { _, generation in
@@ -604,17 +646,18 @@ struct IslandView: View {
     private var horizontalMiniPlayer: some View {
         HStack(spacing: 7) {
             TimelineView(.animation(
-                minimumInterval: 1.0 / 30.0,
-                paused: expanded || (!showProgress && !nowPlaying.isPlaying)
+                minimumInterval: 1.0,
+                paused: collapsedProgressPaused
             )) { context in
                 let elapsed = nowPlaying.elapsed(at: context.date)
-                HStack(spacing: 6) {
+        HStack(spacing: 6) {
                     if showProgress {
                         TrackProgressRing(
                             progress: progressValue(elapsed: elapsed),
                             size: 12,
                             line: 1.5
                         )
+                        .fixedSize()
                     } else if nowPlaying.isPlaying {
                         PlayingBars(barCount: 4, maxHeight: 10, paused: expanded)
                     }
@@ -626,6 +669,9 @@ struct IslandView: View {
                         Text(formatTime(elapsed))
                             .font(.system(size: 10, weight: .semibold, design: .rounded).monospacedDigit())
                             .foregroundColor(.white.opacity(0.55))
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.75)
+                            .layoutPriority(-1)
                     }
                 }
                 .guideTarget(.collapsedMusic)
@@ -643,6 +689,24 @@ struct IslandView: View {
                         .foregroundColor(.white.opacity(timerManager.didFinish ? 0.92 : 0.78))
                 }
                 .guideTarget(.collapsedTimer)
+            }
+
+            if state.shows(.schedule), scheduleManager.nextItem != nil, !expanded {
+                TimelineView(.periodic(from: .now, by: scheduleManager.nextItem?.isUrgent == true ? 10 : 60)) { _ in
+                    HStack(spacing: 3) {
+                        TrackProgressRing(
+                            progress: scheduleManager.countdownProgress(for: scheduleManager.nextItem),
+                            size: 11,
+                            line: 1.4
+                        )
+                        if let short = scheduleManager.collapsedShortText() {
+                            Text(short)
+                                .font(.system(size: 10, weight: .semibold, design: .rounded).monospacedDigit())
+                                .foregroundColor(.white.opacity(scheduleManager.nextItem?.isUrgent == true ? 0.95 : 0.62))
+                        }
+                    }
+                    .guideTarget(.collapsedSchedule)
+                }
             }
         }
     }
@@ -664,7 +728,13 @@ struct IslandView: View {
                         .foregroundColor(.white.opacity(0.38))
                 }
                 if showProgress {
-                    TrackProgressRing(progress: progressValue(elapsed: nowPlaying.elapsed()), size: 40, line: 1.7)
+                    TimelineView(.animation(minimumInterval: 1.0, paused: expanded)) { context in
+                        TrackProgressRing(
+                            progress: progressValue(elapsed: nowPlaying.elapsed(at: context.date)),
+                            size: 40,
+                            line: 1.7
+                        )
+                    }
                 }
             }
             .frame(width: 40, height: 40)
@@ -687,6 +757,24 @@ struct IslandView: View {
                         .minimumScaleFactor(0.8)
                 }
                 .guideTarget(.collapsedTimer)
+            }
+
+            if state.shows(.schedule), scheduleManager.nextItem != nil, !expanded {
+                TimelineView(.periodic(from: .now, by: scheduleManager.nextItem?.isUrgent == true ? 10 : 60)) { _ in
+                    HStack(spacing: 2) {
+                        TrackProgressRing(
+                            progress: scheduleManager.countdownProgress(for: scheduleManager.nextItem),
+                            size: 10,
+                            line: 1.3
+                        )
+                        if let short = scheduleManager.collapsedShortText() {
+                            Text(short)
+                                .font(.system(size: 9, weight: .semibold, design: .rounded).monospacedDigit())
+                                .foregroundColor(.white.opacity(scheduleManager.nextItem?.isUrgent == true ? 0.95 : 0.62))
+                        }
+                    }
+                    .guideTarget(.collapsedSchedule)
+                }
             }
         }
         .frame(maxWidth: .infinity)
@@ -769,6 +857,9 @@ struct IslandView: View {
             if showsClipboardPanel {
                 clipboardList
             }
+            if showsSchedulePanel {
+                scheduleList
+            }
             if showProgress {
                 progressSection
             }
@@ -795,6 +886,9 @@ struct IslandView: View {
                 if showsClipboardPanel {
                     clipboardList
                 }
+                if showsSchedulePanel {
+                    scheduleList
+                }
                 if showProgress {
             progressSection
                 }
@@ -817,6 +911,9 @@ struct IslandView: View {
             mediaSection
             if showsClipboardPanel {
                 clipboardList
+            }
+            if showsSchedulePanel {
+                scheduleList
             }
             if showProgress {
                 progressSection
@@ -845,7 +942,7 @@ struct IslandView: View {
 
             VStack(alignment: .leading, spacing: 2) {
                     HStack(spacing: 6) {
-                        if nowPlaying.artwork == nil, nowPlaying.isPlaying, !nowPlaying.title.isEmpty {
+                        if nowPlaying.artwork == nil, nowPlaying.isPlaying, !nowPlaying.title.isEmpty, !showProgress {
                             PlayingBars(barCount: 4, maxHeight: 11, paused: !expanded)
                         }
                 Text(nowPlaying.title.isEmpty ? "Ничего не играет" : nowPlaying.title)
@@ -963,12 +1060,146 @@ struct IslandView: View {
     private var rightEarControls: some View {
         HStack(alignment: .center, spacing: 2) {
             editButton
-            if state.shows(.guide) {
-                guideButton
+            ForEach(0..<3, id: \.self) { index in
+                utilityEarSlot(index)
             }
-            micMuteSlot
-            clipboardSlot
         }
+    }
+
+    private func utilityEarSlot(_ index: Int) -> some View {
+        Group {
+            if let module = state.module(atEarSlot: index) {
+                utilityEarModuleView(module, slot: index)
+            } else if state.isEditing {
+                Button {
+                    state.cycleEarSlot(at: index)
+                } label: {
+                    RoundedRectangle(cornerRadius: 8, style: .continuous)
+                        .strokeBorder(Color.white.opacity(0.22), style: StrokeStyle(lineWidth: 1, dash: [3, 3]))
+                        .frame(width: 26, height: 26)
+                        .overlay {
+                            Image(systemName: "plus")
+                                .font(.system(size: 10, weight: .semibold))
+                                .foregroundColor(.white.opacity(0.35))
+                        }
+                }
+                .buttonStyle(.plain)
+                .help("Назначить кнопку")
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func utilityEarModuleView(_ module: IslandModule, slot index: Int) -> some View {
+        Group {
+            switch module {
+            case .guide:
+                guideButton
+            case .clipboard:
+                clipboardButton
+            case .micMute:
+                micMuteButton
+            case .schedule:
+                scheduleUtilityButton
+            default:
+                EmptyView()
+            }
+        }
+        .allowsHitTesting(!state.isEditing)
+        .overlay(alignment: .topTrailing) {
+            if state.isEditing {
+                utilitySlotEditOverlay(module, slot: index)
+            }
+        }
+        .overlay {
+            if state.isEditing {
+                Button {
+                    state.cycleEarSlot(at: index)
+                } label: {
+                    Color.clear
+                        .frame(width: 26, height: 26)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .help("Сменить кнопку")
+            }
+        }
+    }
+
+    private func utilitySlotEditOverlay(_ module: IslandModule, slot index: Int) -> some View {
+        Button {
+            state.hide(module)
+        } label: {
+            Image(systemName: "minus.circle.fill")
+                .symbolRenderingMode(.palette)
+                .foregroundStyle(.white, Color.black.opacity(0.55))
+                .font(.system(size: 11, weight: .semibold))
+                .offset(x: 5, y: -5)
+        }
+        .buttonStyle(.plain)
+        .help("Убрать с островка")
+    }
+
+    private var scheduleUtilityButton: some View {
+        Button {
+            if !scheduleManager.isAuthorized {
+                scheduleManager.requestAccess()
+            } else {
+                scheduleOpen.toggle()
+                if scheduleOpen { clipboardOpen = false }
+            }
+        } label: {
+            scheduleUtilityIcon
+        }
+        .buttonStyle(.plain)
+        .contextMenu {
+            Button("Календари и напоминания…") {
+                scheduleManager.toggleSettings()
+            }
+        }
+        .help(scheduleManager.isAuthorized ? "Расписание" : "Разрешить календарь")
+        .guideTarget(.schedule)
+    }
+
+    private var scheduleUtilityIcon: some View {
+        TimelineView(.periodic(from: .now, by: scheduleManager.nextItem?.isUrgent == true ? 10 : 60)) { _ in
+            ZStack {
+                Image(systemName: "calendar")
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundColor(.white.opacity(scheduleOpen ? 0.95 : 0.72))
+                    .frame(width: 26, height: 26)
+                if scheduleManager.isAuthorized, let next = scheduleManager.nextItem, !next.isAllDay {
+                    TrackProgressRing(
+                        progress: scheduleManager.countdownProgress(for: next),
+                        size: 24,
+                        line: 1.6
+                    )
+                    .allowsHitTesting(false)
+                }
+            }
+        }
+    }
+
+    private var micMuteButton: some View {
+        Button {
+            micMute.toggle()
+        } label: {
+            if micMute.isMuted {
+                Image(systemName: "mic.slash.fill")
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundColor(.red)
+                    .frame(width: 26, height: 26)
+                    .background(Circle().fill(Color.white))
+            } else {
+                Image(systemName: "mic.fill")
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundColor(.white.opacity(0.92))
+                    .frame(width: 26, height: 26)
+            }
+        }
+        .buttonStyle(.plain)
+        .help(micMute.isMuted ? "Микрофон выключен" : "Микрофон")
+        .guideTarget(.mic)
     }
 
     private var audioOutputSlot: some View {
@@ -1032,39 +1263,6 @@ struct IslandView: View {
         .help(state.isEditing ? "Убрать с островка" : help)
     }
 
-    private var micMuteSlot: some View {
-        Group {
-            if state.shows(.micMute) {
-                Button {
-                    if state.isEditing {
-                        state.hide(.micMute)
-                    } else {
-                        micMute.toggle()
-                    }
-                } label: {
-                    if micMute.isMuted {
-                        Image(systemName: "mic.slash.fill")
-                            .font(.system(size: 11, weight: .semibold))
-                            .foregroundColor(.red)
-                            .frame(width: 26, height: 26)
-                            .background(Circle().fill(Color.white))
-                    } else {
-                        Image(systemName: "mic.fill")
-                            .font(.system(size: 12, weight: .semibold))
-                            .foregroundColor(.white.opacity(0.92))
-                            .frame(width: 26, height: 26)
-                    }
-                }
-                .buttonStyle(.plain)
-                .overlay(alignment: .topTrailing) {
-                    if state.isEditing { editMinus }
-                }
-                .help(state.isEditing ? "Убрать с островка" : (micMute.isMuted ? "Микрофон выключен" : "Микрофон"))
-                .guideTarget(.mic)
-            }
-        }
-    }
-
     private var timerSlot: some View {
         Group {
             if state.shows(.timer) {
@@ -1088,24 +1286,10 @@ struct IslandView: View {
         }
     }
 
-    private var clipboardSlot: some View {
-        Group {
-            if state.shows(.clipboard) {
-                clipboardButton
-                    .overlay(alignment: .topTrailing) {
-                        if state.isEditing { editMinus }
-                    }
-            }
-        }
-    }
-
     private var clipboardButton: some View {
         Button {
-            if state.isEditing {
-                state.hide(.clipboard)
-            } else {
-                clipboardOpen.toggle()
-            }
+            clipboardOpen.toggle()
+            if clipboardOpen { scheduleOpen = false }
         } label: {
             Image(systemName: "doc.on.clipboard")
                 .font(.system(size: 11, weight: .semibold))
@@ -1114,7 +1298,7 @@ struct IslandView: View {
                 .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .help(state.isEditing ? "Убрать с островка" : "Буфер обмена")
+        .help("Буфер обмена")
         .guideTarget(.clipboard)
     }
 
@@ -1193,14 +1377,16 @@ struct IslandView: View {
     }
 
     private var progressSection: some View {
-        TimelineView(.animation(minimumInterval: 1.0 / 30.0, paused: isScrubbing || !expanded)) { context in
+        TimelineView(.animation(minimumInterval: progressTickInterval, paused: progressTickPaused)) { context in
             let elapsed = isScrubbing ? scrubValue : nowPlaying.elapsed(at: context.date)
             let progress = progressValue(elapsed: elapsed)
 
             HStack(alignment: .center, spacing: 8) {
                 TrackProgressRing(progress: progress, size: 13, line: 1.5)
+                    .fixedSize()
+                    .layoutPriority(1)
 
-                VStack(spacing: 3) {
+                VStack(alignment: .leading, spacing: 3) {
                     TrackTimeline(progress: progress, isDragging: isScrubbing) { fraction in
                         let value = fraction * nowPlaying.duration
                         isScrubbing = true
@@ -1212,25 +1398,45 @@ struct IslandView: View {
                         nowPlaying.seek(to: value)
                         isScrubbing = false
                     }
+                    .frame(maxWidth: .infinity)
 
-            HStack {
+                    HStack(spacing: 4) {
                         Text(formatTime(elapsed))
-                Spacer()
-                Text(formatTime(nowPlaying.duration))
-            }
-                    .font(.system(size: 9, weight: .medium, design: .rounded).monospacedDigit())
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        Text(formatTime(nowPlaying.duration))
+                            .frame(maxWidth: .infinity, alignment: .trailing)
+                    }
+                    .font(playbackTimeFont)
                     .foregroundColor(.white.opacity(0.38))
-        }
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.75)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
         .transaction { $0.animation = nil }
         .guideTarget(.progress)
     }
 
+    private var playbackTimeFont: Font {
+        let longest = max(nowPlaying.duration, 0)
+        if longest >= 3600 {
+            return .system(size: 8, weight: .medium, design: .rounded).monospacedDigit()
+        }
+        return .system(size: 9, weight: .medium, design: .rounded).monospacedDigit()
+    }
+
     private func formatTime(_ seconds: Double) -> String {
         guard seconds.isFinite, seconds >= 0 else { return "0:00" }
-        let s = Int(seconds)
-        return String(format: "%d:%02d", s / 60, s % 60)
+        let total = Int(seconds.rounded(.down))
+        let hours = total / 3600
+        let minutes = (total % 3600) / 60
+        let secs = total % 60
+        if hours > 0 {
+            return String(format: "%d:%02d:%02d", hours, minutes, secs)
+        }
+        return String(format: "%d:%02d", minutes, secs)
     }
 
     private var timerSection: some View {
@@ -1284,6 +1490,64 @@ struct IslandView: View {
                 .scaleEffect(state.useOwnerLayout ? 0.72 : 1, anchor: .leading)
             }
         }
+    }
+
+    private var scheduleList: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            if !scheduleManager.isAuthorized {
+                Button { scheduleManager.requestAccess() } label: {
+                    Text("Разрешить Календарь и Напоминания")
+                        .font(.system(size: 10, weight: .semibold, design: .rounded))
+                        .foregroundColor(.white.opacity(0.72))
+                }
+                .buttonStyle(.plain)
+            } else if scheduleManager.timelineItems.isEmpty {
+                Text("Сегодня свободно")
+                    .font(.system(size: 10, weight: .medium, design: .rounded))
+                    .foregroundColor(.white.opacity(0.35))
+                    .padding(.horizontal, 6)
+            } else {
+                ForEach(scheduleManager.timelineItems) { item in
+                    Button { scheduleManager.openApp(for: item.kind) } label: {
+                        HStack(spacing: 6) {
+                            Text(scheduleTimeLabel(for: item))
+                                .font(.system(size: 9, weight: .semibold, design: .rounded).monospacedDigit())
+                                .foregroundColor(.white.opacity(item.isOverdue ? 0.35 : 0.48))
+                                .frame(width: 34, alignment: .leading)
+                            if let color = item.calendarColor {
+                                Circle()
+                                    .fill(color)
+                                    .frame(width: 4, height: 4)
+                            }
+                            Text(item.title)
+                                .font(.system(size: 11, weight: .medium, design: .rounded))
+                                .foregroundColor(.white.opacity(item.isOverdue ? 0.42 : 0.86))
+                                .lineLimit(1)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            Image(systemName: item.kind == .event ? "video" : "checkmark.circle")
+                                .font(.system(size: 8, weight: .semibold))
+                                .foregroundColor(.white.opacity(0.28))
+                        }
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 3)
+                        .background(Capsule(style: .continuous).fill(Color.white.opacity(0.05)))
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+        }
+        .guideTarget(.schedule)
+    }
+
+    private func scheduleTimeLabel(for item: ScheduleItem) -> String {
+        if item.isAllDay { return "день" }
+        if item.isOverdue { return "!" }
+        if let minutes = item.minutesUntil, minutes >= 0, minutes <= 59 {
+            return "\(minutes)м"
+        }
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm"
+        return formatter.string(from: item.date)
     }
 
     private var collapsedTitle: String {
@@ -1456,6 +1720,7 @@ private struct TrackProgressRing: View {
                 .rotationEffect(.degrees(-90))
         }
         .frame(width: size, height: size)
+        .fixedSize()
     }
 }
 
@@ -1476,7 +1741,7 @@ private struct TrackTimeline: View {
             ZStack(alignment: .leading) {
                 Capsule()
                     .fill(Color.white.opacity(0.12))
-                    .frame(height: bar)
+                    .frame(width: width, height: bar)
                 Capsule()
                     .fill(Color.white.opacity(0.92))
                     .frame(width: max(bar, filled), height: bar)
@@ -1485,7 +1750,7 @@ private struct TrackTimeline: View {
                     .frame(width: knob, height: knob)
                     .offset(x: knobX)
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .frame(width: width, height: max(bar, knob), alignment: .leading)
             .contentShape(Rectangle())
             .gesture(
                 DragGesture(minimumDistance: 0)
@@ -1497,7 +1762,7 @@ private struct TrackTimeline: View {
                     }
             )
         }
-        .frame(height: 14)
+        .frame(maxWidth: .infinity, minHeight: 14, maxHeight: 14)
         .transaction { $0.animation = nil }
     }
 }
@@ -1508,7 +1773,7 @@ private struct PlayingBars: View {
     var paused: Bool = false
 
     var body: some View {
-        TimelineView(.animation(minimumInterval: 1.0 / 24.0, paused: paused)) { context in
+        TimelineView(.animation(minimumInterval: 1.0 / 12.0, paused: paused)) { context in
             let t = context.date.timeIntervalSinceReferenceDate
             HStack(alignment: .center, spacing: 1.8) {
                 ForEach(0..<barCount, id: \.self) { index in
@@ -1526,129 +1791,5 @@ private struct PlayingBars: View {
         let speed = 2.6 + Double(index) * 0.35
         let wave = (sin(t * speed + phase) + 1) / 2
         return 3 + (maxHeight - 3) * wave
-    }
-}
-
-struct MosesCapsule: Shape {
-    var cornerRadius: CGFloat
-    var cursor: CGPoint?
-
-    func path(in rect: CGRect) -> Path {
-        let capR = min(cornerRadius, rect.height / 2)
-        guard let hole = Self.hole(in: rect, cornerRadius: capR, cursor: cursor) else {
-            return Path(roundedRect: rect, cornerRadius: capR, style: .continuous)
-        }
-
-        let minX = rect.minX
-        let maxX = rect.maxX
-        let minY = rect.minY
-        let maxY = rect.maxY
-
-        var path = Path()
-        path.move(to: CGPoint(x: minX + capR, y: minY))
-        path.addLine(to: CGPoint(x: maxX - capR, y: minY))
-        path.addArc(
-            center: CGPoint(x: maxX - capR, y: minY + capR),
-            radius: capR,
-            startAngle: .degrees(-90),
-            endAngle: .degrees(90),
-            clockwise: false
-        )
-
-        path.addLine(to: CGPoint(x: hole.cx + hole.w, y: maxY))
-        hole.appendEdge(to: &path)
-
-        path.addLine(to: CGPoint(x: minX + capR, y: maxY))
-        path.addArc(
-            center: CGPoint(x: minX + capR, y: minY + capR),
-            radius: capR,
-            startAngle: .degrees(90),
-            endAngle: .degrees(-90),
-            clockwise: false
-        )
-        path.closeSubpath()
-        return path
-    }
-
-    func holeEdge(in rect: CGRect) -> Path {
-        var path = Path()
-        guard let hole = Self.hole(in: rect, cornerRadius: min(cornerRadius, rect.height / 2), cursor: cursor) else {
-            return path
-        }
-        path.move(to: CGPoint(x: hole.cx + hole.w, y: hole.maxY))
-        hole.appendEdge(to: &path)
-        return path
-    }
-
-    fileprivate struct Hole {
-        var cx: CGFloat
-        var peakY: CGFloat
-        var w: CGFloat
-        var handle: CGFloat
-        var maxY: CGFloat
-
-        func appendEdge(to path: inout Path) {
-            path.addCurve(
-                to: CGPoint(x: cx, y: peakY),
-                control1: CGPoint(x: cx + w - handle, y: maxY),
-                control2: CGPoint(x: cx + handle, y: peakY)
-            )
-            path.addCurve(
-                to: CGPoint(x: cx - w, y: maxY),
-                control1: CGPoint(x: cx - handle, y: peakY),
-                control2: CGPoint(x: cx - w + handle, y: maxY)
-            )
-        }
-    }
-
-    fileprivate static func hole(in rect: CGRect, cornerRadius capR: CGFloat, cursor: CGPoint?) -> Hole? {
-        guard let cursor else { return nil }
-        let maxY = rect.maxY
-        let progress = min(1, max(0, (maxY - cursor.y) / max(rect.height * 2 / 3, 1)))
-        let w = min(13 + progress * 18, rect.width / 2 - capR - 6)
-        return Hole(
-            cx: min(max(cursor.x, capR + w + 4), rect.maxX - capR - w - 4),
-            peakY: min(max(cursor.y - 4, rect.minY + 5), maxY - 7),
-            w: w,
-            handle: w * 0.55,
-            maxY: maxY
-        )
-    }
-}
-
-private struct MosesWaterLook: View {
-    var shape: MosesCapsule
-
-    var body: some View {
-        GeometryReader { geo in
-            let rect = CGRect(origin: .zero, size: geo.size)
-            let edge = shape.holeEdge(in: rect)
-            ZStack {
-                shape
-                    .stroke(Color.black.opacity(0.5), lineWidth: 4)
-                    .blur(radius: 1.3)
-                    .offset(y: 0.8)
-                    .clipShape(shape)
-
-                edge
-                    .stroke(Color.white.opacity(0.42), lineWidth: 3)
-                    .blur(radius: 0.8)
-                    .offset(y: -0.35)
-
-                edge.stroke(
-                    LinearGradient(
-                        colors: [
-                            Color.white.opacity(0.72),
-                            Color.white.opacity(0.2),
-                            Color.black.opacity(0.32)
-                        ],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    ),
-                    lineWidth: 1.2
-                )
-            }
-        }
-        .allowsHitTesting(false)
     }
 }

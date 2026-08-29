@@ -69,12 +69,14 @@ enum GuideSpot: Hashable {
     case capsule
     case collapsedMusic
     case collapsedTimer
+    case collapsedSchedule
     case moses
     case appear
     case relocate
     case relocateDock
     case relocateHome
     case timer
+    case schedule
     case edit
     case guide
     case mic
@@ -323,6 +325,9 @@ final class IslandGuide: ObservableObject {
         if state.shows(.timer) {
             next.append(.collapsedTimer)
         }
+        if state.shows(.schedule) {
+            next.append(.collapsedSchedule)
+        }
         next.append(.moses)
         next.append(.appear)
         next.append(.relocate)
@@ -330,6 +335,9 @@ final class IslandGuide: ObservableObject {
         next.append(.relocateHome)
         if state.shows(.timer) {
             next.append(.timer)
+        }
+        if state.shows(.schedule) {
+            next.append(.schedule)
         }
         next.append(.edit)
         if state.shows(.guide) {
@@ -376,7 +384,7 @@ final class IslandGuide: ObservableObject {
         guard let state else { return }
         let spot = currentSpot
         switch spot {
-        case .capsule, .collapsedMusic, .collapsedTimer, .appear, .relocate:
+        case .capsule, .collapsedMusic, .collapsedTimer, .collapsedSchedule, .appear, .relocate:
             closePanelsIfOpened()
             restoreIslandPlace()
             state.endEditing()
@@ -668,15 +676,20 @@ extension GuideCopy {
                 why: "Таймер продолжает идти, даже пока Insula маленькая.",
                 how: "Оставшееся время показано справа на капсуле. Чтобы поставить новый таймер, откройте Insula."
             )
+        case .collapsedSchedule:
+            return GuideCopy(
+                why: "Следующая встреча или задача видна без открытия Календаря.",
+                how: "Справа на капсуле — название и время или «через N мин». За 15 и 5 минут до события придёт уведомление."
+            )
         case .moses:
             return GuideCopy(
                 why: "Капсула лежит поверх строки меню и адресной строки браузера, поэтому может мешать кликам под собой.",
-                how: "Если подводить курсор медленно, вдоль нижнего края открывается щель, которая следует за курсором, — клики проходят сквозь неё. Если подвести быстро, щели не будет."
+                how: "Если подводить курсор медленно снизу, весь остров сжимается вверх и освобождает место под собой. Если подвести быстро — сжатия не будет."
             )
         case .appear:
             return GuideCopy(
                 why: "Insula не должна раскрываться от любого движения курсора рядом с камерой — но и не должна «тормозить», когда она правда нужна.",
-                how: "Быстрый проход мимо не откроет её — задержите курсор примерно на 0.1 секунды. При медленном приближении сначала появляется узкая щель, а полностью Insula раскрывается только в верхней трети, у самой камеры."
+                how: "Быстрый проход мимо не откроет её — задержите курсор примерно на 0.1 секунды. При медленном приближении остров сначала сжимается снизу, а полностью раскрывается только в верхней трети, у самой камеры."
             )
         case .relocate:
             return GuideCopy(
@@ -697,6 +710,11 @@ extension GuideCopy {
             return GuideCopy(
                 why: "Здесь ставится обратный отсчёт — а не в приложении «Часы» и не где-то ещё.",
                 how: "Слева: часы, минуты, секунды. По окончании — звук и уведомление; музыка, если играла, ставится на паузу, а потом снова включается."
+            )
+        case .schedule:
+            return GuideCopy(
+                why: "Календарь и Напоминания macOS — в одном месте на Insula.",
+                how: "«Следующее», список встреч и задач на сегодня. Нажмите строку — откроется Календарь или Reminders. Можно включить рабочие часы и выбрать календари."
             )
         case .edit:
             return GuideCopy(
@@ -798,15 +816,20 @@ extension GuideCopy {
                 why: "El temporizador sigue corriendo aunque Insula esté pequeña.",
                 how: "El tiempo restante aparece a la derecha de la cápsula. Abre Insula para poner uno nuevo."
             )
+        case .collapsedSchedule:
+            return GuideCopy(
+                why: "La próxima reunión o tarea se ve sin abrir Calendario.",
+                how: "A la derecha de la cápsula: título y hora o «en N min». Aviso 15 y 5 minutos antes."
+            )
         case .moses:
             return GuideCopy(
                 why: "La cápsula queda encima de la barra de menú y de la barra de direcciones, así que puede bloquear los clics de lo que hay debajo.",
-                how: "Si te acercas despacio, se abre un hueco a lo largo del borde inferior que sigue al cursor, y los clics pasan a través. Si llegas rápido, no hay hueco."
+                how: "Si te acercas despacio por abajo, toda la isla se comprime hacia arriba y deja sitio debajo. Si llegas rápido, no se comprime."
             )
         case .appear:
             return GuideCopy(
                 why: "Insula no debería abrirse cada vez que el cursor pasa cerca de la cámara, pero tampoco debería sentirse lenta cuando de verdad la quieres usar.",
-                how: "Un simple paso rápido no la abre: quédate sobre ella unos 0,1 segundos. Si te acercas despacio, primero aparece el hueco pequeño y luego se abre del todo, cerca de la parte superior, junto a la cámara."
+                how: "Un simple paso rápido no la abre: quédate sobre ella unos 0,1 segundos. Si te acercas despacio, primero la isla se comprime por abajo y luego se abre del todo, cerca de la parte superior, junto a la cámara."
             )
         case .relocate:
             return GuideCopy(
@@ -827,6 +850,11 @@ extension GuideCopy {
             return GuideCopy(
                 why: "Aquí es donde se pone una cuenta atrás, no en la app Reloj ni en otro sitio.",
                 how: "A la izquierda: horas, minutos y segundos. Al terminar suena un aviso y llega una notificación; si había música sonando, se pausa y luego sigue."
+            )
+        case .schedule:
+            return GuideCopy(
+                why: "Calendario y Recordatorios de macOS en un solo lugar en Insula.",
+                how: "«Siguiente», reuniones y tareas de hoy. Toca una fila para abrir Calendario o Recordatorios. Puedes activar horario laboral y elegir calendarios."
             )
         case .edit:
             return GuideCopy(
@@ -928,15 +956,20 @@ extension GuideCopy {
                 why: "The timer keeps running even while Insula stays small.",
                 how: "The time left shows on the right side of the capsule. Open Insula to start a new one."
             )
+        case .collapsedSchedule:
+            return GuideCopy(
+                why: "Your next meeting or task is visible without opening Calendar.",
+                how: "On the right of the capsule: title and time or «in N min». Notifications 15 and 5 minutes before."
+            )
         case .moses:
             return GuideCopy(
                 why: "The capsule sits on top of your menu bar and address bar, so it can block clicks underneath it.",
-                how: "Approach slowly and a gap opens along the bottom edge, following your cursor, so clicks reach what's underneath. Approach fast and there's no gap."
+                how: "Approach slowly from below and the whole island compresses upward, freeing space underneath. Approach fast and it won't compress."
             )
         case .appear:
             return GuideCopy(
                 why: "Insula shouldn't pop open every time your cursor passes near the camera, but it shouldn't feel slow either when you actually want it.",
-                how: "A quick pass-by won't open it — pause on it for about 0.1 seconds. Moving in slowly shows the small gap first, then opens the full Insula near the top, right by the camera."
+                how: "A quick pass-by won't open it — pause on it for about 0.1 seconds. Moving in slowly compresses the island first, then opens the full Insula near the top, right by the camera."
             )
         case .relocate:
             return GuideCopy(
@@ -957,6 +990,11 @@ extension GuideCopy {
             return GuideCopy(
                 why: "This is where you set a countdown — not the Clock app, not somewhere else.",
                 how: "On the left side: hours, minutes, seconds. When it ends you get a sound and a notification; any music playing pauses, then resumes."
+            )
+        case .schedule:
+            return GuideCopy(
+                why: "macOS Calendar and Reminders in one glance on Insula.",
+                how: "«Next up», today's meetings and tasks. Tap a row to open Calendar or Reminders. Optional work hours and calendar filters."
             )
         case .edit:
             return GuideCopy(
@@ -1058,15 +1096,20 @@ extension GuideCopy {
                 why: "即使Insula保持很小，计时器也会继续走。",
                 how: "剩余时间显示在胶囊右侧。要设置新的计时器，需要先展开Insula。"
             )
+        case .collapsedSchedule:
+            return GuideCopy(
+                why: "不用打开日历也能看到下一个会议或任务。",
+                how: "胶囊右侧显示标题和时间或「N分钟后」。事件前15和5分钟会收到通知。"
+            )
         case .moses:
             return GuideCopy(
                 why: "胶囊盖在菜单栏和地址栏上方，可能会挡住下面的点击。",
-                how: "把光标慢慢移过去，胶囊下边缘会出现一条跟随光标移动的缝隙，点击可以穿过它落到下面的内容上。如果很快划过，就不会出现这条缝。"
+                how: "从下方慢慢靠近时，整个胶囊会向上压缩，让出下面的空间。如果很快划过，就不会压缩。"
             )
         case .appear:
             return GuideCopy(
                 why: "Insula 不应该因为光标随便经过摄像头附近就弹开，但真正想用它时也不能反应慢。",
-                how: "快速经过不会展开它——需要在上面停留大约 0.1 秒。慢慢靠近时，先出现一条小缝，然后才会在最上方、摄像头旁边完全展开。"
+                how: "快速经过不会展开它——需要在上面停留大约 0.1 秒。慢慢靠近时，胶囊会先向下压缩，然后才会在最上方、摄像头旁边完全展开。"
             )
         case .relocate:
             return GuideCopy(
@@ -1087,6 +1130,11 @@ extension GuideCopy {
             return GuideCopy(
                 why: "倒计时是在这里设置的，不是在“时钟”App，也不是别的地方。",
                 how: "左侧可以设置小时、分钟、秒。倒计时结束时会有声音提示和系统通知；如果正在播放音乐，会先暂停再继续播放。"
+            )
+        case .schedule:
+            return GuideCopy(
+                why: "macOS日历和提醒事项，在Insula上一目了然。",
+                how: "「下一个」、今天的会议和任务。点一行打开日历或提醒事项。可设工作时间和筛选日历。"
             )
         case .edit:
             return GuideCopy(
@@ -1188,15 +1236,20 @@ extension GuideCopy {
                 why: "Insula が小さいままでも、タイマーは動き続けます。",
                 how: "残り時間はカプセルの右側に表示されます。新しいタイマーを設定するには Insula を開いてください。"
             )
+        case .collapsedSchedule:
+            return GuideCopy(
+                why: "カレンダーを開かなくても次の予定やタスクが見えます。",
+                how: "カプセル右側にタイトルと時刻、または「あとN分」。15分前と5分前に通知が届きます。"
+            )
         case .moses:
             return GuideCopy(
                 why: "カプセルはメニューバーやアドレスバーの上に重なっているため、下にあるものへのクリックを塞いでしまうことがあります。",
-                how: "ゆっくり近づくと、下端に沿ってカーソルを追いかける隙間が現れ、クリックがそのまま下に届きます。素早く近づくと隙間は現れません。"
+                how: "下からゆっくり近づくと、島全体が上に押し込まれて下にスペースができます。素早く近づくと押し込まれません。"
             )
         case .appear:
             return GuideCopy(
                 why: "カメラ付近をカーソルが通っただけで毎回開いてしまうのも、逆に本当に開きたいときに反応が遅いのも困ります。",
-                how: "サッと通り過ぎただけでは開きません。約0.1秒とどまる必要があります。ゆっくり近づくと、まず小さな隙間が現れ、カメラのすぐそば・上部三分の一の範囲でだけ完全に開きます。"
+                how: "サッと通り過ぎただけでは開きません。約0.1秒とどまる必要があります。ゆっくり近づくと、まず島が下から押し込まれ、カメラのすぐそば・上部三分の一の範囲でだけ完全に開きます。"
             )
         case .relocate:
             return GuideCopy(
@@ -1217,6 +1270,11 @@ extension GuideCopy {
             return GuideCopy(
                 why: "カウントダウンはここで設定します。「時計」アプリなど別の場所ではありません。",
                 how: "左側で時・分・秒を設定します。終了すると音と通知が鳴り、再生中の音楽は一時停止したあと再び再生されます。"
+            )
+        case .schedule:
+            return GuideCopy(
+                why: "macOSのカレンダーとリマインダーを Insula で一覧できます。",
+                how: "「次」、今日の予定とタスク。行をタップするとカレンダーまたはリマインダーが開きます。勤務時間とカレンダー選択も可能です。"
             )
         case .edit:
             return GuideCopy(
@@ -1318,15 +1376,20 @@ extension GuideCopy {
                 why: "O temporizador continua contando mesmo com Insula pequena.",
                 how: "O tempo restante aparece à direita da cápsula. Abra Insula para definir um novo."
             )
+        case .collapsedSchedule:
+            return GuideCopy(
+                why: "A próxima reunião ou tarefa aparece sem abrir o Calendário.",
+                how: "À direita da cápsula: título e hora ou «em N min». Avisos 15 e 5 minutos antes."
+            )
         case .moses:
             return GuideCopy(
                 why: "A cápsula fica sobre a barra de menu e a barra de endereços, então pode bloquear cliques no que está embaixo dela.",
-                how: "Aproxime-se devagar e uma fenda se abre na borda de baixo, seguindo o cursor, deixando os cliques passarem para o que está embaixo. Se você chegar rápido, não aparece fenda nenhuma."
+                how: "Aproxime-se devagar por baixo e a ilha inteira se comprime para cima, liberando espaço embaixo. Se chegar rápido, não comprime."
             )
         case .appear:
             return GuideCopy(
                 why: "Insula não deveria se abrir toda vez que o cursor passa perto da câmera, mas também não deveria demorar quando você realmente quer usá-la.",
-                how: "Só passar rápido por cima não abre Insula — fique parado nela por cerca de 0,1 segundo. Chegando devagar, primeiro aparece a fenda pequena, e Insula só abre por completo perto do topo, junto à câmera."
+                how: "Só passar rápido por cima não abre Insula — fique parado nela por cerca de 0,1 segundo. Chegando devagar, primeiro a ilha se comprime por baixo, e Insula só abre por completo perto do topo, junto à câmera."
             )
         case .relocate:
             return GuideCopy(
@@ -1347,6 +1410,11 @@ extension GuideCopy {
             return GuideCopy(
                 why: "É aqui que se configura uma contagem regressiva — não no app Relógio nem em outro lugar.",
                 how: "Do lado esquerdo: horas, minutos, segundos. Quando termina, toca um som e chega uma notificação; se havia música tocando, ela pausa e depois volta."
+            )
+        case .schedule:
+            return GuideCopy(
+                why: "Calendário e Lembretes do macOS num só lugar na Insula.",
+                how: "«Próximo», reuniões e tarefas de hoje. Toque numa linha para abrir Calendário ou Lembretes. Horário de trabalho e filtros de calendário opcionais."
             )
         case .edit:
             return GuideCopy(

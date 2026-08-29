@@ -261,7 +261,9 @@
 				INFOPLIST_KEY_NSAppleEventsUsageDescription = "Нужен доступ к Музыке и Spotify, чтобы показывать обложку и данные текущего трека.";
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Чтобы на острове показать, куда идёт звук: наушники, колонки или машина.";
 				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "Чтобы на острове показать, куда идёт звук: наушники, колонки или машина.";
+				INFOPLIST_KEY_NSCalendarsFullAccessUsageDescription = "Чтобы показать встречи на сегодня и напоминать перед созвоном.";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSRemindersFullAccessUsageDescription = "Чтобы показать задачи на сегодня и напоминать о дедлайнах.";
 				INFOPLIST_KEY_NSUserNotificationsUsageDescription = "Чтобы сообщить, когда таймер закончится.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -298,7 +300,9 @@
 				INFOPLIST_KEY_NSAppleEventsUsageDescription = "Нужен доступ к Музыке и Spotify, чтобы показывать обложку и данные текущего трека.";
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Чтобы на острове показать, куда идёт звук: наушники, колонки или машина.";
 				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "Чтобы на острове показать, куда идёт звук: наушники, колонки или машина.";
+				INFOPLIST_KEY_NSCalendarsFullAccessUsageDescription = "Чтобы показать встречи на сегодня и напоминать перед созвоном.";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSRemindersFullAccessUsageDescription = "Чтобы показать задачи на сегодня и напоминать о дедлайнах.";
 				INFOPLIST_KEY_NSUserNotificationsUsageDescription = "Чтобы сообщить, когда таймер закончится.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

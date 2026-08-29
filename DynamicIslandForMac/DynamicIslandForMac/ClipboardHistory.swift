@@ -16,10 +16,10 @@ final class ClipboardHistory: ObservableObject {
 
     init() {
         ingestCurrent()
-        let timer = Timer(timeInterval: 0.4, repeats: true) { [weak self] _ in
+        let timer = Timer(timeInterval: 1.0, repeats: true) { [weak self] _ in
             self?.poll()
         }
-        timer.tolerance = 0.15
+        timer.tolerance = 0.25
         RunLoop.main.add(timer, forMode: .common)
         self.timer = timer
     }

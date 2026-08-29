@@ -13,6 +13,7 @@ final class NotchHoverMonitor {
     private var lastPoint: NSPoint?
     private var lastTick: TimeInterval = 0
     private var fastUntil: TimeInterval = 0
+    private var pollFast = false
 
     private let expandDelay: TimeInterval = 0.1
     private let collapseDelay: TimeInterval = 0.16
@@ -20,12 +21,7 @@ final class NotchHoverMonitor {
 
     func start(state: IslandState) {
         self.state = state
-        let timer = Timer(timeInterval: 1.0 / 20.0, repeats: true) { [weak self] _ in
-            self?.tick()
-        }
-        timer.tolerance = 0.02
-        RunLoop.main.add(timer, forMode: .common)
-        self.timer = timer
+        installTimer(fast: false)
         tick()
     }
 
@@ -44,6 +40,23 @@ final class NotchHoverMonitor {
         collapseWork = nil
     }
 
+    private func installTimer(fast: Bool) {
+        pollFast = fast
+        timer?.invalidate()
+        let interval = fast ? 1.0 / 30.0 : 0.1
+        let timer = Timer(timeInterval: interval, repeats: true) { [weak self] _ in
+            self?.tick()
+        }
+        timer.tolerance = fast ? 0.008 : 0.04
+        RunLoop.main.add(timer, forMode: .common)
+        self.timer = timer
+    }
+
+    private func setPollFast(_ fast: Bool) {
+        guard fast != pollFast else { return }
+        installTimer(fast: fast)
+    }
+
     private func isInsideNotch(_ state: IslandState, expanded: Bool) -> Bool {
         guard let screen = NotchGeometry.targetScreen else { return false }
         return NotchGeometry.containsCursor(
@@ -60,12 +73,14 @@ final class NotchHoverMonitor {
 
     private func tick() {
         guard let state else { return }
+
         if state.isRelocating {
-            state.mosesCursor = nil
+            state.approachSquish = 0
             if state.isHovering {
                 state.isHovering = false
                 onHoveringChange?(false)
             }
+            updatePollRate(for: state)
             return
         }
         if state.guideHold == .collapsed || state.guideHold == .moses {
@@ -74,41 +89,42 @@ final class NotchHoverMonitor {
                 onHoveringChange?(false)
             }
             if state.guideHold == .moses, state.placement == .home {
-                let size = NotchGeometry.collapsedVisualSize(
-                    notch: state.collapsedSize,
-                    activity: state.showsActivity,
-                    placement: state.placement
-                )
-                let demo = CGPoint(x: size.width / 2, y: size.height - 7)
-                if state.mosesCursor != demo {
-                    state.mosesCursor = demo
+                let demo: CGFloat = 0.72
+                if state.approachSquish != demo {
+                    state.approachSquish = demo
                 }
-            } else if state.mosesCursor != nil {
-                state.mosesCursor = nil
+            } else if state.approachSquish != 0 {
+                state.approachSquish = 0
             }
+            updatePollRate(for: state)
             return
         }
         if state.guideHold == .expanded || state.guideHold == .editing {
-            state.mosesCursor = nil
+            state.approachSquish = 0
             cancelCollapse()
             if !state.isHovering {
                 state.isHovering = true
                 onHoveringChange?(true)
             }
+            updatePollRate(for: state)
             return
         }
         if state.isEditing {
-            state.mosesCursor = nil
+            state.approachSquish = 0
             cancelCollapse()
             if !state.isHovering {
                 state.isHovering = true
                 onHoveringChange?(true)
             }
+            updatePollRate(for: state)
             return
         }
         guard let screen = NotchGeometry.targetScreen else { return }
         let point = NSEvent.mouseLocation
-        if point == lastPoint { return }
+        if point == lastPoint {
+            updatePollRate(for: state, point: point, screen: screen)
+            return
+        }
         let activity = state.showsActivity
         let placement = state.placement
         let along = state.along
@@ -120,13 +136,13 @@ final class NotchHoverMonitor {
         }
         lastPoint = point
         lastTick = now
-        let inMoses = state.mosesCursor != nil
-        if !inMoses, speed >= fastApproach {
+        let inApproach = state.approachSquish > 0.02
+        if !inApproach, speed >= fastApproach {
             fastUntil = now + 0.12
         }
 
         if state.isHovering {
-            state.mosesCursor = nil
+            state.approachSquish = 0
             let inside = isInsideNotch(state, expanded: true) || (extraStayInside?() ?? false)
             if inside {
                 cancelCollapse()
@@ -134,35 +150,39 @@ final class NotchHoverMonitor {
                 cancelExpand()
                 scheduleCollapse()
             }
+            updatePollRate(for: state, point: point, screen: screen)
             return
         }
 
-        let arrivingFast = !inMoses && now < fastUntil
+        let arrivingFast = !inApproach && now < fastUntil
         if arrivingFast, NotchGeometry.isOnCollapsedPill(point, activity: activity, on: screen, placement: placement, along: along) {
             cancelCollapse()
             scheduleExpand(requireDeep: false)
+            updatePollRate(for: state, point: point, screen: screen)
             return
         }
 
         if arrivingFast {
             cancelExpand()
+            updatePollRate(for: state, point: point, screen: screen)
             return
         }
 
         if placement != .home {
-            state.mosesCursor = nil
+            state.approachSquish = 0
             if NotchGeometry.isOnCollapsedPill(point, activity: activity, on: screen, placement: placement, along: along) {
                 cancelCollapse()
                 scheduleExpand(requireDeep: false)
             } else {
                 cancelExpand()
             }
+            updatePollRate(for: state, point: point, screen: screen)
             return
         }
 
-        let nextCursor = NotchGeometry.mosesCursorInPill(point, activity: activity, on: screen, placement: placement, along: along)
-        if state.mosesCursor != nextCursor {
-            state.mosesCursor = nextCursor
+        let nextSquish = NotchGeometry.approachSquish(point, activity: activity, on: screen, placement: placement, along: along)
+        if state.approachSquish != nextSquish {
+            state.approachSquish = nextSquish
         }
 
         let deep = NotchGeometry.isDeepExpandZone(point, activity: activity, on: screen, placement: placement, along: along)
@@ -172,6 +192,23 @@ final class NotchHoverMonitor {
         } else {
             cancelExpand()
         }
+        updatePollRate(for: state, point: point, screen: screen)
+    }
+
+    private func updatePollRate(for state: IslandState, point: NSPoint? = nil, screen: NSScreen? = nil) {
+        let mouse = point ?? NSEvent.mouseLocation
+        let screen = screen ?? NotchGeometry.targetScreen
+        let needsFast = state.approachSquish > 0.02
+            || (screen.map {
+                NotchGeometry.isInApproachZone(
+                    mouse,
+                    activity: state.showsActivity,
+                    on: $0,
+                    placement: state.placement,
+                    along: state.along
+                )
+            } ?? false)
+        setPollFast(needsFast)
     }
 
     private func scheduleExpand(requireDeep: Bool) {
@@ -202,7 +239,7 @@ final class NotchHoverMonitor {
                 ) else { return }
             }
             state.isHovering = true
-            state.mosesCursor = nil
+            state.approachSquish = 0
             self.onHoveringChange?(true)
         }
         expandWork = work

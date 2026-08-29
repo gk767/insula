@@ -24,6 +24,11 @@ final class PillHostingView<Content: View>: NSHostingView<Content> {
             magnet: state.magnet
         )
         var hitRect = state.isExpanded ? pill.insetBy(dx: -4, dy: -4) : pill
+        if !state.isExpanded, state.approachSquish > 0.001 {
+            let factor = 1 - state.approachSquish * 0.32
+            let squishedHeight = pill.height * factor
+            hitRect = NSRect(x: pill.minX, y: pill.maxY - squishedHeight, width: pill.width, height: squishedHeight)
+        }
         let chrome = NotchGeometry.editChromeRect(
             in: bounds,
             expanded: state.isExpanded,
