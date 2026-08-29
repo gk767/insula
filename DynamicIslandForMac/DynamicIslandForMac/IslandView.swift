@@ -279,7 +279,7 @@ struct IslandView: View {
                 .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .help("Редакт островка")
+        .help("Редакт Insula")
         .guideTarget(.edit)
     }
 

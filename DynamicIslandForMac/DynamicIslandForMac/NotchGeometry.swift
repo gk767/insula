@@ -13,6 +13,8 @@ enum NotchGeometry {
     static let sideExpandedSize: CGFloat = 268
     static let sideCollapsedRadius: CGFloat = 24
     static let sideExpandedRadius: CGFloat = 30
+    /// Keep side cards off the physical screen edge so glass/shadow aren't clipped.
+    static let sideEdgeInset: CGFloat = 12
 
     /// Side card is a square only with a cover. No cover — crop the empty bottom.
     static func sideExpandedHeight(hasArtwork: Bool, showProgress: Bool) -> CGFloat {
@@ -263,14 +265,14 @@ enum NotchGeometry {
             )
         case .left:
             return NSRect(
-                x: bounds.minX,
+                x: bounds.minX + sideEdgeInset,
                 y: bounds.midY - size.height / 2,
                 width: size.width,
                 height: size.height
             )
         case .right:
             return NSRect(
-                x: bounds.maxX - size.width,
+                x: bounds.maxX - size.width - sideEdgeInset,
                 y: bounds.midY - size.height / 2,
                 width: size.width,
                 height: size.height
@@ -440,14 +442,14 @@ enum NotchGeometry {
             )
         case .left:
             return NSRect(
-                x: visible.minX,
+                x: visible.minX + sideEdgeInset,
                 y: alongOrigin(along, length: size.height, lo: visible.minY, hi: visible.maxY),
                 width: size.width,
                 height: size.height
             )
         case .right:
             return NSRect(
-                x: visible.maxX - size.width,
+                x: visible.maxX - size.width - sideEdgeInset,
                 y: alongOrigin(along, length: size.height, lo: visible.minY, hi: visible.maxY),
                 width: size.width,
                 height: size.height

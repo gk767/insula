@@ -5,64 +5,69 @@ const COPY = {
     navMap: "Карта",
     navGet: "Скачать",
     kicker: "для Mac",
-    title: "Island",
-    lede: "У камеры Mac. Музыка, таймер и буфер — без отдельного окна и без кружка в Dock.",
+    title: "Insula",
+    lede: "Она сидит у выреза камеры и показывает, что сейчас активно — музыку или таймер, — без необходимости её открывать.",
     download: "Скачать для Mac",
     win: "Windows — в планах",
-    hover: "наведите на остров",
+    hover: "наведите на Insula",
     lidNotch: "с челкой",
     lidNone: "без челки",
-    mapTitle: "Что на острове",
-    mapLede: "Развёрнутый остров. Стрелка к тому, что уже есть — без ролика.",
+    mapTitle: "Что на Insula",
+    mapLede: "Нажмите фишку на Insula — справа коротко, что она делает.",
+    mapHint: "Выбрано",
     timer: "Таймер",
-    timerHow: "Левое ухо: часы, минуты, секунды. В конце — звук, уведомление, музыка на паузе.",
+    timerHow: "Слева: часы, минуты, секунды. По окончании — звук и уведомление; музыка, если играла, ставится на паузу, а потом снова включается.",
     edit: "Редакт",
-    editHow: "Карандаш у выреза. Лишние кнопки снимаются в лоток, не пропадают.",
+    editHow: "Нажмите на значок карандаша справа, рядом с вырезом, чтобы войти в режим редактирования. Нажмите ещё раз или на «Готово», чтобы выйти.",
     guide: "Гайд",
-    guideHow: `Тур поверх экрана: зачем, потом как. ${LANGS_ON_SITE}.`,
+    guideHow: "Кнопка находится рядом с карандашом. Нажмите, чтобы начать сначала. Пока тур идёт, то же нажатие его закрывает.",
+    mic: "Мьют",
+    micHow: "Нажатие сразу выключает микрофон Mac для всех приложений. Обычный белый значок микрофона — вас слышно. Красный значок на белом фоне — вы выключены.",
     clipboard: "Буфер",
-    clipboardHow: "Последние пять текстов. Тап по строке — копирует снова.",
+    clipboardHow: "Значок буфера обмена справа. Нажмите на него, чтобы увидеть последние скопированные фрагменты, и на любой из них — чтобы скопировать снова.",
     media: "Медиа",
-    mediaHow: "Обложка, название, назад / пауза / дальше. Куда звук: колонки, наушники, Mac.",
+    mediaHow: "Они расположены под вырезом камеры. Нажмите на обложку, чтобы открыть полноценный плеер. Назад, пауза, вперёд. Если в режиме редактирования включены анимации, кнопки паузы и перемотки подсвечиваются при использовании.",
+    lyrics: "Субтитры",
+    lyricsHow: "Нажмите на значок в виде облачка рядом с кнопками воспроизведения. Если для текущей песни текста нет, кнопка скрыта или неактивна.",
     playlist: "Плейлист",
-    playlistHow: "Кнопка списка только если Music отдал текущую очередь.",
+    playlistHow: "Значок списка появляется, только если Music поделился текущим плейлистом. Нажмите на него, чтобы открыть окно со всей очередью; играющий сейчас трек подсвечен.",
     progress: "Прогресс",
-    progressHow: "Полоса внизу. Её можно перетащить, чтобы перемотать.",
+    progressHow: "Полоса прогресса находится под кнопками управления на развёрнутой Insula. Потяните её, чтобы перейти к другому моменту песни.",
     anim: "Анимации",
-    animHow: "Искра в лотке. Пауза и перемотка подсвечиваются, если включить там.",
-    hoverWhy: "Наведение, не клик",
-    hoverBody: "Раскрывается только если курсор на самом острове. Проскочил мимо — большой не открывается. Задержись около 0.1 с. Медленно — сначала щель в стекле, большой у камеры.",
-    moveWhy: "Перенос",
-    moveBody: "Три клика за полторы секунды — остров едет за курсором и липнет к краю. Кнопка у камеры возвращает домой.",
+    animHow: "В режиме редактирования нажмите на кнопку на Insula, чтобы отправить её в лоток снизу. Нажмите на плитку в лотке, чтобы вернуть кнопку обратно. Значок-искра включает или выключает подсветку паузы и перемотки. «Готово» завершает редактирование.",
+    hoverWhy: "Insula не должна раскрываться от любого движения курсора рядом с камерой — но и не должна «тормозить», когда она правда нужна.",
+    hoverBody: "Быстрый проход мимо не откроет её — задержите курсор примерно на 0.1 секунды. При медленном приближении сначала появляется узкая щель, а полностью Insula раскрывается только в верхней трети, у самой камеры.",
+    moveWhy: "Insula можно перенести в другое место на экране.",
+    moveBody: "Кликните по нему три раза подряд быстро, в течение примерно полутора секунд, — и она начнёт следовать за курсором. После тройного клика подождите около двух секунд и кликните один раз — Insula по прямой полетит к ближайшему краю. Внизу она становится пилюлей, сбоку — карточкой. Найдите маленькую иконку домика рядом с вырезом. Один клик — и Insula дома.",
     moveTitle: "Перенос",
-    moveLede: "Не наведение. Три клика за полторы секунды — остров едет за курсором и липнет к краю. Сбоку — карточка у стены. Снизу — пилюля. У камеры кнопка: тап — домой.",
+    moveLede: "Кликните по нему три раза подряд быстро, в течение примерно полутора секунд, — и она начнёт следовать за курсором. После тройного клика подождите около двух секунд и кликните один раз — Insula по прямой полетит к ближайшему краю. Внизу она становится пилюлей, сбоку — карточкой. Найдите маленькую иконку домика рядом с вырезом. Один клик — и Insula дома.",
     moveHouse: "домой",
     moveSide: "сбоку",
     moveBottom: "снизу",
     moveClicks: "три клика",
-    micWhy: "Микрофон на весь Mac",
-    micBody: "Один тап глушит вход для Zoom, Discord и всего остального. Белый — вас слышно. Красный на белом — нет.",
-    lyricsWhy: "Текст рядом",
-    lyricsBody: "Песня на остров не влезает. Пузырёк открывает стеклянную панель, её можно двигать и тянуть за угол.",
+    micWhy: "В Zoom, Discord и любом другом приложении своя отдельная кнопка mute — легко забыть, где она включена.",
+    micBody: "Нажатие сразу выключает микрофон Mac для всех приложений. Обычный белый значок микрофона — вас слышно. Красный значок на белом фоне — вы выключены.",
+    lyricsWhy: "Текст песни не помещается в Insula, поэтому он открывается рядом, в отдельном окне.",
+    lyricsBody: "Нажмите на значок в виде облачка рядом с кнопками воспроизведения. Если для текущей песни текста нет, кнопка скрыта или неактивна. Это полупрозрачная панель со своей кнопкой закрытия — её можно перетаскивать по экрану. Музыка при этом продолжает играть.",
     lyricsTitle: "Субтитры",
-    lyricsLede: "Текст на остров не влезает. Пузырёк открывает стеклянную панель рядом. Тащить можно за само стекло — не за крестик и не за белый кружок в углу.",
+    lyricsLede: "Текст песни читают рядом с Insula, а не внутри маленькой капсулы. Это полупрозрачная панель со своей кнопкой закрытия — её можно перетаскивать по экрану. Музыка при этом продолжает играть.",
     lyricsGrab: "тянуть здесь",
     lyricsCorner: "угол — размер",
-    editWhy: "Своя раскладка",
-    editBody: "Не всем нужны все кнопки. Карандаш открывает лоток: поставил, снял, готово.",
+    editWhy: "Не всем нужны все кнопки сразу. Лишние необязательно держать на капсуле.",
+    editBody: "Нажмите на значок карандаша справа, рядом с вырезом, чтобы войти в режим редактирования. Нажмите ещё раз или на «Готово», чтобы выйти.",
     editTitle: "Редакт",
-    editLede: "Карандаш в правом ухе, у выреза. Кнопки, которыми не пользуешься, снимаются в лоток под островом — они не пропадают. Тап по фишке в лотке возвращает её на остров. Done или снова карандаш — выход. Медиа и вырез снять нельзя.",
+    editLede: "Нажмите на значок карандаша справа, рядом с вырезом, чтобы войти в режим редактирования. Нажмите ещё раз или на «Готово», чтобы выйти. В режиме редактирования нажмите на кнопку на Insula, чтобы отправить её в лоток снизу. Нажмите на плитку в лотке, чтобы вернуть кнопку обратно. Значок-искра включает или выключает подсветку паузы и перемотки. «Готово» завершает редактирование.",
     editTrayLab: "лоток",
     getTitle: "Бесплатно на Mac",
-    getBody: "macOS 14 и новее. Не из App Store — обычный диск. После скачивания: правый клик → Открыть, если система спросит.",
+    getBody: "macOS 14 и новее, Apple Silicon (M1 и новее). Не из App Store. После установки: правый клик по Insula → «Открыть» (двойной клик система часто блокирует).",
     reqs: "Обложка и кнопки трека — из Music или Spotify.",
     donate: "Донат появится здесь, когда будет ссылка.",
     partner: "Партнёрство — без формы на этой странице.",
     privacy: "Политика",
-    missing: "Файл сборки ещё не лежит в downloads/Island.dmg.",
+    missing: "Файл сборки ещё не лежит в downloads/Insula.dmg.",
     song: "Night Harbor",
     artist: "Local",
-    allOn: "All on the island",
+    allOn: "Всё на Insula",
     done: "Done",
     playAnim: "Смотреть",
     playAgain: "Ещё раз",
@@ -71,53 +76,58 @@ const COPY = {
     navMap: "Map",
     navGet: "Download",
     kicker: "for Mac",
-    title: "Island",
-    lede: "The island sits at the camera. Music, a timer, and the clipboard — no extra window, no Dock icon.",
+    title: "Insula",
+    lede: "It sits over the camera and shows what's active — music or a timer — without you opening it.",
     download: "Download for Mac",
     win: "Windows — planned",
-    hover: "hover the island",
+    hover: "hover Insula",
     lidNotch: "with notch",
     lidNone: "no notch",
-    mapTitle: "What’s on the island",
-    mapLede: "The island, expanded. Arrows to what already exists — no video.",
+    mapTitle: "What’s on Insula",
+    mapLede: "Tap a chip on Insula — on the right, a short note about what it does.",
+    mapHint: "Selected",
     timer: "Timer",
-    timerHow: "Left ear: hours, minutes, seconds. At the end: sound, a notification, music pauses.",
+    timerHow: "On the left side: hours, minutes, seconds. When it ends you get a sound and a notification; any music playing pauses, then resumes.",
     edit: "Edit",
-    editHow: "The pencil by the notch. Extra buttons go to the tray; they aren’t lost.",
+    editHow: "Tap the pencil icon on the right side, near the notch, to enter edit mode. Tap it again, or tap Done, to leave.",
     guide: "Guide",
-    guideHow: `A tour on the screen: why, then how. ${LANGS_ON_SITE}.`,
+    guideHow: "The button sits next to the pencil. Tap it to start over from the beginning. While the tour is running, the same tap closes it.",
+    mic: "Mute",
+    micHow: "Tap this to mute your Mac's microphone for every app at once. A plain white mic icon means people can hear you. A red mic on white means you're muted.",
     clipboard: "Clipboard",
-    clipboardHow: "The last five texts. Tap a row to copy it again.",
+    clipboardHow: "The clipboard icon is on the right side. Tap it to see recent copies, then tap any entry to copy it again.",
     media: "Media",
-    mediaHow: "Artwork, title, back / pause / next. Sound goes to speakers, headphones, or Mac.",
+    mediaHow: "They sit below the notch. Tap the artwork to open the full player. Back, pause, and next. If animations are turned on in edit mode, pause and skip glow when you use them.",
+    lyrics: "Lyrics",
+    lyricsHow: "Tap the speech-bubble icon next to the playback controls. If there are no lyrics for the current song, the button is hidden or does nothing.",
     playlist: "Playlist",
-    playlistHow: "The list button appears only if Music gives the current queue.",
+    playlistHow: "The list icon only appears if Music shares its current playlist. Tap it to open a window with the full queue; the current track is highlighted.",
     progress: "Progress",
-    progressHow: "The bar at the bottom. Drag it to scrub.",
+    progressHow: "The bar sits below the controls on the full-size Insula. Drag it to jump to a different point in the song.",
     anim: "Animations",
-    animHow: "The sparkle in the tray. Pause and skip light up if you turn them on there.",
-    hoverWhy: "Hover, not a click",
-    hoverBody: "It opens only when the cursor is on the island. A quick pass-through does not open it. Stay about 0.1 s. Approach slowly — a gap in the glass first, large near the camera.",
-    moveWhy: "Move it",
-    moveBody: "Three clicks in a second and a half — the island follows the cursor and sticks to an edge. The button by the camera sends it home.",
+    animHow: "In edit mode, tap a button on Insula to send it to the tray below. Tap a tile in the tray to bring it back. The sparkle icon turns the pause/skip glow animation on or off. Tap Done to leave edit mode.",
+    hoverWhy: "Insula shouldn't pop open every time your cursor passes near the camera, but it shouldn't feel slow either when you actually want it.",
+    hoverBody: "A quick pass-by won't open it — pause on it for about 0.1 seconds. Moving in slowly shows the small gap first, then opens the full Insula near the top, right by the camera.",
+    moveWhy: "You can move Insula to a different spot on the screen.",
+    moveBody: "Click it three times quickly, within about a second and a half, and it starts following your cursor. After the triple-click, wait about two seconds, then click once — it slides straight to the nearest edge. At the bottom it becomes a pill; on the side, a card. Look for the small house icon near the notch. One click and it's back home.",
     moveTitle: "Move",
-    moveLede: "Not a hover. Three clicks in a second and a half — the island follows the cursor and sticks to an edge. On the side it becomes a card. At the bottom, a pill. A home button stays by the camera: tap it to go back.",
+    moveLede: "Click it three times quickly, within about a second and a half, and it starts following your cursor. After the triple-click, wait about two seconds, then click once — it slides straight to the nearest edge. At the bottom it becomes a pill; on the side, a card. Look for the small house icon near the notch. One click and it's back home.",
     moveHouse: "home",
     moveSide: "side",
     moveBottom: "bottom",
     moveClicks: "three clicks",
-    micWhy: "Mic for the whole Mac",
-    micBody: "One tap mutes input for Zoom, Discord, everything. White — they hear you. Red on white — they don’t.",
-    lyricsWhy: "Lyrics beside",
-    lyricsBody: "The song doesn’t fit on the island. The bubble opens a glass panel you can move and resize.",
+    micWhy: "Zoom, Discord, and every other app has its own separate mute button — easy to lose track of which one is on.",
+    micBody: "Tap this to mute your Mac's microphone for every app at once. A plain white mic icon means people can hear you. A red mic on white means you're muted.",
+    lyricsWhy: "Lyrics don't fit inside Insula, so they open in a separate space next to it.",
+    lyricsBody: "Tap the speech-bubble icon next to the playback controls. If there are no lyrics for the current song, the button is hidden or does nothing. It's a translucent panel with its own close button, and you can drag it anywhere on screen. Music keeps playing while it's open.",
     lyricsTitle: "Lyrics",
-    lyricsLede: "The song doesn’t fit on the island. The bubble opens a glass panel beside it. Drag the glass itself — not the close button, not the white dot in the corner.",
+    lyricsLede: "Lyrics are read next to Insula, not squeezed inside the small capsule. It's a translucent panel with its own close button, and you can drag it anywhere on screen. Music keeps playing while it's open.",
     lyricsGrab: "drag here",
     lyricsCorner: "corner — size",
-    editWhy: "Your layout",
-    editBody: "Not everyone needs every button. The pencil opens the tray: put it on, take it off, Done.",
+    editWhy: "Not everyone needs every button. Anything extra doesn't have to stay on the capsule.",
+    editBody: "Tap the pencil icon on the right side, near the notch, to enter edit mode. Tap it again, or tap Done, to leave.",
     editTitle: "Edit",
-    editLede: "The pencil sits in the right ear, by the notch. Buttons you don’t use go to the tray under the island — they aren’t lost. Tap a chip in the tray to put it back. Done, or the pencil again, to leave. Media and the notch stay.",
+    editLede: "Tap the pencil icon on the right side, near the notch, to enter edit mode. Tap it again, or tap Done, to leave. In edit mode, tap a button on Insula to send it to the tray below. Tap a tile in the tray to bring it back. The sparkle icon turns the pause/skip glow animation on or off. Tap Done to leave edit mode.",
     editTrayLab: "tray",
     getTitle: "Free on Mac",
     getBody: "macOS 14 and later. Not the App Store — a disk image. After download: right-click → Open if the system asks.",
@@ -125,10 +135,10 @@ const COPY = {
     donate: "A donate link will sit here when there is one.",
     partner: "Partnership — no form on this page.",
     privacy: "Privacy",
-    missing: "The build is not in downloads/Island.dmg yet.",
+    missing: "The build is not in downloads/Insula.dmg yet.",
     song: "Night Harbor",
     artist: "Local",
-    allOn: "All on the island",
+    allOn: "All on Insula",
     done: "Done",
     playAnim: "Watch",
     playAgain: "Watch again",
@@ -137,53 +147,58 @@ const COPY = {
     navMap: "Mapa",
     navGet: "Descargar",
     kicker: "para Mac",
-    title: "Isla",
-    lede: "La isla está en la cámara. Música, temporizador y portapapeles — sin otra ventana ni icono en el Dock.",
+    title: "Insula",
+    lede: "Se coloca sobre la cámara y muestra lo que está activo —música o un temporizador— sin que tengas que abrirla.",
     download: "Descargar para Mac",
     win: "Windows — en planes",
-    hover: "pasa el cursor por la isla",
+    hover: "pasa el cursor por Insula",
     lidNotch: "con recorte",
     lidNone: "sin recorte",
-    mapTitle: "Qué hay en la isla",
-    mapLede: "La isla abierta. Flechas a lo que ya existe — sin vídeo.",
+    mapTitle: "Qué hay en Insula",
+    mapLede: "Toca una ficha en Insula: a la derecha, una nota corta de lo que hace.",
+    mapHint: "Elegido",
     timer: "Temporizador",
-    timerHow: "Oreja izquierda: horas, minutos, segundos. Al terminar: sonido, aviso, la música se pausa.",
+    timerHow: "A la izquierda: horas, minutos y segundos. Al terminar suena un aviso y llega una notificación; si había música sonando, se pausa y luego sigue.",
     edit: "Editar",
-    editHow: "El lápiz junto al recorte. Los botones de más van a la bandeja; no se pierden.",
+    editHow: "Toca el icono del lápiz a la derecha, junto al recorte, para entrar en modo edición. Tócalo otra vez, o toca «Listo», para salir.",
     guide: "Guía",
-    guideHow: `Un recorrido en pantalla: para qué, luego cómo. ${LANGS_ON_SITE}.`,
+    guideHow: "El botón está junto al lápiz. Tócalo para empezar de nuevo desde el principio. Mientras el recorrido está en marcha, el mismo toque lo cierra.",
+    mic: "Mute",
+    micHow: "Tócalo para silenciar el micrófono del Mac en todas las apps a la vez. Un icono de micrófono blanco significa que se te oye. Uno rojo sobre blanco significa que estás silenciado.",
     clipboard: "Portapapeles",
-    clipboardHow: "Los últimos cinco textos. Un toque en una línea la vuelve a copiar.",
+    clipboardHow: "El icono del portapapeles está a la derecha. Tócalo para ver lo copiado recientemente, y toca cualquier entrada para copiarla de nuevo.",
     media: "Medios",
-    mediaHow: "Carátula, título, atrás / pausa / adelante. El sonido: altavoz, auriculares o Mac.",
+    mediaHow: "Aparecen debajo del recorte. Toca la carátula para abrir el reproductor completo. Atrás, pausa y siguiente. Si las animaciones están activadas en modo edición, pausa y siguiente se iluminan al usarlos.",
+    lyrics: "Subtítulos",
+    lyricsHow: "Toca el icono del globo de texto junto a los controles de reproducción. Si la canción no tiene letra disponible, el botón queda oculto o no responde.",
     playlist: "Lista",
-    playlistHow: "El botón de lista sale solo si Music entrega la cola actual.",
+    playlistHow: "El icono de lista solo aparece si Music comparte la lista de reproducción actual. Tócalo para abrir una ventana con toda la cola; el tema actual queda resaltado.",
     progress: "Progreso",
-    progressHow: "La barra abajo. Arrástrala para saltar.",
+    progressHow: "La barra está debajo de los controles, en Insula grande. Arrástrala para saltar a otro punto de la canción.",
     anim: "Animaciones",
-    animHow: "La chispa en la bandeja. Pausa y salto se marcan si las enciendes ahí.",
-    hoverWhy: "Pasar el cursor, no un clic",
-    hoverBody: "Se abre solo si el cursor está en la isla. Si solo pasas de largo, no se abre. Quédate unos 0,1 s. Despacio — primero una hendidura en el cristal, grande junto a la cámara.",
-    moveWhy: "Moverla",
-    moveBody: "Tres clics en un segundo y medio — la isla sigue el cursor y se pega al borde. El botón junto a la cámara la devuelve.",
+    animHow: "En modo edición, toca un botón de Insula para mandarlo a la bandeja de abajo. Toca una ficha de la bandeja para devolverlo. El icono de chispa activa o desactiva la animación de pausa y salto. Toca «Listo» para salir del modo edición.",
+    hoverWhy: "Insula no debería abrirse cada vez que el cursor pasa cerca de la cámara, pero tampoco debería sentirse lenta cuando de verdad la quieres usar.",
+    hoverBody: "Un simple paso rápido no la abre: quédate sobre ella unos 0,1 segundos. Si te acercas despacio, primero aparece el hueco pequeño y luego se abre del todo, cerca de la parte superior, junto a la cámara.",
+    moveWhy: "Puedes mover Insula a otro punto de la pantalla.",
+    moveBody: "Haz tres clics rápidos seguidos, en poco más de un segundo, y empezará a seguir al cursor. Después del triple clic, espera unos dos segundos y haz un clic más: se desliza en línea recta hasta el borde más cercano. Abajo se convierte en píldora; al lado, en tarjeta. Busca el pequeño icono de casa junto al recorte. Un clic y vuelve a su sitio.",
     moveTitle: "Mover",
-    moveLede: "No es pasar el cursor. Tres clics en un segundo y medio — la isla sigue el cursor y se pega al borde. Al lado, una tarjeta. Abajo, una pastilla. En la cámara queda un botón: un toque y vuelve.",
+    moveLede: "Haz tres clics rápidos seguidos, en poco más de un segundo, y empezará a seguir al cursor. Después del triple clic, espera unos dos segundos y haz un clic más: se desliza en línea recta hasta el borde más cercano. Abajo se convierte en píldora; al lado, en tarjeta. Busca el pequeño icono de casa junto al recorte. Un clic y vuelve a su sitio.",
     moveHouse: "inicio",
     moveSide: "al lado",
     moveBottom: "abajo",
     moveClicks: "tres clics",
-    micWhy: "Micrófono de todo el Mac",
-    micBody: "Un toque silencia la entrada para Zoom, Discord, todo. Blanco: te oyen. Rojo sobre blanco: no.",
-    lyricsWhy: "Letra al lado",
-    lyricsBody: "La canción no cabe en la isla. El bocadillo abre un panel de cristal que se mueve y se estira.",
-    lyricsTitle: "Subtítulos",
-    lyricsLede: "La letra no cabe en la isla. El bocadillo abre un panel de cristal al lado. Arrástralo por el cristal — no por la cruz ni por el punto blanco de la esquina.",
+    micWhy: "Zoom, Discord y cualquier otra app tienen su propio botón de silencio, y es fácil perder de vista cuál está activado.",
+    micBody: "Tócalo para silenciar el micrófono del Mac en todas las apps a la vez. Un icono de micrófono blanco significa que se te oye. Uno rojo sobre blanco significa que estás silenciado.",
+    lyricsWhy: "La letra no cabe dentro de Insula, así que se abre aparte, al lado.",
+    lyricsBody: "Toca el icono del globo de texto junto a los controles de reproducción. Si la canción no tiene letra disponible, el botón queda oculto o no responde. Es un panel translúcido con su propio botón de cerrar, y puedes arrastrarlo a cualquier parte de la pantalla. La música sigue sonando mientras está abierto.",
+    lyricsTitle: "Letra",
+    lyricsLede: "La letra se lee al lado de Insula, no metida dentro de la cápsula pequeña. Es un panel translúcido con su propio botón de cerrar, y puedes arrastrarlo a cualquier parte de la pantalla. La música sigue sonando mientras está abierto.",
     lyricsGrab: "arrastrar aquí",
     lyricsCorner: "esquina — tamaño",
-    editWhy: "Tu disposición",
-    editBody: "No todos necesitan todos los botones. El lápiz abre la bandeja: pon, quita, Listo.",
+    editWhy: "No todo el mundo necesita todos los botones. Lo que sobra no tiene por qué quedarse en la cápsula.",
+    editBody: "Toca el icono del lápiz a la derecha, junto al recorte, para entrar en modo edición. Tócalo otra vez, o toca «Listo», para salir.",
     editTitle: "Editar",
-    editLede: "El lápiz está en la oreja derecha, junto al recorte. Los botones que no usas van a la bandeja bajo la isla; no se pierden. Un toque en la bandeja los devuelve. Listo, o el lápiz otra vez, para salir. Los medios y el recorte se quedan.",
+    editLede: "Toca el icono del lápiz a la derecha, junto al recorte, para entrar en modo edición. Tócalo otra vez, o toca «Listo», para salir. En modo edición, toca un botón de Insula para mandarlo a la bandeja de abajo. Toca una ficha de la bandeja para devolverlo. El icono de chispa activa o desactiva la animación de pausa y salto. Toca «Listo» para salir del modo edición.",
     editTrayLab: "bandeja",
     getTitle: "Gratis en Mac",
     getBody: "macOS 14 o posterior. No es el App Store: una imagen de disco. Tras bajar: clic derecho → Abrir si el sistema pregunta.",
@@ -191,10 +206,10 @@ const COPY = {
     donate: "El enlace de donar estará aquí cuando exista.",
     partner: "Colaboración — no hay formulario en esta página.",
     privacy: "Privacidad",
-    missing: "El archivo aún no está en downloads/Island.dmg.",
+    missing: "El archivo aún no está en downloads/Insula.dmg.",
     song: "Night Harbor",
     artist: "Local",
-    allOn: "All on the island",
+    allOn: "Todo en Insula",
     done: "Done",
     playAnim: "Ver",
     playAgain: "Ver otra vez",
@@ -203,53 +218,58 @@ const COPY = {
     navMap: "Mapa",
     navGet: "Baixar",
     kicker: "para Mac",
-    title: "Ilha",
-    lede: "A ilha fica na câmera. Música, temporizador e área de transferência — sem outra janela e sem ícone no Dock.",
+    title: "Insula",
+    lede: "Ela fica sobre a câmera e mostra o que está ativo — música ou um temporizador — sem que você precise abri-la.",
     download: "Baixar para Mac",
     win: "Windows — nos planos",
-    hover: "passe o cursor pela ilha",
+    hover: "passe o cursor sobre a Insula",
     lidNotch: "com recorte",
     lidNone: "sem recorte",
-    mapTitle: "O que há na ilha",
-    mapLede: "A ilha aberta. Setas para o que já existe — sem vídeo.",
+    mapTitle: "O que há na Insula",
+    mapLede: "Toque num chip na Insula — à direita, uma nota curta do que faz.",
+    mapHint: "Selecionado",
     timer: "Temporizador",
-    timerHow: "Orelha esquerda: horas, minutos, segundos. Ao terminar: som, aviso, a música pausa.",
+    timerHow: "Do lado esquerdo: horas, minutos, segundos. Quando termina, toca um som e chega uma notificação; se havia música tocando, ela pausa e depois volta.",
     edit: "Editar",
-    editHow: "O lápis fica no recorte. Botões a mais vão para a bandeja; não se perdem.",
+    editHow: "Toque no ícone do lápis à direita, perto do recorte, para entrar no modo de edição. Toque de novo, ou toque em «Concluir», para sair.",
     guide: "Guia",
-    guideHow: `Um percurso na tela: para quê, depois como. ${LANGS_ON_SITE}.`,
+    guideHow: "O botão fica ao lado do lápis. Toque para começar de novo, do início. Enquanto o tour está rodando, o mesmo toque o fecha.",
+    mic: "Mudo",
+    micHow: "Toque aqui para silenciar o microfone do Mac em todos os apps de uma vez. Um ícone de microfone branco simples significa que dá para te ouvir. Um microfone vermelho sobre fundo branco significa que você está mudo.",
     clipboard: "Área de transferência",
-    clipboardHow: "Os últimos cinco textos. Toque numa linha para copiar de novo.",
+    clipboardHow: "O ícone da área de transferência fica à direita. Toque nele para ver o que foi copiado recentemente, e toque em qualquer item para copiá-lo de novo.",
     media: "Mídia",
-    mediaHow: "Capa, título, voltar / pausa / avançar. O som: caixas, fones ou Mac.",
+    mediaHow: "Eles ficam embaixo do recorte. Toque na capa para abrir o player completo. Voltar, pausar e avançar. Se as animações estiverem ativadas no modo de edição, pausar e pular acendem quando usados.",
+    lyrics: "Legendas",
+    lyricsHow: "Toque no ícone de balão de fala ao lado dos controles de reprodução. Se a música não tiver letra disponível, o botão fica escondido ou não faz nada.",
     playlist: "Playlist",
-    playlistHow: "O botão da lista só aparece se o Music entregar a fila atual.",
+    playlistHow: "O ícone de lista só aparece se o Music estiver compartilhando a playlist atual. Toque nele para abrir uma janela com a fila inteira; a faixa atual fica destacada.",
     progress: "Progresso",
-    progressHow: "A barra embaixo. Arraste para pular.",
+    progressHow: "A barra fica abaixo dos controles, na Insula grande. Arraste-a para pular para outro ponto da música.",
     anim: "Animações",
-    animHow: "A fagulha na bandeja. Pausa e avanço acendem se você ligar ali.",
-    hoverWhy: "Passar o cursor, não um clique",
-    hoverBody: "Abre só se o cursor estiver na ilha. Passar depressa não abre. Fique uns 0,1 s. Devagar — primeiro uma fenda no vidro, grande perto da câmera.",
-    moveWhy: "Mover",
-    moveBody: "Três cliques em um segundo e meio — a ilha segue o cursor e gruda na borda. O botão na câmera manda para casa.",
+    animHow: "No modo de edição, toque em um botão da Insula para mandá-lo para a bandeja abaixo. Toque em um item da bandeja para trazê-lo de volta. O ícone de brilho liga ou desliga a animação de pausa/pular. Toque em «Concluir» para sair do modo de edição.",
+    hoverWhy: "Insula não deveria se abrir toda vez que o cursor passa perto da câmera, mas também não deveria demorar quando você realmente quer usá-la.",
+    hoverBody: "Só passar rápido por cima não abre Insula — fique parado nela por cerca de 0,1 segundo. Chegando devagar, primeiro aparece a fenda pequena, e Insula só abre por completo perto do topo, junto à câmera.",
+    moveWhy: "Você pode mover Insula para outro lugar da tela.",
+    moveBody: "Clique nela três vezes rápido, em cerca de um segundo e meio, e ela passa a seguir o cursor. Depois do triplo clique, espere uns dois segundos e clique mais uma vez — ela desliza em linha reta até a borda mais próxima. Embaixo vira uma pílula; do lado, um cartão. Procure o pequeno ícone de casa perto do recorte. Um clique e ela volta para o lugar.",
     moveTitle: "Mover",
-    moveLede: "Não é passar o cursor. Três cliques em um segundo e meio — a ilha segue o cursor e gruda na borda. Do lado, um cartão. Embaixo, uma pílula. Na câmera fica um botão: um toque e volta.",
+    moveLede: "Clique nela três vezes rápido, em cerca de um segundo e meio, e ela passa a seguir o cursor. Depois do triplo clique, espere uns dois segundos e clique mais uma vez — ela desliza em linha reta até a borda mais próxima. Embaixo vira uma pílula; do lado, um cartão. Procure o pequeno ícone de casa perto do recorte. Um clique e ela volta para o lugar.",
     moveHouse: "início",
     moveSide: "do lado",
     moveBottom: "embaixo",
     moveClicks: "três cliques",
-    micWhy: "Microfone do Mac inteiro",
-    micBody: "Um toque silencia a entrada para Zoom, Discord, tudo. Branco: ouvem você. Vermelho no branco: não.",
-    lyricsWhy: "Letra ao lado",
-    lyricsBody: "A letra não cabe na ilha. O balão abre um painel de vidro que se move e estica.",
-    lyricsTitle: "Legendas",
-    lyricsLede: "A letra não cabe na ilha. O balão abre um painel de vidro ao lado. Arraste pelo vidro — não pelo fechar nem pelo ponto branco no canto.",
+    micWhy: "Zoom, Discord e qualquer outro app têm seu próprio botão de mudo, e é fácil perder de vista qual está ativado.",
+    micBody: "Toque aqui para silenciar o microfone do Mac em todos os apps de uma vez. Um ícone de microfone branco simples significa que dá para te ouvir. Um microfone vermelho sobre fundo branco significa que você está mudo.",
+    lyricsWhy: "A letra não cabe dentro da Insula, então ela abre à parte, ao lado.",
+    lyricsBody: "Toque no ícone de balão de fala ao lado dos controles de reprodução. Se a música não tiver letra disponível, o botão fica escondido ou não faz nada. É um painel translúcido com seu próprio botão de fechar, e dá para arrastá-lo para qualquer lugar da tela. A música continua tocando enquanto ele está aberto.",
+    lyricsTitle: "Letra",
+    lyricsLede: "A letra é lida ao lado da Insula, não espremida dentro da cápsula pequena. É um painel translúcido com seu próprio botão de fechar, e dá para arrastá-lo para qualquer lugar da tela. A música continua tocando enquanto ele está aberto.",
     lyricsGrab: "arrastar aqui",
     lyricsCorner: "canto — tamanho",
-    editWhy: "Seu layout",
-    editBody: "Nem todo mundo precisa de todos os botões. O lápis abre a bandeja: coloca, tira, Pronto.",
+    editWhy: "Nem todo mundo precisa de todos os botões. O que sobra não precisa ficar na cápsula.",
+    editBody: "Toque no ícone do lápis à direita, perto do recorte, para entrar no modo de edição. Toque de novo, ou toque em «Concluir», para sair.",
     editTitle: "Editar",
-    editLede: "O lápis fica na orelha direita, no recorte. Botões que você não usa vão para a bandeja sob a ilha; não se perdem. Um toque na bandeja devolve. Pronto, ou o lápis de novo, para sair. Mídia e recorte ficam.",
+    editLede: "Toque no ícone do lápis à direita, perto do recorte, para entrar no modo de edição. Toque de novo, ou toque em «Concluir», para sair. No modo de edição, toque em um botão da Insula para mandá-lo para a bandeja abaixo. Toque em um item da bandeja para trazê-lo de volta. O ícone de brilho liga ou desliga a animação de pausa/pular. Toque em «Concluir» para sair do modo de edição.",
     editTrayLab: "bandeja",
     getTitle: "Grátis no Mac",
     getBody: "macOS 14 ou posterior. Não é a App Store: uma imagem de disco. Depois de baixar: clique com o botão direito → Abrir se o sistema perguntar.",
@@ -257,10 +277,10 @@ const COPY = {
     donate: "O link de doação fica aqui quando existir.",
     partner: "Parceria — sem formulário nesta página.",
     privacy: "Privacidade",
-    missing: "O arquivo ainda não está em downloads/Island.dmg.",
+    missing: "O arquivo ainda não está em downloads/Insula.dmg.",
     song: "Night Harbor",
     artist: "Local",
-    allOn: "All on the island",
+    allOn: "Tudo na Insula",
     done: "Done",
     playAnim: "Ver",
     playAgain: "Ver de novo",
@@ -270,52 +290,57 @@ const COPY = {
     navGet: "下载",
     kicker: "适用于 Mac",
     title: "岛",
-    lede: "岛在摄像头旁。音乐、计时器、剪贴板——没有多余窗口，没有程序坞图标。",
+    lede: "它贴在摄像头位置，会显示当前有什么在活动——比如音乐或计时器——不需要你把它展开。",
     download: "下载 Mac 版",
     win: "Windows — 计划中",
-    hover: "把指针移到岛上",
+    hover: "将光标移到 Insula 上",
     lidNotch: "有刘海",
     lidNone: "无刘海",
-    mapTitle: "岛上有什么",
-    mapLede: "展开后的岛。箭头指向已经有的功能——没有视频。",
+    mapTitle: "Insula 上有什么",
+    mapLede: "点 Insula 上的功能点，右侧会简短说明它做什么。",
+    mapHint: "已选",
     timer: "计时器",
-    timerHow: "左耳：时、分、秒。结束时会响、会通知，音乐会暂停。",
+    timerHow: "左侧可以设置小时、分钟、秒。倒计时结束时会有声音提示和系统通知；如果正在播放音乐，会先暂停再继续播放。",
     edit: "编辑",
-    editHow: "铅笔在刘海旁。多余按钮进托盘，不会丢。",
+    editHow: "点右侧靠近刘海的铅笔图标，进入编辑模式。再点一次，或者点「完成」，即可退出。",
     guide: "指南",
-    guideHow: `屏幕上的导览：先说为什么，再说怎么用。${LANGS_ON_SITE}。`,
+    guideHow: "按钮就在铅笔图标旁边。点一下从头开始播放导览；导览进行中再点同一个按钮会直接关闭它。",
+    mic: "静音",
+    micHow: "点一下就能一次性把 Mac 麦克风对所有 App 静音。普通白色麦克风图标表示对方能听到你；白底红色图标表示你已静音。",
     clipboard: "剪贴板",
-    clipboardHow: "最近五段文字。点一行会重新复制。",
+    clipboardHow: "剪贴板图标在右侧。点开可以看到最近复制的内容，点其中任意一条即可重新复制它。",
     media: "媒体",
-    mediaHow: "封面、歌名、上一首 / 暂停 / 下一首。声音去音箱、耳机或 Mac。",
+    mediaHow: "它们显示在刘海下方。点封面图可以打开完整的播放器界面。 上一首、暂停、下一首。如果在编辑模式里打开了动画效果，使用暂停和切歌时按钮会有发光提示。",
+    lyrics: "字幕",
+    lyricsHow: "点播放按钮旁边的气泡图标。如果当前歌曲没有歌词，这个按钮会隐藏或点了没反应。",
     playlist: "播放列表",
-    playlistHow: "只有 Music 给出当前队列时才出现列表按钮。",
+    playlistHow: "只有当“音乐”App 提供了当前播放列表时，列表图标才会出现。点开会显示整个播放队列的窗口，正在播放的曲目会高亮显示。",
     progress: "进度",
-    progressHow: "底栏。拖动可以跳转。",
+    progressHow: "进度条在Insula展开后位于控制按钮下方。拖动它可以跳到歌曲的其他位置。",
     anim: "动画",
-    animHow: "托盘里的火花。在那里打开后，暂停和跳转会有提示。",
-    hoverWhy: "悬停，不是点击",
-    hoverBody: "只有指针在岛上才会展开。快速穿过不会打开。停大约 0.1 秒。慢慢靠近——玻璃上先出现一条缝，靠近摄像头才变大。",
-    moveWhy: "挪位置",
-    moveBody: "一秒半内连点三次，岛会跟着指针走，并贴到边缘。摄像头旁的按钮把它送回家。",
-    moveTitle: "挪位置",
-    moveLede: "不是悬停。一秒半内连点三次，岛跟着指针走，贴到边缘。侧面变成卡片，底部是胶囊。摄像头旁是主页按钮：点一下就回家。",
+    animHow: "编辑模式下，点Insula 上的按钮可以把它送进下面的托盘；点托盘里的按钮可以把它放回去。星光图标用来开关暂停/切歌的发光动画。点「完成」退出编辑模式。",
+    hoverWhy: "Insula 不应该因为光标随便经过摄像头附近就弹开，但真正想用它时也不能反应慢。",
+    hoverBody: "快速经过不会展开它——需要在上面停留大约 0.1 秒。慢慢靠近时，先出现一条小缝，然后才会在最上方、摄像头旁边完全展开。",
+    moveWhy: "你可以把 Insula移动到屏幕上的其他位置。",
+    moveBody: "在大约一秒半内连续快速点击三次，Insula 就会开始跟着光标移动。 三连击之后，等大约两秒，再点一下——Insula 会沿直线滑到最近的边缘。停在底部时是胶囊形状，停在侧边时是卡片形状。 在刘海旁边找一个小房子图标。点一下，Insula 就回到原位了。",
+    moveTitle: "移动",
+    moveLede: "在大约一秒半内连续快速点击三次，Insula 就会开始跟着光标移动。 三连击之后，等大约两秒，再点一下——Insula 会沿直线滑到最近的边缘。停在底部时是胶囊形状，停在侧边时是卡片形状。 在刘海旁边找一个小房子图标。点一下，Insula 就回到原位了。",
     moveHouse: "主页",
     moveSide: "侧面",
     moveBottom: "底部",
     moveClicks: "点三次",
-    micWhy: "整台 Mac 的麦克风",
-    micBody: "点一下就关掉输入，Zoom、Discord 全都听不见。白色表示听得见你；白底红标表示听不见。",
-    lyricsWhy: "歌词在旁边",
-    lyricsBody: "歌词塞不进岛里。气泡打开一块可移动、可拉角的玻璃面板。",
-    lyricsTitle: "字幕",
-    lyricsLede: "歌词塞不进岛里。气泡在旁边打开一块玻璃面板。拖的是玻璃本身——不是关闭，也不是角落里的白点。",
+    micWhy: "Zoom、Discord 等每个 App 都有自己独立的静音按钮，很容易记不清哪个开着。",
+    micBody: "点一下就能一次性把 Mac 麦克风对所有 App 静音。普通白色麦克风图标表示对方能听到你；白底红色图标表示你已静音。",
+    lyricsWhy: "歌词放不进Insula 里，所以会在旁边单独打开一块区域显示。",
+    lyricsBody: "点播放按钮旁边的气泡图标。如果当前歌曲没有歌词，这个按钮会隐藏或点了没反应。 这是一个半透明面板，有自己的关闭按钮，可以拖到屏幕任意位置。打开它时音乐会继续播放。",
+    lyricsTitle: "歌词",
+    lyricsLede: "歌词是在Insula 旁边单独阅读的，不是挤在小胶囊里面。 这是一个半透明面板，有自己的关闭按钮，可以拖到屏幕任意位置。打开它时音乐会继续播放。",
     lyricsGrab: "从这里拖",
     lyricsCorner: "角落 — 大小",
-    editWhy: "自己的布局",
-    editBody: "不是每个人都需要全部按钮。铅笔打开托盘：放上、拿下、完成。",
+    editWhy: "不是所有人都需要用到全部按钮，用不到的完全可以从胶囊上拿掉。",
+    editBody: "点右侧靠近刘海的铅笔图标，进入编辑模式。再点一次，或者点「完成」，即可退出。",
     editTitle: "编辑",
-    editLede: "铅笔在右耳、刘海旁。不用的按钮进托盘，不会丢。点托盘里的芯片会回到岛上。Done，或再点铅笔退出。媒体和刘海不能拿掉。",
+    editLede: "点右侧靠近刘海的铅笔图标，进入编辑模式。再点一次，或者点「完成」，即可退出。 编辑模式下，点Insula 上的按钮可以把它送进下面的托盘；点托盘里的按钮可以把它放回去。星光图标用来开关暂停/切歌的发光动画。点「完成」退出编辑模式。",
     editTrayLab: "托盘",
     getTitle: "Mac 上免费",
     getBody: "macOS 14 及更新。不是 App Store，是磁盘映像。下载后若系统询问：右键 → 打开。",
@@ -323,10 +348,10 @@ const COPY = {
     donate: "有捐赠链接时会放在这里。",
     partner: "合作——本页没有表格。",
     privacy: "隐私",
-    missing: "安装包还没有放到 downloads/Island.dmg。",
+    missing: "安装包还没有放到 downloads/Insula.dmg。",
     song: "Night Harbor",
     artist: "Local",
-    allOn: "All on the island",
+    allOn: "都在 Insula 上",
     done: "Done",
     playAnim: "观看",
     playAgain: "再看一次",
@@ -335,53 +360,58 @@ const COPY = {
     navMap: "地図",
     navGet: "ダウンロード",
     kicker: "Mac向け",
-    title: "島",
-    lede: "島はカメラのところにある。音楽、タイマー、クリップボード。別ウィンドウもDockのアイコンもない。",
+    title: "Insula",
+    lede: "カメラの位置に表示され、開かなくても音楽やタイマーなど今動いているものがわかります。",
     download: "Mac用を入手",
     win: "Windows — 予定",
-    hover: "島にポインターを合わせる",
+    hover: "Insula にポインタを合わせる",
     lidNotch: "ノッチあり",
     lidNone: "ノッチなし",
-    mapTitle: "島にあるもの",
-    mapLede: "開いた島。すでにあるものへ矢印 — 動画なし。",
+    mapTitle: "Insula の中身",
+    mapLede: "Insula のチップを押すと、右側に短い説明が出ます。",
+    mapHint: "選択中",
     timer: "タイマー",
-    timerHow: "左耳：時、分、秒。終わると音と通知。音楽はいったん止まる。",
+    timerHow: "左側で時・分・秒を設定します。終了すると音と通知が鳴り、再生中の音楽は一時停止したあと再び再生されます。",
     edit: "編集",
-    editHow: "ノッチ横の鉛筆。余ったボタンはトレイへ。消えない。",
+    editHow: "切り欠き近くの右側にある鉛筆アイコンをタップすると編集モードに入ります。もう一度タップするか「完了」をタップすると終了します。",
     guide: "ガイド",
-    guideHow: `画面上の案内。先になぜ、それからどう使う。${LANGS_ON_SITE}。`,
+    guideHow: "ボタンは鉛筆アイコンの隣にあります。タップすると最初からやり直せます。ツアー中に同じボタンをタップすると閉じます。",
+    mic: "ミュート",
+    micHow: "タップすると Mac のマイクをすべてのアプリに対して一括でミュートできます。白いマイクのアイコンは相手に聞こえている状態、白地に赤いマイクはミュート中を示します。",
     clipboard: "クリップボード",
-    clipboardHow: "直近の五つのテキスト。行をタップするとまたコピー。",
+    clipboardHow: "クリップボードのアイコンは右側にあります。タップすると最近コピーした内容が一覧表示され、好きな項目をタップするともう一度コピーできます。",
     media: "メディア",
-    mediaHow: "ジャケット、曲名、戻る / 一時停止 / 次へ。音はスピーカー、ヘッドホン、Mac。",
+    mediaHow: "切り欠きの下に表示されます。アートワークをタップするとフルプレーヤーが開きます。 戻る・一時停止・次へ、の3つです。編集モードでアニメーションをオンにしていると、一時停止とスキップのボタンが操作時に光ります。",
+    lyrics: "字幕",
+    lyricsHow: "再生コントロールの隣にある吹き出しアイコンをタップします。その曲に歌詞がない場合、ボタンは非表示になるか反応しません。",
     playlist: "プレイリスト",
-    playlistHow: "リストボタンは Music が今のキューを出したときだけ。",
+    playlistHow: "リストアイコンは、ミュージックが現在のプレイリスト情報を渡しているときだけ表示されます。タップするとキュー全体のウィンドウが開き、再生中の曲がハイライトされます。",
     progress: "進行",
-    progressHow: "下のバー。ドラッグで飛ばせる。",
+    progressHow: "バーは大きく展開した Insula の、コントロールの下にあります。ドラッグすると曲の別の位置に移動できます。",
     anim: "アニメーション",
-    animHow: "トレイの火花。そこで入れると、一時停止とスキップが光る。",
-    hoverWhy: "ホバー、クリックではない",
-    hoverBody: "カーソルが島の上にあるときだけ開く。素早く通りすぎるだけでは開かない。約 0.1 秒止まって。ゆっくりなら先にガラスに隙間、カメラの近くで大きく。",
-    moveWhy: "移動",
-    moveBody: "一秒半で三回クリック — 島がカーソルについて端に付く。カメラ横のボタンで戻る。",
+    animHow: "編集モード中に Insula 上のボタンをタップするとトレイへ送られます。トレイのタイルをタップすると元に戻せます。キラキラのアイコンは一時停止・スキップの発光アニメーションのオン/オフ切り替えです。「完了」をタップすると編集モードを終了します。",
+    hoverWhy: "カメラ付近をカーソルが通っただけで毎回開いてしまうのも、逆に本当に開きたいときに反応が遅いのも困ります。",
+    hoverBody: "サッと通り過ぎただけでは開きません。約0.1秒とどまる必要があります。ゆっくり近づくと、まず小さな隙間が現れ、カメラのすぐそば・上部三分の一の範囲でだけ完全に開きます。",
+    moveWhy: "Insula は画面の別の場所に動かすことができます。",
+    moveBody: "約1.5秒以内に素早く3回クリックすると、カーソルについてくるようになります。 3回クリックしたあと約2秒待ってからもう1回クリックすると、最も近い端まで一直線に移動します。下端ではピル形に、側面ではカード形になります。 切り欠きの近くにある小さな家のアイコンを探してください。1回クリックするだけで元の位置に戻ります。",
     moveTitle: "移動",
-    moveLede: "ホバーではない。一秒半で三回クリックすると、島がカーソルについて端に付く。横はカード、下はピル。カメラのそばにホームボタン。タップで帰る。",
+    moveLede: "約1.5秒以内に素早く3回クリックすると、カーソルについてくるようになります。 3回クリックしたあと約2秒待ってからもう1回クリックすると、最も近い端まで一直線に移動します。下端ではピル形に、側面ではカード形になります。 切り欠きの近くにある小さな家のアイコンを探してください。1回クリックするだけで元の位置に戻ります。",
     moveHouse: "ホーム",
     moveSide: "横",
     moveBottom: "下",
     moveClicks: "三回クリック",
-    micWhy: "Mac全体のマイク",
-    micBody: "タップ一つで入力を切る。ZoomもDiscordも。白は聞こえる。白地に赤は聞こえない。",
-    lyricsWhy: "歌詞は横で",
-    lyricsBody: "歌詞は島に入らない。吹き出しでガラスのパネルが開く。動かせて、角を引ける。",
-    lyricsTitle: "字幕",
-    lyricsLede: "歌詞は島に入らない。吹き出しで横にガラスのパネルが開く。つかむのはガラスそのもの。閉じるボタンでも、角の白い点でもない。",
+    micWhy: "Zoom や Discord など、アプリごとに別々のミュートボタンがあり、どれがオンになっているか忘れがちです。",
+    micBody: "タップすると Mac のマイクをすべてのアプリに対して一括でミュートできます。白いマイクのアイコンは相手に聞こえている状態、白地に赤いマイクはミュート中を示します。",
+    lyricsWhy: "歌詞は Insula の中に収まらないため、隣に別のスペースで開きます。",
+    lyricsBody: "再生コントロールの隣にある吹き出しアイコンをタップします。その曲に歌詞がない場合、ボタンは非表示になるか反応しません。 半透明のパネルで、専用の閉じるボタンがあり、画面上の好きな場所にドラッグできます。開いている間も音楽は再生され続けます。",
+    lyricsTitle: "歌詞",
+    lyricsLede: "歌詞は小さなカプセルの中ではなく、Insula の隣で読む形になっています。 半透明のパネルで、専用の閉じるボタンがあり、画面上の好きな場所にドラッグできます。開いている間も音楽は再生され続けます。",
     lyricsGrab: "ここをつかむ",
     lyricsCorner: "角 — サイズ",
-    editWhy: "自分の並び",
-    editBody: "全部のボタンが要る人ばかりではない。鉛筆でトレイ：載せる、外す、完了。",
+    editWhy: "すべてのボタンが全員に必要なわけではありません。使わないものはカプセルに置いておく必要はありません。",
+    editBody: "切り欠き近くの右側にある鉛筆アイコンをタップすると編集モードに入ります。もう一度タップするか「完了」をタップすると終了します。",
     editTitle: "編集",
-    editLede: "鉛筆は右耳、ノッチの横。使わないボタンはトレイへ。消えない。トレイのチップをタップすると島に戻る。Done、またはもう一度鉛筆で終わる。メディアとノッチは外せない。",
+    editLede: "切り欠き近くの右側にある鉛筆アイコンをタップすると編集モードに入ります。もう一度タップするか「完了」をタップすると終了します。 編集モード中に Insula 上のボタンをタップするとトレイへ送られます。トレイのタイルをタップすると元に戻せます。キラキラのアイコンは一時停止・スキップの発光アニメーションのオン/オフ切り替えです。「完了」をタップすると編集モードを終了します。",
     editTrayLab: "トレイ",
     getTitle: "Macでは無料",
     getBody: "macOS 14以降。App Storeではない。ディスクイメージ。ダウンロード後、聞かれたら右クリック → 開く。",
@@ -389,10 +419,10 @@ const COPY = {
     donate: "寄付のリンクができたらここに置く。",
     partner: "提携 — このページにフォームはない。",
     privacy: "プライバシー",
-    missing: "ビルドはまだ downloads/Island.dmg にない。",
+    missing: "ビルドはまだ downloads/Insula.dmg にない。",
     song: "Night Harbor",
     artist: "Local",
-    allOn: "All on the island",
+    allOn: "すべて Insula 上",
     done: "Done",
     playAnim: "見る",
     playAgain: "もう一度",
@@ -413,6 +443,8 @@ function applyCopy(lang) {
   document.querySelectorAll(".lang-btn").forEach((btn) => {
     btn.setAttribute("aria-pressed", String(btn.dataset.lang === lang));
   });
+  const map = document.querySelector("#map");
+  if (map?.dataset.spot) showMapSpot(map.dataset.spot, { pause: map.dataset.pauseTour === "1" });
 }
 
 function initLang() {
@@ -468,23 +500,48 @@ function liveIsland() {
 
   let closeTimer = 0;
   let openTimer = 0;
+  let morphTimer = 0;
+  let morphing = false;
+  const MORPH_MS = 520;
   const slot = document.querySelector(".island-slot");
   const fmt = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s) % 60).padStart(2, "0")}`;
   const pad = (n) => String(n).padStart(2, "0");
 
   const syncSlot = () => {
     if (!slot) return;
-    const open = island.classList.contains("is-open");
-    slot.classList.toggle("is-wide", open);
-    slot.classList.toggle("is-taller", open && island.classList.contains("is-tall"));
+    // Slot height is reserved; only grow for tall panels
+    const tall = island.classList.contains("is-open") && island.classList.contains("is-tall");
+    slot.classList.toggle("is-taller", tall);
   };
+
+  const beginMorph = () => {
+    morphing = true;
+    island.classList.add("is-morphing");
+    clearTimeout(morphTimer);
+    morphTimer = setTimeout(() => {
+      morphing = false;
+      island.classList.remove("is-morphing");
+    }, MORPH_MS);
+  };
+
+  island.addEventListener("transitionend", (e) => {
+    if (e.target !== island) return;
+    if (e.propertyName !== "transform" && e.propertyName !== "height") return;
+    morphing = false;
+    island.classList.remove("is-morphing");
+  });
 
   const open = () => {
     clearTimeout(closeTimer);
+    if (island.classList.contains("is-open")) return;
+    beginMorph();
+    // Slot + island class in the same frame to avoid two-step layout
     island.classList.add("is-open");
     syncSlot();
   };
   const close = () => {
+    if (!island.classList.contains("is-open")) return;
+    beginMorph();
     island.classList.remove("is-open");
     syncSlot();
   };
@@ -492,7 +549,7 @@ function liveIsland() {
   island.addEventListener("pointerenter", () => {
     clearTimeout(closeTimer);
     clearTimeout(openTimer);
-    openTimer = setTimeout(open, 100);
+    openTimer = setTimeout(open, 90);
   });
   island.addEventListener("pointerdown", () => {
     clearTimeout(openTimer);
@@ -500,7 +557,7 @@ function liveIsland() {
   });
   wrap.addEventListener("pointerleave", () => {
     clearTimeout(openTimer);
-    closeTimer = setTimeout(close, 180);
+    closeTimer = setTimeout(close, 160);
   });
 
   function wheelHtml(value, max) {
@@ -586,7 +643,8 @@ function liveIsland() {
     if (btn.dataset.act === "next") state.i = (state.i + 1) % tracks.length;
     if (btn.dataset.act === "mic") state.muted = !state.muted;
     if (btn.dataset.act === "clip") togglePanel("show-clip");
-    if (btn.dataset.act === "lyrics") togglePanel("show-lyrics");
+    // Subtitles are shown in the #lyrics demo below — not inline on the live island
+    if (btn.dataset.act === "lyrics") return;
     if (btn.dataset.act === "playlist") togglePanel("show-list");
     if (btn.dataset.act === "guide" || btn.dataset.act === "edit") {
       const map = document.querySelector("#map");
@@ -630,6 +688,7 @@ function liveIsland() {
   paintFlags();
 
   setInterval(() => {
+    if (morphing) return;
     if (state.playing) {
       state.t += 0.25;
       if (state.t > tracks[state.i].dur) {
@@ -650,93 +709,92 @@ function liveIsland() {
   }, 250);
 }
 
-function glyphBox(root) {
-  const box = { left: Infinity, right: -Infinity, top: Infinity, bottom: -Infinity };
-  const add = (r) => {
-    if (!r.width || !r.height) return;
-    box.left = Math.min(box.left, r.left);
-    box.right = Math.max(box.right, r.right);
-    box.top = Math.min(box.top, r.top);
-    box.bottom = Math.max(box.bottom, r.bottom);
-  };
-  const walk = (node) => {
-    if (node.nodeType === Node.TEXT_NODE) {
-      if (!node.textContent.trim()) return;
-      const range = document.createRange();
-      range.selectNodeContents(node);
-      [...range.getClientRects()].forEach(add);
-      return;
-    }
-    node.childNodes.forEach(walk);
-  };
-  walk(root);
-  if (!Number.isFinite(box.left)) {
-    const r = root.getBoundingClientRect();
-    return { left: r.left, right: r.right, top: r.top, bottom: r.bottom };
-  }
-  return box;
+const MAP_SPOTS = ["timer", "edit", "guide", "mic", "clipboard", "media", "lyrics", "playlist", "progress", "anim"];
+
+function mapCopy() {
+  const lang = localStorage.getItem(KEY) || document.documentElement.lang || "ru";
+  return COPY[lang] || COPY.ru;
 }
 
-function leaders() {
-  const svg = document.querySelector(".leaders");
-  const chart = document.querySelector(".chart");
-  if (!svg || !chart || window.matchMedia("(max-width: 900px)").matches) return;
+function showMapSpot(spot, { pause = true } = {}) {
+  const root = document.querySelector("#map");
+  if (!root || !MAP_SPOTS.includes(spot)) return;
+  const t = mapCopy();
+  const title = root.querySelector(".map-story-title");
+  const body = root.querySelector(".map-story-body");
+  if (title) title.textContent = t[spot] || spot;
+  if (body) body.textContent = t[`${spot}How`] || "";
 
-  const island = chart.querySelector(".chart-island .island");
-  if (!island) return;
-  const root = chart.getBoundingClientRect();
-  const box = island.getBoundingClientRect();
-  const w = chart.clientWidth;
-  const h = chart.clientHeight;
-  const x = (n) => ((n - root.left) / root.width) * w;
-  const y = (n) => ((n - root.top) / root.height) * h;
-
-  const spark = chart.querySelector("[data-spot='anim']");
-  const sparkBox = spark ? spark.getBoundingClientRect() : null;
-
-  const targets = {
-    timer: { x: box.left + 36, y: box.top + 18 },
-    edit: { x: box.right - 96, y: box.top + 16 },
-    guide: { x: box.right - 70, y: box.top + 16 },
-    clipboard: { x: box.right - 18, y: box.top + 16 },
-    media: { x: box.left + 48, y: box.top + 62 },
-    playlist: { x: box.right - 28, y: box.top + 62 },
-    progress: { x: box.left + 140, y: box.bottom - 12 },
-    anim: sparkBox
-      ? { x: sparkBox.left + sparkBox.width / 2, y: sparkBox.top + sparkBox.height / 2 }
-      : { x: box.left + box.width / 2 - 90, y: box.bottom + 34 },
-  };
-
-  svg.setAttribute("width", String(w));
-  svg.setAttribute("height", String(h));
-  svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
-  svg.setAttribute("preserveAspectRatio", "none");
-  svg.innerHTML = "";
-  document.querySelectorAll(".chart .label").forEach((label) => {
-    const spot = label.dataset.spot;
-    const to = targets[spot];
-    if (!to) return;
-    const right = label.classList.contains("end");
-    const title = label.querySelector("strong") || label;
-    const ink = glyphBox(title);
-    const gap = 2;
-    const fromX = right ? ink.left - gap : ink.right + gap;
-    const fromY = (ink.top + ink.bottom) / 2;
-    const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-    line.setAttribute("x1", String(x(fromX)));
-    line.setAttribute("y1", String(y(fromY)));
-    line.setAttribute("x2", String(x(to.x)));
-    line.setAttribute("y2", String(y(to.y)));
-    svg.appendChild(line);
+  root.querySelectorAll(".map-hit").forEach((el) => {
+    el.classList.toggle("is-hot", el.dataset.spot === spot);
   });
+  root.querySelectorAll(".map-tab").forEach((el) => {
+    const on = el.dataset.spot === spot;
+    el.setAttribute("aria-selected", on ? "true" : "false");
+    el.classList.toggle("is-on", on);
+  });
+  root.dataset.spot = spot;
+  const island = root.querySelector(".chart-island");
+  if (island) island.classList.add("is-picking");
+  if (pause) root.dataset.pauseTour = "1";
 }
+
+function bindMapTour() {
+  const root = document.querySelector("#map");
+  if (!root) return;
+
+  const activate = (spot, pause = true) => {
+    showMapSpot(spot, { pause });
+  };
+
+  root.addEventListener("click", (e) => {
+    const hit = e.target.closest("[data-spot]");
+    if (!hit || !root.contains(hit)) return;
+    activate(hit.dataset.spot, true);
+  });
+
+  root.addEventListener("keydown", (e) => {
+    if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+    const cur = root.dataset.spot || "timer";
+    const i = MAP_SPOTS.indexOf(cur);
+    if (i < 0) return;
+    e.preventDefault();
+    const next = e.key === "ArrowRight"
+      ? MAP_SPOTS[(i + 1) % MAP_SPOTS.length]
+      : MAP_SPOTS[(i - 1 + MAP_SPOTS.length) % MAP_SPOTS.length];
+    activate(next, true);
+  });
+
+  // Soft auto-tour while the section is on screen; stops after user picks
+  let idx = 0;
+  let timer = 0;
+  const tick = () => {
+    if (root.dataset.pauseTour === "1") return;
+    idx = (idx + 1) % MAP_SPOTS.length;
+    activate(MAP_SPOTS[idx], false);
+  };
+
+  const io = new IntersectionObserver(
+    ([entry]) => {
+      window.clearInterval(timer);
+      if (!entry.isIntersecting) return;
+      if (root.dataset.pauseTour === "1") return;
+      timer = window.setInterval(tick, 4200);
+    },
+    { threshold: 0.35 }
+  );
+  io.observe(root);
+
+  activate("timer", false);
+}
+
 
 async function downloadGuard() {
-  const links = document.querySelectorAll('a.download[href$="Island.dmg"]');
+  const links = document.querySelectorAll('a.download[href$="Insula.dmg"]');
   const note = document.querySelector(".note");
   let ok = false;
   try {
-    const res = await fetch("downloads/Island.dmg", { method: "HEAD" });
+    const res = await fetch("downloads/Insula.dmg", { method: "HEAD" });
     ok = res.ok;
   } catch {
     ok = false;
@@ -762,33 +820,16 @@ function goDark() {
   if (scheme) scheme.setAttribute("content", "dark");
 }
 
-let riseOn = false;
-
 function initRise() {
-  const nodes = document.querySelectorAll(".rise, .rise-stay");
-  if (!nodes.length || riseOn) return;
-  riseOn = true;
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    nodes.forEach((node) => node.classList.add("is-in"));
-    return;
-  }
-  const io = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        entry.target.classList.toggle("is-in", entry.isIntersecting);
-      });
-      window.requestAnimationFrame(leaders);
-      window.setTimeout(leaders, 780);
-    },
-    { threshold: 0.16, rootMargin: "0px 0px -8% 0px" }
-  );
-  nodes.forEach((node) => io.observe(node));
+  document.querySelectorAll(".rise, .rise-stay").forEach((node) => {
+    node.classList.add("is-in");
+  });
 }
 
 function playGate() {
+  initRise();
   const body = document.body;
   const gate = document.getElementById("gate");
-  const veil = gate && gate.querySelector(".gate-veil");
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const timers = [];
   const later = (fn, ms) => {
@@ -797,62 +838,71 @@ function playGate() {
     return id;
   };
 
-  const done = () => {
+  const finish = () => {
     if (body.classList.contains("is-ready")) return;
     timers.forEach(clearTimeout);
     goDark();
-    body.classList.add("is-night", "is-ready");
-    body.classList.remove("booting");
-    if (gate) gate.remove();
+    body.classList.add("is-night", "is-ready", "is-shatter");
+    body.classList.remove("booting", "is-crack");
+    if (gate) {
+      gate.classList.add("is-done");
+      later(() => gate.remove(), 520);
+    }
     initRise();
-    window.requestAnimationFrame(leaders);
+    
   };
 
-  if (reduce || !gate || !veil) {
-    done();
+  if (reduce || !gate) {
+    finish();
     return;
   }
 
-  const expandNight = (ms) =>
-    new Promise((resolve) => {
-      const start = performance.now();
-      const from = parseFloat(getComputedStyle(veil).getPropertyValue("--hole")) || 170;
-      const max = Math.hypot(window.innerWidth, window.innerHeight) * 1.2;
-      const ease = (t) => 1 - Math.pow(1 - t, 4);
-      const frame = (now) => {
-        const t = Math.min(1, (now - start) / ms);
-        veil.style.setProperty("--hole", `${from + (max - from) * ease(t)}px`);
-        if (t < 1) requestAnimationFrame(frame);
-        else resolve();
-      };
-      requestAnimationFrame(frame);
-    });
-
-  gate.addEventListener("click", done);
+  gate.addEventListener("click", finish);
   window.addEventListener(
     "keydown",
     (event) => {
-      if (event.key === "Escape" || event.key === "Enter") done();
+      if (event.key === "Escape" || event.key === "Enter") finish();
     },
     { once: true }
   );
 
+  // Site already under the matte pane
+  goDark();
+  body.classList.add("is-night");
+  initRise();
+
+  // 1) Frosted glass settles in — site barely readable behind it
   later(() => {
-    goDark();
-    body.classList.add("is-night");
-    initRise();
-    expandNight(720).then(() => {
+    if (body.classList.contains("is-ready")) return;
+    gate.classList.add("is-frost");
+  }, 80);
+
+  // 2) Crack walks the island edge
+  later(() => {
+    if (body.classList.contains("is-ready")) return;
+    gate.classList.add("is-crack");
+    body.classList.add("is-crack");
+  }, 1200);
+
+  // 3) Hold on the cracked pane, then the rest shatters at once
+  later(() => {
+    if (body.classList.contains("is-ready")) return;
+    gate.classList.add("is-shatter");
+    body.classList.add("is-shatter");
+  }, 3100);
+
+  // 4) Clear
+  later(() => {
+    if (body.classList.contains("is-ready")) return;
+    gate.classList.add("is-done");
+    later(() => {
       if (body.classList.contains("is-ready")) return;
-      gate.classList.add("is-done");
-      later(() => {
-        if (body.classList.contains("is-ready")) return;
-        body.classList.add("is-ready");
-        body.classList.remove("booting");
-        gate.remove();
-        window.requestAnimationFrame(leaders);
-      }, 280);
-    });
-  }, 60);
+      body.classList.add("is-ready");
+      body.classList.remove("booting", "is-crack");
+      gate.remove();
+      
+    }, 700);
+  }, 4600);
 }
 
 function tipOn(el, origin, ox, oy) {
@@ -952,9 +1002,9 @@ function playLyricsDemo(stage) {
 
   unstick();
   setLine(2);
-  const [gx, gy] = tipOn(card, card, 0.5, 0.28);
-  const ax = gx + 28;
-  const ay = gy + 56;
+  const [gx, gy] = tipOn(card, card, 0.5, 0.55);
+  const ax = gx + 36;
+  const ay = gy + 48;
   const handle = (w, h) => [w - 17, h - 17];
   const [s0x, s0y] = handle(restW, restH);
 
@@ -1033,7 +1083,12 @@ function playEditCursor(stage) {
 
   const travel = MOTION.spring;
   const [px, py] = tipOn(pencil, origin, 0.45, 0.4);
-  const [mx, my] = mic ? tipOn(mic, origin, 0.45, 0.4) : [px + 40, py];
+  const minus = mic?.querySelector(".edit-minus");
+  const [mx, my] = minus
+    ? tipOn(minus, origin, 0.5, 0.5)
+    : mic
+      ? tipOn(mic, origin, 0.92, 0.08)
+      : [px + 40, py];
   let tx;
   let ty;
   if (spark) {
@@ -1165,7 +1220,5 @@ liveIsland();
 downloadGuard();
 initPlayAnims();
 playGate();
-window.addEventListener("load", leaders);
-window.addEventListener("resize", () => {
-  window.requestAnimationFrame(leaders);
-});
+bindMapTour();
+

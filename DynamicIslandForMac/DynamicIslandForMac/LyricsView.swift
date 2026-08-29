@@ -1,5 +1,6 @@
 import AppKit
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct LyricsView: View {
     @ObservedObject var lyrics: LyricsManager
@@ -33,8 +34,17 @@ struct LyricsView: View {
             }
         }
         .background {
-            card.fill(.ultraThinMaterial)
-            card.fill(Color.black.opacity(0.28))
+            if let image = lyrics.droppedImage {
+                Image(nsImage: image)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .clipped()
+                card.fill(Color.black.opacity(0.38))
+            } else {
+                card.fill(.ultraThinMaterial)
+                card.fill(Color.black.opacity(0.28))
+            }
         }
         .overlay {
             card.stroke(Color.white.opacity(0.1), lineWidth: 0.5)
@@ -51,6 +61,10 @@ struct LyricsView: View {
         .overlay(alignment: .topLeading) {
             closeButton
                 .zIndex(20)
+        }
+        .contentShape(card)
+        .onDrop(of: [.fileURL, .image], isTargeted: nil) { providers in
+            lyrics.acceptDroppedProviders(providers)
         }
         .environment(\.colorScheme, .dark)
         .environment(\.islandGuide, guide)
@@ -123,6 +137,7 @@ struct LyricsView: View {
 
     private var lyricsWindow: NSWindow? {
         (NSApp.delegate as? AppDelegate)?.lyricsWindow
+            ?? NSApp.windows.first { $0.contentView is LyricsHost }
     }
 
     private var syncButtons: some View {
@@ -200,11 +215,14 @@ struct LyricsView: View {
                     .onChanged { _ in
                         let mouse = NSEvent.mouseLocation
                         if dragStartSize == nil {
-                            dragStartSize = lyrics.panelSize
+                            let window = lyricsWindow
+                            let frame = window?.frame
+                            dragStartSize = frame?.size ?? lyrics.panelSize
                             dragStartMouse = mouse
-                            if let window = lyricsWindow {
-                                lyrics.beginResize(left: window.frame.minX, top: window.frame.maxY)
-                            }
+                            lyrics.beginResize(
+                                left: frame?.minX ?? lyrics.panelOrigin?.x ?? mouse.x - lyrics.panelSize.width,
+                                top: frame?.maxY ?? ((lyrics.panelOrigin?.y ?? mouse.y) + lyrics.panelSize.height)
+                            )
                         }
                         guard let startSize = dragStartSize, let startMouse = dragStartMouse else { return }
                         lyrics.liveResize(from: startSize, mouse: mouse, origin: startMouse)
@@ -264,6 +282,61 @@ protocol LyricsHost {}
 
 final class LyricsHostingView<Content: View>: NSHostingView<Content>, LyricsHost {
     var handleLength: CGFloat = 28
+
+    override func viewDidMoveToWindow() {
+        super.viewDidMoveToWindow()
+        registerForDraggedTypes([
+            .fileURL,
+            .tiff,
+            .png,
+            NSPasteboard.PasteboardType("public.image"),
+            NSPasteboard.PasteboardType("public.jpeg"),
+            NSPasteboard.PasteboardType("public.png"),
+            NSPasteboard.PasteboardType("public.heic"),
+        ])
+    }
+
+    override func draggingEntered(_ sender: NSDraggingInfo) -> NSDragOperation {
+        canAcceptDrop(sender) ? .copy : []
+    }
+
+    override func draggingUpdated(_ sender: NSDraggingInfo) -> NSDragOperation {
+        canAcceptDrop(sender) ? .copy : []
+    }
+
+    override func prepareForDragOperation(_ sender: NSDraggingInfo) -> Bool {
+        canAcceptDrop(sender)
+    }
+
+    override func performDragOperation(_ sender: NSDraggingInfo) -> Bool {
+        guard let lyrics = (NSApp.delegate as? AppDelegate)?.lyrics else { return false }
+        let board = sender.draggingPasteboard
+        if let urls = board.readObjects(forClasses: [NSURL.self], options: [
+            .urlReadingFileURLsOnly: true,
+        ]) as? [URL] {
+            for url in urls where LyricsManager.isImageURL(url) {
+                if let image = NSImage(contentsOf: url) {
+                    lyrics.setDroppedImage(image)
+                    return true
+                }
+            }
+        }
+        if let image = NSImage(pasteboard: board) {
+            lyrics.setDroppedImage(image)
+            return true
+        }
+        return false
+    }
+
+    private func canAcceptDrop(_ sender: NSDraggingInfo) -> Bool {
+        let board = sender.draggingPasteboard
+        if let urls = board.readObjects(forClasses: [NSURL.self], options: [
+            .urlReadingFileURLsOnly: true,
+        ]) as? [URL] {
+            return urls.contains(where: LyricsManager.isImageURL)
+        }
+        return NSImage(pasteboard: board) != nil
+    }
 
     override func hitTest(_ point: NSPoint) -> NSView? {
         guard bounds.contains(point) else { return nil }

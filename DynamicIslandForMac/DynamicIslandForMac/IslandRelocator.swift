@@ -18,6 +18,7 @@ final class IslandRelocator {
     private var savedAlong: CGFloat = 0.5
     private var homeWindow: NSWindow?
     private var ignoreStartUp = false
+    private var dropReadyAt: TimeInterval = 0
     private var lastFollowTime: TimeInterval = 0
     private(set) var followPoint: NSPoint?
     private var isFlying = false
@@ -26,6 +27,8 @@ final class IslandRelocator {
     private var flyStart: TimeInterval = 0
     private var flyDuration: TimeInterval = 0
     private var pendingSnap: (IslandPlacement, CGFloat)?
+    /// After enter-relocate clicks, ignore attach clicks for this long so a fast triple-click can free the island.
+    private let dropGrace: TimeInterval = 2.0
 
     func start(window: NSWindow, state: IslandState) {
         self.window = window
@@ -142,7 +145,9 @@ final class IslandRelocator {
         switch event.type {
         case .leftMouseDown:
             if state.isRelocating {
-                if ignoreStartUp || isFlying { return }
+                if isFlying { return }
+                if ignoreStartUp { return }
+                if ProcessInfo.processInfo.systemUptime < dropReadyAt { return }
                 dropAtCursor()
                 return
             }
@@ -178,6 +183,7 @@ final class IslandRelocator {
         savedAlong = state.along
         relocateOrigin = NSEvent.mouseLocation
         ignoreStartUp = true
+        dropReadyAt = ProcessInfo.processInfo.systemUptime + dropGrace
         lastFollowTime = ProcessInfo.processInfo.systemUptime
         let pill = NotchGeometry.pillScreenFrame(
             expanded: state.isExpanded,
@@ -303,6 +309,7 @@ final class IslandRelocator {
         relocateOrigin = nil
         followPoint = nil
         ignoreStartUp = false
+        dropReadyAt = 0
         cancelFly()
         stopFollowTimer()
         window?.ignoresMouseEvents = true

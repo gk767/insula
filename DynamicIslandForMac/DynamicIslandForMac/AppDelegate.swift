@@ -144,7 +144,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         statusItem = NSStatusBar.system.statusItem(withLength: 18)
         let icon = NSImage(
             systemSymbolName: "circle.fill",
-            accessibilityDescription: "Dynamic Island"
+            accessibilityDescription: "Insula"
         )?.withSymbolConfiguration(.init(pointSize: 7, weight: .regular))
         icon?.isTemplate = true
         statusItem.button?.image = icon
@@ -191,7 +191,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
         menu.addItem(.separator())
 
-        let editItem = NSMenuItem(title: "Редакт островка", action: #selector(beginIslandEdit), keyEquivalent: "")
+        let editItem = NSMenuItem(title: "Редакт Insula", action: #selector(beginIslandEdit), keyEquivalent: "")
         editItem.target = self
         menu.addItem(editItem)
 
@@ -202,7 +202,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         menu.addItem(stopGuide)
 
         menu.addItem(.separator())
-        let quitItem = NSMenuItem(title: "Выход", action: #selector(quit), keyEquivalent: "q")
+        let quitItem = NSMenuItem(title: "Выключить Insula", action: #selector(quit), keyEquivalent: "q")
         quitItem.target = self
         menu.addItem(quitItem)
     }
@@ -236,6 +236,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
 
     @objc private func quit() {
+        guide.stop()
+        lyrics.isOpen = false
+        playlist.isOpen = false
+        islandState.isHovering = false
+        islandState.isEditing = false
+        islandState.isRelocating = false
+        hoverMonitor.stop()
+        nowPlaying.shutdown()
+        notchWindow.orderOut(nil)
+        lyricsWindow?.orderOut(nil)
+        playlistWindow?.orderOut(nil)
+        guideWindow?.orderOut(nil)
+        if let statusItem {
+            NSStatusBar.system.removeStatusItem(statusItem)
+        }
         NSApp.terminate(nil)
     }
 
@@ -308,9 +323,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     private func setupGuideWindow() {
         let host = GuideHostingView(
-            rootView: GuideOverlayView(guide: guide) { [weak self] hole, card in
+            rootView: GuideOverlayView(guide: guide) { [weak self] hole, card, escape in
                 self?.guideHost?.hole = hole
                 self?.guideHost?.card = card
+                self?.guideHost?.escape = escape
             }
         )
         guideHost = host
@@ -342,8 +358,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
         if guideKeyMonitor == nil {
             guideKeyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
-                if event.keyCode == 53, self?.guide.isActive == true {
+                guard self?.guide.isActive == true else { return event }
+                if event.keyCode == 53 {
                     self?.guide.skip()
+                    return nil
+                }
+                if event.keyCode == 36 || event.keyCode == 76 {
+                    self?.guide.next()
                     return nil
                 }
                 return event
@@ -370,6 +391,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         if visible {
             applyGuideWindowFrame()
             guideWindow.alphaValue = 1
+            NSApp.activate(ignoringOtherApps: true)
+            guideWindow.makeKeyAndOrderFront(nil)
             guideWindow.orderFrontRegardless()
             notchWindow.ignoresMouseEvents = false
         } else {
@@ -377,6 +400,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             guideWindow.orderOut(nil)
             guideHost?.hole = .null
             guideHost?.card = .null
+            guideHost?.escape = .null
         }
     }
 
@@ -478,8 +502,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
                 height: size.height
             )
         }
-        if !guide.forceLyricsPanel, lyrics.userPlaced, let origin = lyrics.panelOrigin,
-           !lyricsOriginIsParkedAtBottom(origin, size: size, on: screen) {
+        if !guide.forceLyricsPanel, lyrics.userPlaced, let origin = lyrics.panelOrigin {
             return NSRect(origin: origin, size: size)
         }
         let pill = NotchGeometry.pillScreenFrame(
@@ -498,12 +521,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             pill: pill,
             placement: islandState.dockedPlacement
         )
-    }
-
-    private func lyricsOriginIsParkedAtBottom(_ origin: CGPoint, size: CGSize, on screen: NSScreen) -> Bool {
-        guard islandState.dockedPlacement == .home else { return false }
-        let visible = screen.visibleFrame
-        return origin.y < visible.minY + visible.height * 0.38
     }
 
     private func animateLyricsWindow(_ changes: () -> Void, completion: (() -> Void)? = nil) {

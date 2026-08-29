@@ -20,10 +20,10 @@ final class NotchHoverMonitor {
 
     func start(state: IslandState) {
         self.state = state
-        let timer = Timer(timeInterval: 1.0 / 30.0, repeats: true) { [weak self] _ in
+        let timer = Timer(timeInterval: 1.0 / 20.0, repeats: true) { [weak self] _ in
             self?.tick()
         }
-        timer.tolerance = 0.012
+        timer.tolerance = 0.02
         RunLoop.main.add(timer, forMode: .common)
         self.timer = timer
         tick()
@@ -33,6 +33,15 @@ final class NotchHoverMonitor {
         timer?.invalidate()
         expandWork?.cancel()
         collapseWork?.cancel()
+    }
+
+    func stop() {
+        timer?.invalidate()
+        timer = nil
+        expandWork?.cancel()
+        collapseWork?.cancel()
+        expandWork = nil
+        collapseWork = nil
     }
 
     private func isInsideNotch(_ state: IslandState, expanded: Bool) -> Bool {

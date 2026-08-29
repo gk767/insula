@@ -106,7 +106,7 @@ final class PermissionGate: ObservableObject {
     private func showExplanation() {
         NSApp.activate(ignoringOtherApps: true)
         let alert = NSAlert()
-        alert.messageText = "Нужны доступы для острова"
+        alert.messageText = "Нужны доступы для Insula"
         alert.informativeText = """
         Чтобы показывать трек, обложки и уведомление таймера, macOS спросит несколько разрешений:
 
@@ -114,7 +114,7 @@ final class PermissionGate: ObservableObject {
         • Музыка — название, прогресс и обложка текущего трека
         • Spotify — обложка, если слушаете там
 
-        В каждом окне нажмите «OK». Иначе Apple Music может не появиться в острове.
+        В каждом окне нажмите «OK». Иначе Apple Music может не появиться в Insula.
         """
         alert.alertStyle = .informational
         alert.addButton(withTitle: "Продолжить")

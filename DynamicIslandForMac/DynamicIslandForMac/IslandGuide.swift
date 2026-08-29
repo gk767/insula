@@ -655,128 +655,128 @@ extension GuideCopy {
         switch spot {
         case .capsule:
             return GuideCopy(
-                why: "В свёрнутом видно, что остров живой — не надо сразу его раскрывать.",
-                how: "Капелька сидит у выреза. На ней то, что сейчас есть: музыка, таймер."
+                why: "Это Insula, свёрнутая в маленькую капсулу.",
+                how: "Она сидит у выреза камеры и показывает, что сейчас активно — музыку или таймер, — без необходимости её открывать."
             )
         case .collapsedMusic:
             return GuideCopy(
-                why: "Сразу видно, играет ли что-то, без большого острова.",
-                how: "Слева на капельке — название и прогресс, если трек идёт."
+                why: "Видно, что что-то играет, даже не открывая Insula.",
+                how: "Пока играет музыка, слева на капсуле показаны название трека и небольшая полоса прогресса."
             )
         case .collapsedTimer:
             return GuideCopy(
-                why: "Таймер не прячется, пока остров маленький.",
-                how: "Справа на капельке — время. Раскройте остров, чтобы поставить новый."
+                why: "Таймер продолжает идти, даже пока Insula маленькая.",
+                how: "Оставшееся время показано справа на капсуле. Чтобы поставить новый таймер, откройте Insula."
             )
         case .moses:
             return GuideCopy(
-                why: "Капелька лежит поверх меню и адресной строки. Глухое стекло закрывает клики; если её спрятать — пропадёт островок.",
-                how: "Медленно к острову — в стекле щель, широкий овал за курсором по нижней кромке, клики проходят. Быстро наехал — щели нет."
+                why: "Капсула лежит поверх строки меню и адресной строки браузера, поэтому может мешать кликам под собой.",
+                how: "Если подводить курсор медленно, вдоль нижнего края открывается щель, которая следует за курсором, — клики проходят сквозь неё. Если подвести быстро, щели не будет."
             )
         case .appear:
             return GuideCopy(
-                why: "Иначе кажется, что остров сам вылезает от любого движения у чёлки, а когда его зовут — тормозит.",
-                how: "Проскочил мимо за доли секунды — большой не открывается. Задержись на острове около 0.1 с. Медленно — сначала щель, большой в верхней трети у камеры."
+                why: "Insula не должна раскрываться от любого движения курсора рядом с камерой — но и не должна «тормозить», когда она правда нужна.",
+                how: "Быстрый проход мимо не откроет её — задержите курсор примерно на 0.1 секунды. При медленном приближении сначала появляется узкая щель, а полностью Insula раскрывается только в верхней трети, у самой камеры."
             )
         case .relocate:
             return GuideCopy(
-                why: "Иногда удобнее снизу или сбоку, не у камеры.",
-                how: "Три быстрых клика по острову за полторы секунды — он едет за курсором."
+                why: "Insula можно перенести в другое место на экране.",
+                how: "Кликните по нему три раза подряд быстро, в течение примерно полутора секунд, — и она начнёт следовать за курсором."
             )
         case .relocateDock:
             return GuideCopy(
-                why: "У края островок не висит посередине стола — он прилипает к стене.",
-                how: "Кликни — остров едет по прямой к ближайшей стене. Снизу пилюля, сбоку карточка."
+                why: "У края экрана Insula прилипает к этому краю, а не зависает посреди экрана.",
+                how: "После тройного клика подождите около двух секунд и кликните один раз — Insula по прямой полетит к ближайшему краю. Внизу она становится пилюлей, сбоку — карточкой."
             )
         case .relocateHome:
             return GuideCopy(
-                why: "Вернуться к камере сразу, без поездки по экрану.",
-                how: "Домик у выреза. Клик — сразу домой."
+                why: "Эта кнопка сразу возвращает Insula к вырезу камеры.",
+                how: "Найдите маленькую иконку домика рядом с вырезом. Один клик — и Insula дома."
             )
         case .timer:
             return GuideCopy(
-                why: "Отсчёт ставят здесь, не в часах и не в отдельном приложении.",
-                how: "Левое ухо: часы, минуты, секунды. По окончании — звук и уведомление, музыка на паузе, потом снова играет."
+                why: "Здесь ставится обратный отсчёт — а не в приложении «Часы» и не где-то ещё.",
+                how: "Слева: часы, минуты, секунды. По окончании — звук и уведомление; музыка, если играла, ставится на паузу, а потом снова включается."
             )
         case .edit:
             return GuideCopy(
-                why: "Не всем нужны все кнопки. Лишнее не держать на пилюле.",
-                how: "Карандаш в правом ухе, у выреза. Тап — режим правки. Ещё раз или «Готово» — выход."
+                why: "Не всем нужны все кнопки сразу. Лишние необязательно держать на капсуле.",
+                how: "Нажмите на значок карандаша справа, рядом с вырезом, чтобы войти в режим редактирования. Нажмите ещё раз или на «Готово», чтобы выйти."
             )
         case .guide:
             return GuideCopy(
-                why: "Этот тур можно открыть снова, если что-то забылось.",
-                how: "Кнопка рядом с карандашом. Тап — с начала. Во время тура тот же тап закрывает его."
+                why: "Этот тур можно открыть заново в любой момент, если что-то забылось.",
+                how: "Кнопка находится рядом с карандашом. Нажмите, чтобы начать сначала. Пока тур идёт, то же нажатие его закрывает."
             )
         case .mic:
             return GuideCopy(
-                why: "В Zoom и Discord у каждого своя кнопка mute — легко забыть, где она.",
-                how: "Тап глушит вход Mac для всех приложений. Белый микрофон — вас слышно. Красный на белом — нет."
+                why: "В Zoom, Discord и любом другом приложении своя отдельная кнопка mute — легко забыть, где она включена.",
+                how: "Нажатие сразу выключает микрофон Mac для всех приложений. Обычный белый значок микрофона — вас слышно. Красный значок на белом фоне — вы выключены."
             )
         case .clipboard:
             return GuideCopy(
-                why: "Последние скопированные тексты не теряются сразу.",
-                how: "Иконка буфера в правом ухе. Тап — список, ещё тап по строке — копирует снова."
+                why: "Скопированный текст не пропадает сразу же, как только вы скопируете что-то новое.",
+                how: "Значок буфера обмена справа. Нажмите на него, чтобы увидеть последние скопированные фрагменты, и на любой из них — чтобы скопировать снова."
             )
         case .media:
             return GuideCopy(
-                why: "Обложка и название — чтобы понять, что сейчас играет.",
-                how: "Картинка и строка под вырезом. Тап по обложке открывает плеер."
+                why: "Обложка и название трека показывают, что играет прямо сейчас.",
+                how: "Они расположены под вырезом камеры. Нажмите на обложку, чтобы открыть полноценный плеер."
             )
         case .transport:
             return GuideCopy(
-                why: "Управление треком — на большом острове, не на капельке.",
-                how: "Назад, пауза, дальше. Если анимации включены в редакте — пауза и перемотка подсвечиваются."
+                why: "Управление воспроизведением находится на развёрнутой Insula, а не на маленькой капсуле.",
+                how: "Назад, пауза, вперёд. Если в режиме редактирования включены анимации, кнопки паузы и перемотки подсвечиваются при использовании."
             )
         case .audio:
             return GuideCopy(
-                why: "Музыка уже на острове, а наушники снимаешь на звонок или наоборот.",
-                how: "Капсула после транспорта. Кружок только если устройство есть: колонки, наушники, MacBook, машина. Активный — белый."
+                why: "Музыка уже управляется с Insula, но иногда нужно переключиться, например, с наушников на колонки.",
+                how: "Этот элемент идёт сразу после кнопок воспроизведения. Значок устройства появляется, только если оно реально доступно: колонки, наушники, MacBook или машина. Активное устройство показано белым."
             )
         case .lyrics:
             return GuideCopy(
-                why: "Текст песни в остров не влезает, его смотрят рядом.",
-                how: "Пузырёк рядом с транспортом. Если текста нет — кнопки нет или она неактивна."
+                why: "Текст песни не помещается в Insula, поэтому он открывается рядом, в отдельном окне.",
+                how: "Нажмите на значок в виде облачка рядом с кнопками воспроизведения. Если для текущей песни текста нет, кнопка скрыта или неактивна."
             )
         case .playlist:
             return GuideCopy(
-                why: "С островка виден один трек, а дальше в очереди — нет.",
-                how: "Кнопка списка — только если Music отдал текущий плейлист. Тап открывает окно, текущий трек выделен."
+                why: "Insula показывает только текущий трек, а не то, что будет играть дальше.",
+                how: "Значок списка появляется, только если Music поделился текущим плейлистом. Нажмите на него, чтобы открыть окно со всей очередью; играющий сейчас трек подсвечен."
             )
         case .progress:
             return GuideCopy(
-                why: "Сколько прошло и сколько осталось — без окна плеера.",
-                how: "Полоса внизу большого острова. Её можно перетаскивать, чтобы перемотать."
+                why: "Видно, сколько трека уже прошло и сколько осталось, — без открытия полноценного плеера.",
+                how: "Полоса прогресса находится под кнопками управления на развёрнутой Insula. Потяните её, чтобы перейти к другому моменту песни."
             )
         case .editTray:
             return GuideCopy(
-                why: "Снятые кнопки не пропадают — они ждут в лотке под островом.",
-                how: "Тап по кнопке на острове — в лоток. Тап по фишке в лотке — обратно. Искра включает анимацию паузы и перемотки. «Готово» закрывает правку."
+                why: "Убранная кнопка не удаляется навсегда — она просто уходит с глаз в лоток.",
+                how: "В режиме редактирования нажмите на кнопку на Insula, чтобы отправить её в лоток снизу. Нажмите на плитку в лотке, чтобы вернуть кнопку обратно. Значок-искра включает или выключает подсветку паузы и перемотки. «Готово» завершает редактирование."
             )
         case .lyricsPanel:
             return GuideCopy(
-                why: "Текст читают рядом с островом, не внутри капельки.",
-                how: "Панель стеклянная, с крестиком. Её можно подвинуть. Музыка при этом играет."
+                why: "Текст песни читают рядом с Insula, а не внутри маленькой капсулы.",
+                how: "Это полупрозрачная панель со своей кнопкой закрытия — её можно перетаскивать по экрану. Музыка при этом продолжает играть."
             )
         case .lyricsResize:
             return GuideCopy(
-                why: "Кому-то окно мелкое, кому-то строки рано или поздно — единого размера нет.",
-                how: "Потяните белый кружок в углу — окно меняет размер."
+                why: "Кому-то удобнее маленькое окно, а кому-то нужно видеть больше строк сразу — единого размера нет.",
+                how: "Потяните за маленький белый кружок в углу, чтобы изменить размер панели."
             )
         case .lyricsSync:
             return GuideCopy(
-                why: "Строки иногда идут раньше или позже музыки.",
-                how: "Минус — позже, плюс — раньше. Сдвиг помнится на эту песню."
+                why: "Иногда строки текста опережают музыку или отстают от неё.",
+                how: "Минус задерживает текст, плюс — сдвигает его раньше. Эта настройка запоминается отдельно для каждой песни."
             )
         case .playlistPanel:
             return GuideCopy(
-                why: "Очередь целиком, не только текущий трек.",
-                how: "Имя плейлиста сверху, текущий выделен. Тап по строке — играет этот трек."
+                why: "Здесь показана вся очередь треков, а не только тот, что играет сейчас.",
+                how: "Название плейлиста — сверху, текущий трек подсвечен. Нажмите на любой трек в списке, чтобы включить именно его."
             )
         case .end:
             return GuideCopy(
-                why: "Тур можно закрыть и пользоваться островом.",
-                how: "Приятного использования. Кнопка гайда откроет его снова."
+                why: "На этом тур закончен — можно пользоваться Insula самостоятельно.",
+                how: "Приятного использования. Этот гайд можно снова открыть кнопкой гайда."
             )
         }
     }
@@ -785,128 +785,128 @@ extension GuideCopy {
         switch spot {
         case .capsule:
             return GuideCopy(
-                why: "En pequeño se ve que la isla está viva: no hace falta abrirla enseguida.",
-                how: "La pastilla está en el recorte. Ahí aparecen la música y el temporizador, si los hay."
+                why: "Esta es Insula reducida a una pequeña cápsula.",
+                how: "Se coloca sobre la cámara y muestra lo que está activo —música o un temporizador— sin que tengas que abrirla."
             )
         case .collapsedMusic:
             return GuideCopy(
-                why: "Se ve al momento si suena algo, sin abrir la isla.",
-                how: "A la izquierda: el título y el progreso si hay un tema."
+                why: "Se nota si algo está sonando sin necesidad de abrir Insula.",
+                how: "El nombre del tema y una pequeña barra de progreso aparecen a la izquierda de la cápsula mientras suena música."
             )
         case .collapsedTimer:
             return GuideCopy(
-                why: "El temporizador no se esconde cuando la isla está pequeña.",
-                how: "A la derecha: el tiempo. Abre la isla para poner uno nuevo."
+                why: "El temporizador sigue corriendo aunque Insula esté pequeña.",
+                how: "El tiempo restante aparece a la derecha de la cápsula. Abre Insula para poner uno nuevo."
             )
         case .moses:
             return GuideCopy(
-                why: "La pastilla cubre el menú y la barra de direcciones. Si es opaca, no puedes pulsar lo de debajo; si la ocultas, desaparece la isla.",
-                how: "Al acercarte despacio aparece una hendidura ovalada que sigue el cursor por el borde inferior y deja pasar los clics. Si llegas rápido, no hay hendidura."
+                why: "La cápsula queda encima de la barra de menú y de la barra de direcciones, así que puede bloquear los clics de lo que hay debajo.",
+                how: "Si te acercas despacio, se abre un hueco a lo largo del borde inferior que sigue al cursor, y los clics pasan a través. Si llegas rápido, no hay hueco."
             )
         case .appear:
             return GuideCopy(
-                why: "Si no, parece que la isla se abre sola con cualquier movimiento junto al recorte, y que tarda cuando la llamas de verdad.",
-                how: "Si solo pasas de largo, no se abre. Quédate unos 0,1 s. Despacio: primero la hendidura; grande solo en el tercio superior, junto a la cámara."
+                why: "Insula no debería abrirse cada vez que el cursor pasa cerca de la cámara, pero tampoco debería sentirse lenta cuando de verdad la quieres usar.",
+                how: "Un simple paso rápido no la abre: quédate sobre ella unos 0,1 segundos. Si te acercas despacio, primero aparece el hueco pequeño y luego se abre del todo, cerca de la parte superior, junto a la cámara."
             )
         case .relocate:
             return GuideCopy(
-                why: "A veces viene mejor abajo o a un lado, no junto a la cámara.",
-                how: "Tres clics rápidos en la isla en un segundo y medio: viaja con el cursor."
+                why: "Puedes mover Insula a otro punto de la pantalla.",
+                how: "Haz tres clics rápidos seguidos, en poco más de un segundo, y empezará a seguir al cursor."
             )
         case .relocateDock:
             return GuideCopy(
-                why: "En el borde no queda en medio del escritorio: se pega a la pared.",
-                how: "Haz clic: va en línea recta a la pared más cercana. Abajo pastilla; al lado, tarjeta."
+                why: "Cerca de un borde de la pantalla, Insula se pega a ese borde en vez de quedar flotando en medio.",
+                how: "Después del triple clic, espera unos dos segundos y haz un clic más: se desliza en línea recta hasta el borde más cercano. Abajo se convierte en píldora; al lado, en tarjeta."
             )
         case .relocateHome:
             return GuideCopy(
-                why: "Volver a la cámara al instante, sin cruzar la pantalla.",
-                how: "La casita está en el recorte. Un clic — a casa."
+                why: "Este botón devuelve Insula directamente a la cámara.",
+                how: "Busca el pequeño icono de casa junto al recorte. Un clic y vuelve a su sitio."
             )
         case .timer:
             return GuideCopy(
-                why: "La cuenta atrás se pone aquí, no en Reloj ni en otra app.",
-                how: "Oreja izquierda: horas, minutos, segundos. Al terminar: sonido, aviso, la música se pausa y luego sigue."
+                why: "Aquí es donde se pone una cuenta atrás, no en la app Reloj ni en otro sitio.",
+                how: "A la izquierda: horas, minutos y segundos. Al terminar suena un aviso y llega una notificación; si había música sonando, se pausa y luego sigue."
             )
         case .edit:
             return GuideCopy(
-                why: "No todo el mundo necesita todos los botones. Lo de más no tiene que estar en la pastilla.",
-                how: "El lápiz está en la oreja derecha, junto al recorte. Un toque entra en edición. Otro toque o «Listo» sale."
+                why: "No todo el mundo necesita todos los botones. Lo que sobra no tiene por qué quedarse en la cápsula.",
+                how: "Toca el icono del lápiz a la derecha, junto al recorte, para entrar en modo edición. Tócalo otra vez, o toca «Listo», para salir."
             )
         case .guide:
             return GuideCopy(
-                why: "Este recorrido se puede abrir otra vez si se olvida algo.",
-                how: "El botón está junto al lápiz. Un toque empieza de cero. Durante el tour, el mismo toque lo cierra."
+                why: "Puedes volver a abrir este recorrido cuando quieras si se te olvida algo.",
+                how: "El botón está junto al lápiz. Tócalo para empezar de nuevo desde el principio. Mientras el recorrido está en marcha, el mismo toque lo cierra."
             )
         case .mic:
             return GuideCopy(
-                why: "En Zoom y Discord cada uno tiene su silencio: es fácil olvidar cuál está activo.",
-                how: "Un toque silencia la entrada del Mac para todas las apps. Micrófono blanco: te oyen. Rojo sobre blanco: no."
+                why: "Zoom, Discord y cualquier otra app tienen su propio botón de silencio, y es fácil perder de vista cuál está activado.",
+                how: "Tócalo para silenciar el micrófono del Mac en todas las apps a la vez. Un icono de micrófono blanco significa que se te oye. Uno rojo sobre blanco significa que estás silenciado."
             )
         case .clipboard:
             return GuideCopy(
-                why: "Los últimos textos copiados no se pierden enseguida.",
-                how: "El icono está en la oreja derecha. Un toque abre la lista; otro en una línea la vuelve a copiar."
+                why: "El texto que copias no desaparece en cuanto copias otra cosa.",
+                how: "El icono del portapapeles está a la derecha. Tócalo para ver lo copiado recientemente, y toca cualquier entrada para copiarla de nuevo."
             )
         case .media:
             return GuideCopy(
-                why: "La carátula y el título dicen qué está sonando.",
-                how: "Debajo del recorte. Un toque en la carátula abre el reproductor."
+                why: "La carátula y el título muestran lo que suena en este momento.",
+                how: "Aparecen debajo del recorte. Toca la carátula para abrir el reproductor completo."
             )
         case .transport:
             return GuideCopy(
-                why: "El tema se controla en la isla grande, no en la pastilla.",
-                how: "Atrás, pausa, adelante. Si las animaciones están on en edición, pausa y salto se marcan."
+                why: "Los controles de reproducción están en Insula grande, no en la cápsula pequeña.",
+                how: "Atrás, pausa y siguiente. Si las animaciones están activadas en modo edición, pausa y siguiente se iluminan al usarlos."
             )
         case .audio:
             return GuideCopy(
-                why: "La música ya está en la isla; a veces pasas de auriculares a altavoz.",
-                how: "La cápsula va detrás del transporte. Un círculo solo si el aparato existe: altavoz, auriculares, MacBook, coche. El activo es blanco."
+                why: "La música ya se controla desde Insula, pero a veces necesitas cambiar, por ejemplo, de auriculares a altavoces.",
+                how: "Esto va justo después de los controles de reproducción. Un icono de dispositivo solo aparece si ese dispositivo está realmente disponible: altavoces, auriculares, tu MacBook o un coche. El que está en uso se muestra en blanco."
             )
         case .lyrics:
             return GuideCopy(
-                why: "La letra no cabe en la isla; se lee al lado.",
-                how: "El bocadillo está junto al transporte. Si no hay letra, el botón no aparece o no responde."
+                why: "La letra no cabe dentro de Insula, así que se abre aparte, al lado.",
+                how: "Toca el icono del globo de texto junto a los controles de reproducción. Si la canción no tiene letra disponible, el botón queda oculto o no responde."
             )
         case .playlist:
             return GuideCopy(
-                why: "En la isla se ve un tema; no se ve lo que sigue.",
-                how: "El botón de lista sale solo si Music entrega la lista actual. Un toque abre la ventana; el tema actual está marcado."
+                why: "Insula muestra el tema actual, no lo que viene después.",
+                how: "El icono de lista solo aparece si Music comparte la lista de reproducción actual. Tócalo para abrir una ventana con toda la cola; el tema actual queda resaltado."
             )
         case .progress:
             return GuideCopy(
-                why: "Cuánto ha pasado y cuánto queda, sin abrir el reproductor.",
-                how: "La barra está abajo. Arrástrala para saltar en el tema."
+                why: "Puedes ver cuánto ha pasado del tema y cuánto queda, sin abrir el reproductor completo.",
+                how: "La barra está debajo de los controles, en Insula grande. Arrástrala para saltar a otro punto de la canción."
             )
         case .editTray:
             return GuideCopy(
-                why: "Los botones quitados no se pierden: esperan en la bandeja bajo la isla.",
-                how: "Toque en la isla: van a la bandeja. Toque en la ficha: vuelven. La chispa enciende la animación de pausa y salto. «Listo» cierra la edición."
+                why: "Quitar un botón no lo borra: solo lo aparta a una bandeja.",
+                how: "En modo edición, toca un botón de Insula para mandarlo a la bandeja de abajo. Toca una ficha de la bandeja para devolverlo. El icono de chispa activa o desactiva la animación de pausa y salto. Toca «Listo» para salir del modo edición."
             )
         case .lyricsPanel:
             return GuideCopy(
-                why: "La letra se lee al lado de la isla, no dentro de la pastilla.",
-                how: "El panel es de cristal, con una cruz. Se puede mover. La música sigue."
+                why: "La letra se lee al lado de Insula, no metida dentro de la cápsula pequeña.",
+                how: "Es un panel translúcido con su propio botón de cerrar, y puedes arrastrarlo a cualquier parte de la pantalla. La música sigue sonando mientras está abierto."
             )
         case .lyricsResize:
             return GuideCopy(
-                why: "A unos les va una ventana chica; a otros las líneas van pronto o tarde.",
-                how: "Tira del círculo blanco de la esquina para cambiar el tamaño."
+                why: "A algunas personas les viene bien una ventana pequeña; otras quieren ver más líneas a la vez: no hay un tamaño único.",
+                how: "Arrastra el pequeño círculo blanco de la esquina para cambiar el tamaño del panel."
             )
         case .lyricsSync:
             return GuideCopy(
-                why: "A veces las líneas van antes o después que la música.",
-                how: "Menos: más tarde. Más: más pronto. El desfase se guarda para esta canción."
+                why: "A veces la letra va un poco por delante, o por detrás, de la música.",
+                how: "El signo menos retrasa la letra; el más la adelanta. Este ajuste se recuerda para esa canción en concreto."
             )
         case .playlistPanel:
             return GuideCopy(
-                why: "Toda la cola, no solo el tema actual.",
-                how: "El nombre va arriba, el actual está marcado. Un toque en una línea la reproduce."
+                why: "Aquí se ve toda la cola que viene después, no solo el tema que suena ahora.",
+                how: "El nombre de la lista aparece arriba, y el tema actual queda resaltado. Toca cualquier tema para reproducirlo."
             )
         case .end:
             return GuideCopy(
-                why: "Puedes cerrar el recorrido y usar la isla.",
-                how: "Que lo disfrutes. El botón de la guía lo abre otra vez."
+                why: "Con esto termina el recorrido: ya puedes usar Insula por tu cuenta.",
+                how: "Que la disfrutes. Puedes volver a abrir esta guía cuando quieras desde el botón de guía."
             )
         }
     }
@@ -915,128 +915,128 @@ extension GuideCopy {
         switch spot {
         case .capsule:
             return GuideCopy(
-                why: "Collapsed, you can see the island is alive — you don’t have to open it right away.",
-                how: "The capsule sits at the notch. Music and the timer show on it when they’re there."
+                why: "This is Insula collapsed down to a small capsule.",
+                how: "It sits over the camera and shows what's active — music or a timer — without you opening it."
             )
         case .collapsedMusic:
             return GuideCopy(
-                why: "You can tell if something is playing without opening the island.",
-                how: "On the left of the capsule: title and progress while a track is on."
+                why: "You can tell something is playing without opening Insula.",
+                how: "The track name and a small progress bar appear on the left side of the capsule while music plays."
             )
         case .collapsedTimer:
             return GuideCopy(
-                why: "The timer stays visible while the island is small.",
-                how: "On the right of the capsule: the time. Open the island to set a new one."
+                why: "The timer keeps running even while Insula stays small.",
+                how: "The time left shows on the right side of the capsule. Open Insula to start a new one."
             )
         case .moses:
             return GuideCopy(
-                why: "The capsule sits over the menu and the address bar. If it’s solid you can’t click what’s under it; if you hide it, the island is gone.",
-                how: "Approach slowly — a wide oval gap follows the cursor along the bottom edge, and clicks pass through. Arrive fast — no gap."
+                why: "The capsule sits on top of your menu bar and address bar, so it can block clicks underneath it.",
+                how: "Approach slowly and a gap opens along the bottom edge, following your cursor, so clicks reach what's underneath. Approach fast and there's no gap."
             )
         case .appear:
             return GuideCopy(
-                why: "Otherwise it feels like the island pops open from any move near the notch, and lags when you actually want it.",
-                how: "A quick pass-through does not open it. Stay about 0.1 s. Approach slowly — gap first; large only in the top third, by the camera."
+                why: "Insula shouldn't pop open every time your cursor passes near the camera, but it shouldn't feel slow either when you actually want it.",
+                how: "A quick pass-by won't open it — pause on it for about 0.1 seconds. Moving in slowly shows the small gap first, then opens the full Insula near the top, right by the camera."
             )
         case .relocate:
             return GuideCopy(
-                why: "Sometimes it’s better at the bottom or the side, not by the camera.",
-                how: "Three quick clicks on the island within a second and a half — it follows the cursor."
+                why: "You can move Insula to a different spot on the screen.",
+                how: "Click it three times quickly, within about a second and a half, and it starts following your cursor."
             )
         case .relocateDock:
             return GuideCopy(
-                why: "At an edge it doesn’t sit in the middle of the desk — it sticks to the wall.",
-                how: "Click — it travels in a straight line to the nearest wall. Bottom is a pill; the side is a card."
+                why: "Near a screen edge, Insula snaps to that edge instead of floating in the middle of the screen.",
+                how: "After the triple-click, wait about two seconds, then click once — it slides straight to the nearest edge. At the bottom it becomes a pill; on the side, a card."
             )
         case .relocateHome:
             return GuideCopy(
-                why: "Get back to the camera at once, without riding across the screen.",
-                how: "The house sits at the notch. Click — you’re home."
+                why: "This brings Insula straight back to the camera notch.",
+                how: "Look for the small house icon near the notch. One click and it's back home."
             )
         case .timer:
             return GuideCopy(
-                why: "Countdowns belong here, not in Clock or another app.",
-                how: "Left ear: hours, minutes, seconds. When it ends: sound, a notification, music pauses, then it plays again."
+                why: "This is where you set a countdown — not the Clock app, not somewhere else.",
+                how: "On the left side: hours, minutes, seconds. When it ends you get a sound and a notification; any music playing pauses, then resumes."
             )
         case .edit:
             return GuideCopy(
-                why: "Not everyone needs every button. Keep extras off the pill.",
-                how: "The pencil is in the right ear, by the notch. Tap to edit. Tap again or Done to leave."
+                why: "Not everyone needs every button. Anything extra doesn't have to stay on the capsule.",
+                how: "Tap the pencil icon on the right side, near the notch, to enter edit mode. Tap it again, or tap Done, to leave."
             )
         case .guide:
             return GuideCopy(
-                why: "You can run this tour again if something slips your mind.",
-                how: "The button sits next to the pencil. Tap to start from the beginning. During the tour, the same tap closes it."
+                why: "You can reopen this tour any time if you forget how something works.",
+                how: "The button sits next to the pencil. Tap it to start over from the beginning. While the tour is running, the same tap closes it."
             )
         case .mic:
             return GuideCopy(
-                why: "Zoom and Discord each have their own mute — easy to forget which one is on.",
-                how: "Tap mutes the Mac input for every app. White mic: they hear you. Red on white: they don’t."
+                why: "Zoom, Discord, and every other app has its own separate mute button — easy to lose track of which one is on.",
+                how: "Tap this to mute your Mac's microphone for every app at once. A plain white mic icon means people can hear you. A red mic on white means you're muted."
             )
         case .clipboard:
             return GuideCopy(
-                why: "Recent copied text doesn’t vanish at once.",
-                how: "The clipboard icon is in the right ear. Tap for the list; tap a row to copy it again."
+                why: "Text you've copied doesn't just vanish the moment you copy something new.",
+                how: "The clipboard icon is on the right side. Tap it to see recent copies, then tap any entry to copy it again."
             )
         case .media:
             return GuideCopy(
-                why: "Artwork and title show what’s playing.",
-                how: "Under the notch. Tap the artwork to open the player."
+                why: "The artwork and title show you what's playing right now.",
+                how: "They sit below the notch. Tap the artwork to open the full player."
             )
         case .transport:
             return GuideCopy(
-                why: "Track control lives on the large island, not the capsule.",
-                how: "Back, pause, next. If animations are on in edit, pause and skip light up."
+                why: "Track controls live on the full-size Insula, not on the small capsule.",
+                how: "Back, pause, and next. If animations are turned on in edit mode, pause and skip glow when you use them."
             )
         case .audio:
             return GuideCopy(
-                why: "Music is already on the island; you still switch from headphones to speakers.",
-                how: "The capsule sits after transport. A circle only if that device exists: speakers, headphones, MacBook, car. The active one is white."
+                why: "Music is already on Insula, but you still need to switch between things like headphones and speakers.",
+                how: "This sits right after the playback buttons. A device icon only appears if that device is actually available: speakers, headphones, your MacBook, or a car. The one you're using is shown in white."
             )
         case .lyrics:
             return GuideCopy(
-                why: "Lyrics don’t fit in the island; you read them beside it.",
-                how: "The bubble is next to transport. If there’s no text, the button is missing or inactive."
+                why: "Lyrics don't fit inside Insula, so they open in a separate space next to it.",
+                how: "Tap the speech-bubble icon next to the playback controls. If there are no lyrics for the current song, the button is hidden or does nothing."
             )
         case .playlist:
             return GuideCopy(
-                why: "The island shows one track, not what’s next.",
-                how: "The list button appears only if Music gives the current playlist. Tap opens the window; the current track is highlighted."
+                why: "Insula shows you the current track, not what's coming up next.",
+                how: "The list icon only appears if Music shares its current playlist. Tap it to open a window with the full queue; the current track is highlighted."
             )
         case .progress:
             return GuideCopy(
-                why: "Elapsed and remaining time without opening the player.",
-                how: "The bar is at the bottom of the large island. Drag it to scrub."
+                why: "See how far into the track you are, and how much is left, without opening the full player.",
+                how: "The bar sits below the controls on the full-size Insula. Drag it to jump to a different point in the song."
             )
         case .editTray:
             return GuideCopy(
-                why: "Removed buttons aren’t lost — they wait in the tray under the island.",
-                how: "Tap a button on the island to send it to the tray. Tap a chip to bring it back. The sparkle turns pause and skip animation on. Done leaves edit."
+                why: "Removing a button doesn't delete it — it just moves out of the way, into a tray.",
+                how: "In edit mode, tap a button on Insula to send it to the tray below. Tap a tile in the tray to bring it back. The sparkle icon turns the pause/skip glow animation on or off. Tap Done to leave edit mode."
             )
         case .lyricsPanel:
             return GuideCopy(
-                why: "You read lyrics beside the island, not inside the capsule.",
-                how: "The panel is glass, with a close button. You can move it. Music keeps playing."
+                why: "Lyrics are read next to Insula, not squeezed inside the small capsule.",
+                how: "It's a translucent panel with its own close button, and you can drag it anywhere on screen. Music keeps playing while it's open."
             )
         case .lyricsResize:
             return GuideCopy(
-                why: "Some want a small window; some need lines earlier or later — there’s no one size.",
-                how: "Drag the white circle in the corner to resize."
+                why: "Some people want a small window; others want to see more lines at once — there's no single right size.",
+                how: "Drag the small white circle in the corner to resize the panel."
             )
         case .lyricsSync:
             return GuideCopy(
-                why: "Lines sometimes run ahead of the music, or behind it.",
-                how: "Minus — later. Plus — earlier. The offset is remembered for this song."
+                why: "Sometimes the lyrics run a little ahead of, or behind, the music.",
+                how: "Minus delays the lyrics, plus brings them earlier. This adjustment is remembered for that specific song."
             )
         case .playlistPanel:
             return GuideCopy(
-                why: "The whole queue, not just the current track.",
-                how: "The playlist name is at the top; the current track is highlighted. Tap a row to play it."
+                why: "This shows the whole upcoming queue, not just the track playing right now.",
+                how: "The playlist name is at the top, and the current track is highlighted. Tap any track to play it."
             )
         case .end:
             return GuideCopy(
-                why: "You can close the tour and use the island.",
-                how: "Enjoy it. The guide button opens this again."
+                why: "That's the whole tour — you're ready to use Insula on your own.",
+                how: "Enjoy. You can reopen this guide any time from the guide button."
             )
         }
     }
@@ -1045,128 +1045,128 @@ extension GuideCopy {
         switch spot {
         case .capsule:
             return GuideCopy(
-                why: "收起时也能看出岛是活的，不必马上展开。",
-                how: "胶囊贴在刘海处。有音乐或计时器时，会显示在上面。"
+                why: "这是缩成小胶囊状态的 Insula。",
+                how: "它贴在摄像头位置，会显示当前有什么在活动——比如音乐或计时器——不需要你把它展开。"
             )
         case .collapsedMusic:
             return GuideCopy(
-                why: "不用展开也能知道现在有没有在播。",
-                how: "胶囊左侧是歌名和进度。"
+                why: "不用展开Insula，也能看出是否有音乐在播放。",
+                how: "播放音乐时，胶囊左侧会显示歌曲名和一小段进度条。"
             )
         case .collapsedTimer:
             return GuideCopy(
-                why: "岛很小的时候，计时器仍然看得见。",
-                how: "胶囊右侧是时间。要设新的，先展开岛。"
+                why: "即使Insula保持很小，计时器也会继续走。",
+                how: "剩余时间显示在胶囊右侧。要设置新的计时器，需要先展开Insula。"
             )
         case .moses:
             return GuideCopy(
-                why: "胶囊盖在菜单和地址栏上。如果完全挡住，点不到下面；如果藏起来，岛就没了。",
-                how: "慢慢靠近会出现一条宽椭圆缝，跟着光标沿下沿移动，点击可以穿过。冲得很快则没有缝。"
+                why: "胶囊盖在菜单栏和地址栏上方，可能会挡住下面的点击。",
+                how: "把光标慢慢移过去，胶囊下边缘会出现一条跟随光标移动的缝隙，点击可以穿过它落到下面的内容上。如果很快划过，就不会出现这条缝。"
             )
         case .appear:
             return GuideCopy(
-                why: "否则会觉得在刘海附近一动就会自己展开，真要用时又很慢。",
-                how: "只是快速穿过不会展开。在岛上停大约 0.1 秒。慢慢靠近：先有缝，只有到摄像头旁上三分之一才变大。"
+                why: "Insula 不应该因为光标随便经过摄像头附近就弹开，但真正想用它时也不能反应慢。",
+                how: "快速经过不会展开它——需要在上面停留大约 0.1 秒。慢慢靠近时，先出现一条小缝，然后才会在最上方、摄像头旁边完全展开。"
             )
         case .relocate:
             return GuideCopy(
-                why: "有时放在下方或两侧更方便，不必贴着摄像头。",
-                how: "在一秒半内连点岛三次，它就会跟着光标走。"
+                why: "你可以把 Insula移动到屏幕上的其他位置。",
+                how: "在大约一秒半内连续快速点击三次，Insula 就会开始跟着光标移动。"
             )
         case .relocateDock:
             return GuideCopy(
-                why: "靠边缘时它不会停在桌面中间，而是贴到墙上。",
-                how: "点一下，小岛沿直线飞向最近的墙。下方是胶囊，侧面是卡片。"
+                why: "靠近屏幕边缘时，Insula 会贴到那条边上，而不是停在屏幕正中间。",
+                how: "三连击之后，等大约两秒，再点一下——Insula 会沿直线滑到最近的边缘。停在底部时是胶囊形状，停在侧边时是卡片形状。"
             )
         case .relocateHome:
             return GuideCopy(
-                why: "要马上回到摄像头，不用在屏幕上走一圈。",
-                how: "小屋在刘海旁。点一下就回家。"
+                why: "这个按钮会让 Insula立刻回到摄像头位置。",
+                how: "在刘海旁边找一个小房子图标。点一下，Insula 就回到原位了。"
             )
         case .timer:
             return GuideCopy(
-                why: "倒计时就在这里设，不用打开时钟或其他应用。",
-                how: "左耳：时、分、秒。结束时会响、会通知，音乐会先暂停再继续。"
+                why: "倒计时是在这里设置的，不是在“时钟”App，也不是别的地方。",
+                how: "左侧可以设置小时、分钟、秒。倒计时结束时会有声音提示和系统通知；如果正在播放音乐，会先暂停再继续播放。"
             )
         case .edit:
             return GuideCopy(
-                why: "不是每个人都需要全部按钮，多余的不必留在胶囊上。",
-                how: "铅笔在右耳、靠刘海。点一下进入编辑，再点或「完成」退出。"
+                why: "不是所有人都需要用到全部按钮，用不到的完全可以从胶囊上拿掉。",
+                how: "点右侧靠近刘海的铅笔图标，进入编辑模式。再点一次，或者点「完成」，即可退出。"
             )
         case .guide:
             return GuideCopy(
-                why: "忘了可以再看一遍。",
-                how: "按钮在铅笔旁边。点一下从头开始。导览中再点同一按钮会关掉。"
+                why: "如果忘了某个功能怎么用，随时可以重新打开这个导览。",
+                how: "按钮就在铅笔图标旁边。点一下从头开始播放导览；导览进行中再点同一个按钮会直接关闭它。"
             )
         case .mic:
             return GuideCopy(
-                why: "Zoom、Discord 各自有静音，很容易搞混。",
-                how: "点一下会关掉 Mac 的输入，对所有应用生效。白色麦克风表示听得见你；白底红标表示听不见。"
+                why: "Zoom、Discord 等每个 App 都有自己独立的静音按钮，很容易记不清哪个开着。",
+                how: "点一下就能一次性把 Mac 麦克风对所有 App 静音。普通白色麦克风图标表示对方能听到你；白底红色图标表示你已静音。"
             )
         case .clipboard:
             return GuideCopy(
-                why: "刚复制的文字不会马上丢掉。",
-                how: "剪贴板图标在右耳。点开列表，再点一行会重新复制。"
+                why: "复制的文字不会因为你又复制了新内容就立刻消失。",
+                how: "剪贴板图标在右侧。点开可以看到最近复制的内容，点其中任意一条即可重新复制它。"
             )
         case .media:
             return GuideCopy(
-                why: "封面和歌名告诉你现在在播什么。",
-                how: "在刘海下面。点封面会打开播放器。"
+                why: "封面图和歌曲名会告诉你现在正在播放什么。",
+                how: "它们显示在刘海下方。点封面图可以打开完整的播放器界面。"
             )
         case .transport:
             return GuideCopy(
-                why: "切歌在大岛上，不在小胶囊上。",
-                how: "上一首、暂停、下一首。若在编辑里打开了动画，暂停和跳转会有提示。"
+                why: "播放控制按钮在展开的 Insula上，小胶囊上没有。",
+                how: "上一首、暂停、下一首。如果在编辑模式里打开了动画效果，使用暂停和切歌时按钮会有发光提示。"
             )
         case .audio:
             return GuideCopy(
-                why: "音乐已经在岛上，有时要在耳机和扬声器之间切换。",
-                how: "胶囊在播放键后面。只有真正连上的设备才有圆点：音箱、耳机、MacBook、车机。当前是白色。"
+                why: "音乐播放已经能在Insula 上控制，但有时你还需要在耳机和扬声器之间切换。",
+                how: "这个控件紧跟在播放按钮后面。只有设备真的可用时才会显示对应图标：扬声器、耳机、你的 MacBook 或车载音响。正在使用的那个会显示为白色。"
             )
         case .lyrics:
             return GuideCopy(
-                why: "歌词塞不进岛里，要在旁边看。",
-                how: "气泡在播放键旁边。没有歌词时按钮会消失或不可用。"
+                why: "歌词放不进Insula 里，所以会在旁边单独打开一块区域显示。",
+                how: "点播放按钮旁边的气泡图标。如果当前歌曲没有歌词，这个按钮会隐藏或点了没反应。"
             )
         case .playlist:
             return GuideCopy(
-                why: "岛上只能看到当前这一首，看不到后面排队的。",
-                how: "只有 Music 给出当前播放列表时才有列表按钮。点开窗口，当前曲目会高亮。"
+                why: "Insula 上只显示当前这一首歌，不会显示接下来要播放的内容。",
+                how: "只有当“音乐”App 提供了当前播放列表时，列表图标才会出现。点开会显示整个播放队列的窗口，正在播放的曲目会高亮显示。"
             )
         case .progress:
             return GuideCopy(
-                why: "不用打开播放器也能看到已播和剩余时间。",
-                how: "进度条在大岛底部，拖动可以跳转。"
+                why: "不用打开完整播放器，也能看到这首歌播放了多久、还剩多少。",
+                how: "进度条在Insula展开后位于控制按钮下方。拖动它可以跳到歌曲的其他位置。"
             )
         case .editTray:
             return GuideCopy(
-                why: "拿掉的按钮不会丢，它们在岛下面的托盘里。",
-                how: "点岛上的按钮会放进托盘；点托盘里的芯片会放回。火花开关控制暂停和跳转动画。「完成」退出编辑。"
+                why: "拿掉一个按钮并不会删除它，只是把它挪到旁边的托盘里放着。",
+                how: "编辑模式下，点Insula 上的按钮可以把它送进下面的托盘；点托盘里的按钮可以把它放回去。星光图标用来开关暂停/切歌的发光动画。点「完成」退出编辑模式。"
             )
         case .lyricsPanel:
             return GuideCopy(
-                why: "歌词在岛旁边读，不塞进胶囊。",
-                how: "玻璃面板，有关闭按钮，可以挪动。音乐继续播放。"
+                why: "歌词是在Insula 旁边单独阅读的，不是挤在小胶囊里面。",
+                how: "这是一个半透明面板，有自己的关闭按钮，可以拖到屏幕任意位置。打开它时音乐会继续播放。"
             )
         case .lyricsResize:
             return GuideCopy(
-                why: "有人要小窗，有人觉得歌词偏早或偏晚，没有统一尺寸。",
-                how: "拖动角落的白圆点改变大小。"
+                why: "有人喜欢小窗口，有人想一次看到更多行歌词——没有一个统一合适的大小。",
+                how: "拖动面板角落的白色小圆点，即可调整大小。"
             )
         case .lyricsSync:
             return GuideCopy(
-                why: "歌词有时会比音乐早或晚。",
-                how: "减号更晚，加号更早。偏移会记住，只对这首歌。"
+                why: "有时歌词会比音乐快一点，或者慢一点。",
+                how: "点减号让歌词延后，点加号让歌词提前。这个偏移量会针对这首歌单独记住。"
             )
         case .playlistPanel:
             return GuideCopy(
-                why: "整条队列，不只是当前这一首。",
-                how: "列表名在顶部，当前曲目高亮。点一行就会播放。"
+                why: "这里显示的是接下来整个播放队列，不只是当前这一首。",
+                how: "顶部是播放列表名称，当前曲目会高亮显示。点列表里的任意一首即可播放它。"
             )
         case .end:
             return GuideCopy(
-                why: "可以关掉导览，开始用岛。",
-                how: "祝使用愉快。指南按钮可以再打开。"
+                why: "导览到这里就结束了，你可以自己使用Insula了。",
+                how: "祝使用愉快。随时可以通过导览按钮再次打开这份指南。"
             )
         }
     }
@@ -1175,128 +1175,128 @@ extension GuideCopy {
         switch spot {
         case .capsule:
             return GuideCopy(
-                why: "畳んだままでも島が生きているのが分かります。すぐ開かなくて大丈夫です。",
-                how: "カプセルはノッチにあります。音楽やタイマーがあれば、その上に出ます。"
+                why: "これはカプセル状に折りたたまれた状態の Insula です。",
+                how: "カメラの位置に表示され、開かなくても音楽やタイマーなど今動いているものがわかります。"
             )
         case .collapsedMusic:
             return GuideCopy(
-                why: "島を開かなくても、何か再生中か分かります。",
-                how: "カプセルの左：曲名と、再生中なら進捗。"
+                why: "Insula を開かなくても、何か再生中かどうかが一目でわかります。",
+                how: "音楽再生中は、カプセルの左側に曲名と小さな進捗バーが表示されます。"
             )
         case .collapsedTimer:
             return GuideCopy(
-                why: "島が小さくてもタイマーは見えます。",
-                how: "カプセルの右：残り時間。新しくセットするときは島を開きます。"
+                why: "Insula が小さいままでも、タイマーは動き続けます。",
+                how: "残り時間はカプセルの右側に表示されます。新しいタイマーを設定するには Insula を開いてください。"
             )
         case .moses:
             return GuideCopy(
-                why: "カプセルはメニューやアドレスバーの上にあります。完全に塞ぐと下がクリックできず、隠すと島がなくなります。",
-                how: "ゆっくり近づくと、下辺に沿ってカーソルを追う幅広の楕円の隙間ができ、クリックが通ります。速く乗ると隙間はありません。"
+                why: "カプセルはメニューバーやアドレスバーの上に重なっているため、下にあるものへのクリックを塞いでしまうことがあります。",
+                how: "ゆっくり近づくと、下端に沿ってカーソルを追いかける隙間が現れ、クリックがそのまま下に届きます。素早く近づくと隙間は現れません。"
             )
         case .appear:
             return GuideCopy(
-                why: "そうしないと、ノッチ付近の動きだけで島が開き、本当に呼びたいときは遅いように感じます。",
-                how: "素早く通りすぎるだけでは開きません。約 0.1 秒止まってください。ゆっくり — 先に隙間、大きいのはカメラ横の上三分の一だけ。"
+                why: "カメラ付近をカーソルが通っただけで毎回開いてしまうのも、逆に本当に開きたいときに反応が遅いのも困ります。",
+                how: "サッと通り過ぎただけでは開きません。約0.1秒とどまる必要があります。ゆっくり近づくと、まず小さな隙間が現れ、カメラのすぐそば・上部三分の一の範囲でだけ完全に開きます。"
             )
         case .relocate:
             return GuideCopy(
-                why: "カメラのそばより、下や横のほうが楽なことがあります。",
-                how: "1.5秒以内に島を3回クリックすると、カーソルに付いて動きます。"
+                why: "Insula は画面の別の場所に動かすことができます。",
+                how: "約1.5秒以内に素早く3回クリックすると、カーソルについてくるようになります。"
             )
         case .relocateDock:
             return GuideCopy(
-                why: "端では机の真ん中に浮かず、壁に付きます。",
-                how: "クリックすると、いちばん近い壁まで直線で移動します。下はピル、横はカード。"
+                why: "画面の端に近づけると、中央に浮いたままにならず、その端にぴったり収まります。",
+                how: "3回クリックしたあと約2秒待ってからもう1回クリックすると、最も近い端まで一直線に移動します。下端ではピル形に、側面ではカード形になります。"
             )
         case .relocateHome:
             return GuideCopy(
-                why: "画面を横断せず、すぐカメラへ戻ります。",
-                how: "家のマークはノッチにあります。クリックですぐホーム。"
+                why: "このボタンは Insula をすぐカメラの位置に戻します。",
+                how: "切り欠きの近くにある小さな家のアイコンを探してください。1回クリックするだけで元の位置に戻ります。"
             )
         case .timer:
             return GuideCopy(
-                why: "カウントダウンはここで、時計アプリではありません。",
-                how: "左耳：時・分・秒。終了時は音と通知、音楽は一時停止してから再開します。"
+                why: "カウントダウンはここで設定します。「時計」アプリなど別の場所ではありません。",
+                how: "左側で時・分・秒を設定します。終了すると音と通知が鳴り、再生中の音楽は一時停止したあと再び再生されます。"
             )
         case .edit:
             return GuideCopy(
-                why: "すべてのボタンが必要な人ばかりではありません。余分はピルに置かないでください。",
-                how: "鉛筆は右耳、ノッチ側。タップで編集。もう一度か「完了」で終了。"
+                why: "すべてのボタンが全員に必要なわけではありません。使わないものはカプセルに置いておく必要はありません。",
+                how: "切り欠き近くの右側にある鉛筆アイコンをタップすると編集モードに入ります。もう一度タップするか「完了」をタップすると終了します。"
             )
         case .guide:
             return GuideCopy(
-                why: "忘れたら、このツアーをやり直せます。",
-                how: "ボタンは鉛筆の隣。タップで最初から。ツアー中の同じタップで閉じます。"
+                why: "使い方を忘れたときは、いつでもこのツアーをもう一度開けます。",
+                how: "ボタンは鉛筆アイコンの隣にあります。タップすると最初からやり直せます。ツアー中に同じボタンをタップすると閉じます。"
             )
         case .mic:
             return GuideCopy(
-                why: "Zoom と Discord はそれぞれミュートがあり、どれがオンか忘れやすいです。",
-                how: "タップで Mac の入力を全アプリ分ミュート。白いマイクは聞こえる。白地に赤は聞こえない。"
+                why: "Zoom や Discord など、アプリごとに別々のミュートボタンがあり、どれがオンになっているか忘れがちです。",
+                how: "タップすると Mac のマイクをすべてのアプリに対して一括でミュートできます。白いマイクのアイコンは相手に聞こえている状態、白地に赤いマイクはミュート中を示します。"
             )
         case .clipboard:
             return GuideCopy(
-                why: "コピーしたテキストはすぐ消えません。",
-                how: "クリップボードは右耳。タップで一覧、行をタップでもう一度コピー。"
+                why: "コピーしたテキストは、新しく何かをコピーしてもすぐには消えません。",
+                how: "クリップボードのアイコンは右側にあります。タップすると最近コピーした内容が一覧表示され、好きな項目をタップするともう一度コピーできます。"
             )
         case .media:
             return GuideCopy(
-                why: "ジャケットと曲名で、今何が流れているか分かります。",
-                how: "ノッチの下。ジャケットをタップするとプレーヤーが開きます。"
+                why: "アートワークと曲名で、今何が再生されているかがわかります。",
+                how: "切り欠きの下に表示されます。アートワークをタップするとフルプレーヤーが開きます。"
             )
         case .transport:
             return GuideCopy(
-                why: "曲の操作は大きい島にあり、カプセルにはありません。",
-                how: "戻る、一時停止、次へ。編集でアニメがオンなら、一時停止とスキップが光ります。"
+                why: "曲の操作ボタンは大きく展開した Insula にあり、小さいカプセルにはありません。",
+                how: "戻る・一時停止・次へ、の3つです。編集モードでアニメーションをオンにしていると、一時停止とスキップのボタンが操作時に光ります。"
             )
         case .audio:
             return GuideCopy(
-                why: "音楽はすでに島にあります。それでもヘッドホンとスピーカーを切り替えます。",
-                how: "カプセルは操作の後ろ。機器があるときだけ丸：スピーカー、ヘッドホン、MacBook、車。使っているのは白。"
+                why: "音楽の操作はすでに Insula でできますが、ヘッドホンとスピーカーの切り替えなどはまた別です。",
+                how: "再生コントロールのすぐ後ろに表示されます。実際に使える機器がある場合だけアイコンが出ます：スピーカー、ヘッドホン、MacBook本体、車のオーディオなど。現在使用中の機器は白く表示されます。"
             )
         case .lyrics:
             return GuideCopy(
-                why: "歌詞は島に入りきらないので、横で読みます。",
-                how: "吹き出しは操作の隣。歌詞がなければボタンはないか、押せません。"
+                why: "歌詞は Insula の中に収まらないため、隣に別のスペースで開きます。",
+                how: "再生コントロールの隣にある吹き出しアイコンをタップします。その曲に歌詞がない場合、ボタンは非表示になるか反応しません。"
             )
         case .playlist:
             return GuideCopy(
-                why: "島には今の1曲だけで、次は見えません。",
-                how: "リストボタンは Music が再生中プレイリストを渡したときだけ。タップで窓、再生中は強調。"
+                why: "Insula に表示されるのは今の1曲だけで、次に流れる曲まではわかりません。",
+                how: "リストアイコンは、ミュージックが現在のプレイリスト情報を渡しているときだけ表示されます。タップするとキュー全体のウィンドウが開き、再生中の曲がハイライトされます。"
             )
         case .progress:
             return GuideCopy(
-                why: "プレーヤーを開かなくても経過と残りが分かります。",
-                how: "バーは大きい島の下。ドラッグでシーク。"
+                why: "フルプレーヤーを開かなくても、曲がどこまで進んでどれくらい残っているかがわかります。",
+                how: "バーは大きく展開した Insula の、コントロールの下にあります。ドラッグすると曲の別の位置に移動できます。"
             )
         case .editTray:
             return GuideCopy(
-                why: "外したボタンは消えません。島の下のトレイで待ちます。",
-                how: "島のボタンをタップしてトレイへ。チップをタップして戻す。キラキラで一時停止とスキップのアニメ。「完了」で編集終了。"
+                why: "ボタンを外しても削除されるわけではなく、下のトレイに移動するだけです。",
+                how: "編集モード中に Insula 上のボタンをタップするとトレイへ送られます。トレイのタイルをタップすると元に戻せます。キラキラのアイコンは一時停止・スキップの発光アニメーションのオン/オフ切り替えです。「完了」をタップすると編集モードを終了します。"
             )
         case .lyricsPanel:
             return GuideCopy(
-                why: "歌詞は島の横で読み、カプセルの中ではありません。",
-                how: "ガラスのパネル、閉じるボタンあり。動かせます。音楽は止まりません。"
+                why: "歌詞は小さなカプセルの中ではなく、Insula の隣で読む形になっています。",
+                how: "半透明のパネルで、専用の閉じるボタンがあり、画面上の好きな場所にドラッグできます。開いている間も音楽は再生され続けます。"
             )
         case .lyricsResize:
             return GuideCopy(
-                why: "小さい窓がいい人も、行が早い・遅い人もいて、一つの大きさはありません。",
-                how: "角の白い丸をドラッグしてサイズを変えます。"
+                why: "小さいウィンドウが好みの人もいれば、一度に多くの行を見たい人もいるため、決まった正解のサイズはありません。",
+                how: "角にある小さな白い丸をドラッグするとパネルのサイズを変更できます。"
             )
         case .lyricsSync:
             return GuideCopy(
-                why: "行が音楽より先、または遅れていることがあります。",
-                how: "マイナスは遅く、プラスは早く。ずれはこの曲だけ覚えます。"
+                why: "歌詞が音楽より少し早く、または遅れて表示されることがあります。",
+                how: "マイナスで歌詞を遅らせ、プラスで早めます。この調整はその曲ごとに記憶されます。"
             )
         case .playlistPanel:
             return GuideCopy(
-                why: "今の1曲だけでなく、キュー全体です。",
-                how: "上にプレイリスト名、再生中は強調。行をタップして再生。"
+                why: "ここには今再生中の1曲だけでなく、この先のキュー全体が表示されます。",
+                how: "上部にプレイリスト名が表示され、再生中の曲はハイライトされます。リスト内の曲をタップすると、その曲が再生されます。"
             )
         case .end:
             return GuideCopy(
-                why: "ツアーを閉じて島を使えます。",
-                how: "どうぞご利用ください。ガイドボタンでもう一度開けます。"
+                why: "これでツアーは終わりです。Insula を自分の手で使う準備ができました。",
+                how: "どうぞお楽しみください。ガイドボタンからこのツアーはいつでも開き直せます。"
             )
         }
     }
@@ -1305,128 +1305,128 @@ extension GuideCopy {
         switch spot {
         case .capsule:
             return GuideCopy(
-                why: "Fechada, dá para ver que a ilha está viva — não precisa abrir na hora.",
-                how: "A cápsula fica no recorte. Música e temporizador aparecem nela quando existem."
+                why: "Esta é Insula reduzida a uma pequena cápsula.",
+                how: "Ela fica sobre a câmera e mostra o que está ativo — música ou um temporizador — sem que você precise abri-la."
             )
         case .collapsedMusic:
             return GuideCopy(
-                why: "Dá para saber se algo está tocando sem abrir a ilha.",
-                how: "À esquerda da cápsula: título e progresso enquanto a faixa toca."
+                why: "Dá para saber se algo está tocando sem precisar abrir Insula.",
+                how: "O nome da faixa e uma pequena barra de progresso aparecem à esquerda da cápsula enquanto a música toca."
             )
         case .collapsedTimer:
             return GuideCopy(
-                why: "O temporizador continua visível com a ilha pequena.",
-                how: "À direita da cápsula: o tempo. Abra a ilha para definir um novo."
+                why: "O temporizador continua contando mesmo com Insula pequena.",
+                how: "O tempo restante aparece à direita da cápsula. Abra Insula para definir um novo."
             )
         case .moses:
             return GuideCopy(
-                why: "A cápsula cobre o menu e a barra de endereço. Se for sólida, não dá para clicar o que está embaixo; se esconder, a ilha some.",
-                how: "Chegue devagar — uma fenda oval larga segue o cursor na borda de baixo, e os cliques passam. Chegue rápido — sem fenda."
+                why: "A cápsula fica sobre a barra de menu e a barra de endereços, então pode bloquear cliques no que está embaixo dela.",
+                how: "Aproxime-se devagar e uma fenda se abre na borda de baixo, seguindo o cursor, deixando os cliques passarem para o que está embaixo. Se você chegar rápido, não aparece fenda nenhuma."
             )
         case .appear:
             return GuideCopy(
-                why: "Senão parece que a ilha abre sozinha com qualquer movimento perto do recorte, e demora quando você realmente quer.",
-                how: "Passar depressa não abre. Fique uns 0,1 s. Chegue devagar — primeiro a fenda; grande só no terço de cima, junto à câmera."
+                why: "Insula não deveria se abrir toda vez que o cursor passa perto da câmera, mas também não deveria demorar quando você realmente quer usá-la.",
+                how: "Só passar rápido por cima não abre Insula — fique parado nela por cerca de 0,1 segundo. Chegando devagar, primeiro aparece a fenda pequena, e Insula só abre por completo perto do topo, junto à câmera."
             )
         case .relocate:
             return GuideCopy(
-                why: "Às vezes fica melhor embaixo ou do lado, não na câmera.",
-                how: "Três cliques rápidos na ilha em um segundo e meio — ela segue o cursor."
+                why: "Você pode mover Insula para outro lugar da tela.",
+                how: "Clique nela três vezes rápido, em cerca de um segundo e meio, e ela passa a seguir o cursor."
             )
         case .relocateDock:
             return GuideCopy(
-                why: "Na borda ela não fica no meio da mesa — cola na parede.",
-                how: "Clique: vai em linha reta até a parede mais perto. Embaixo é pílula; do lado, cartão."
+                why: "Perto de uma borda da tela, Insula gruda nessa borda em vez de ficar flutuando no meio.",
+                how: "Depois do triplo clique, espere uns dois segundos e clique mais uma vez — ela desliza em linha reta até a borda mais próxima. Embaixo vira uma pílula; do lado, um cartão."
             )
         case .relocateHome:
             return GuideCopy(
-                why: "Voltar à câmera na hora, sem atravessar a tela.",
-                how: "A casinha fica no recorte. Um clique — você está em casa."
+                why: "Este botão traz Insula de volta para a câmera na hora.",
+                how: "Procure o pequeno ícone de casa perto do recorte. Um clique e ela volta para o lugar."
             )
         case .timer:
             return GuideCopy(
-                why: "A contagem fica aqui, não no Relógio nem em outro app.",
-                how: "Orelha esquerda: horas, minutos, segundos. Ao terminar: som, notificação, a música pausa e depois volta."
+                why: "É aqui que se configura uma contagem regressiva — não no app Relógio nem em outro lugar.",
+                how: "Do lado esquerdo: horas, minutos, segundos. Quando termina, toca um som e chega uma notificação; se havia música tocando, ela pausa e depois volta."
             )
         case .edit:
             return GuideCopy(
-                why: "Nem todo mundo precisa de todos os botões. O que sobra não precisa ficar na pílula.",
-                how: "O lápis está na orelha direita, junto ao recorte. Toque para editar. Toque de novo ou «Concluir» para sair."
+                why: "Nem todo mundo precisa de todos os botões. O que sobra não precisa ficar na cápsula.",
+                how: "Toque no ícone do lápis à direita, perto do recorte, para entrar no modo de edição. Toque de novo, ou toque em «Concluir», para sair."
             )
         case .guide:
             return GuideCopy(
-                why: "Dá para abrir este tour de novo se algo escapar.",
-                how: "O botão fica ao lado do lápis. Toque para começar do início. Durante o tour, o mesmo toque fecha."
+                why: "Você pode abrir este tour de novo a qualquer momento, se esquecer como algo funciona.",
+                how: "O botão fica ao lado do lápis. Toque para começar de novo, do início. Enquanto o tour está rodando, o mesmo toque o fecha."
             )
         case .mic:
             return GuideCopy(
-                why: "Zoom e Discord têm mute próprio — é fácil esquecer qual está ligado.",
-                how: "O toque silencia a entrada do Mac em todos os apps. Microfone branco: te ouvem. Vermelho no branco: não."
+                why: "Zoom, Discord e qualquer outro app têm seu próprio botão de mudo, e é fácil perder de vista qual está ativado.",
+                how: "Toque aqui para silenciar o microfone do Mac em todos os apps de uma vez. Um ícone de microfone branco simples significa que dá para te ouvir. Um microfone vermelho sobre fundo branco significa que você está mudo."
             )
         case .clipboard:
             return GuideCopy(
-                why: "Os últimos textos copiados não somem na hora.",
-                how: "O ícone da área de transferência está na orelha direita. Toque para a lista; toque numa linha para copiar de novo."
+                why: "O texto que você copia não some assim que você copia outra coisa.",
+                how: "O ícone da área de transferência fica à direita. Toque nele para ver o que foi copiado recentemente, e toque em qualquer item para copiá-lo de novo."
             )
         case .media:
             return GuideCopy(
-                why: "Capa e título mostram o que está tocando.",
-                how: "Embaixo do recorte. Toque na capa para abrir o player."
+                why: "A capa e o título mostram o que está tocando agora.",
+                how: "Eles ficam embaixo do recorte. Toque na capa para abrir o player completo."
             )
         case .transport:
             return GuideCopy(
-                why: "O controle da faixa fica na ilha grande, não na cápsula.",
-                how: "Voltar, pausa, próxima. Se as animações estiverem ligadas na edição, pausa e pular acendem."
+                why: "Os controles de reprodução ficam na Insula grande, não na cápsula pequena.",
+                how: "Voltar, pausar e avançar. Se as animações estiverem ativadas no modo de edição, pausar e pular acendem quando usados."
             )
         case .audio:
             return GuideCopy(
-                why: "A música já está na ilha; ainda assim você troca de fone para alto-falante.",
-                how: "A cápsula fica depois do transporte. Um círculo só se o aparelho existe: caixas, fones, MacBook, carro. O ativo é branco."
+                why: "A música já é controlada pela Insula, mas às vezes você ainda precisa trocar, por exemplo, do fone para a caixa de som.",
+                how: "Isso fica logo depois dos controles de reprodução. Um ícone de aparelho só aparece se ele estiver realmente disponível: caixa de som, fone, seu MacBook ou o carro. O que está em uso aparece em branco."
             )
         case .lyrics:
             return GuideCopy(
-                why: "A letra não cabe na ilha; lê-se ao lado.",
-                how: "O balão fica ao lado do transporte. Se não houver texto, o botão some ou não responde."
+                why: "A letra não cabe dentro da Insula, então ela abre à parte, ao lado.",
+                how: "Toque no ícone de balão de fala ao lado dos controles de reprodução. Se a música não tiver letra disponível, o botão fica escondido ou não faz nada."
             )
         case .playlist:
             return GuideCopy(
-                why: "A ilha mostra uma faixa, não o que vem depois.",
-                how: "O botão da lista só aparece se o Music entregar a playlist atual. Toque abre a janela; a faixa atual fica marcada."
+                why: "Insula mostra a faixa atual, não o que vem a seguir.",
+                how: "O ícone de lista só aparece se o Music estiver compartilhando a playlist atual. Toque nele para abrir uma janela com a fila inteira; a faixa atual fica destacada."
             )
         case .progress:
             return GuideCopy(
-                why: "Quanto já passou e quanto falta, sem abrir o player.",
-                how: "A barra fica embaixo da ilha grande. Arraste para pular na faixa."
+                why: "Dá para ver quanto da faixa já passou e quanto falta, sem abrir o player completo.",
+                how: "A barra fica abaixo dos controles, na Insula grande. Arraste-a para pular para outro ponto da música."
             )
         case .editTray:
             return GuideCopy(
-                why: "Botões tirados não se perdem — esperam na bandeja debaixo da ilha.",
-                how: "Toque num botão da ilha para mandar à bandeja. Toque numa ficha para devolver. O brilho liga a animação de pausa e pular. «Concluir» sai da edição."
+                why: "Tirar um botão não o apaga — ele só vai para uma bandeja, fora do caminho.",
+                how: "No modo de edição, toque em um botão da Insula para mandá-lo para a bandeja abaixo. Toque em um item da bandeja para trazê-lo de volta. O ícone de brilho liga ou desliga a animação de pausa/pular. Toque em «Concluir» para sair do modo de edição."
             )
         case .lyricsPanel:
             return GuideCopy(
-                why: "A letra lê-se ao lado da ilha, não dentro da cápsula.",
-                how: "O painel é de vidro, com um fechar. Dá para mover. A música continua."
+                why: "A letra é lida ao lado da Insula, não espremida dentro da cápsula pequena.",
+                how: "É um painel translúcido com seu próprio botão de fechar, e dá para arrastá-lo para qualquer lugar da tela. A música continua tocando enquanto ele está aberto."
             )
         case .lyricsResize:
             return GuideCopy(
-                why: "Tem quem queira janela pequena; tem quem precise das linhas mais cedo ou mais tarde — não há um tamanho só.",
-                how: "Arraste o círculo branco no canto para redimensionar."
+                why: "Tem gente que prefere uma janela pequena; tem gente que quer ver mais linhas de uma vez — não existe um tamanho único certo.",
+                how: "Arraste o pequeno círculo branco no canto para redimensionar o painel."
             )
         case .lyricsSync:
             return GuideCopy(
-                why: "Às vezes as linhas vão na frente da música, ou atrasadas.",
-                how: "Menos — mais tarde. Mais — mais cedo. O deslocamento fica guardado nesta música."
+                why: "Às vezes a letra fica um pouco à frente, ou atrás, da música.",
+                how: "O menos atrasa a letra, o mais a adianta. Esse ajuste fica salvo especificamente para aquela música."
             )
         case .playlistPanel:
             return GuideCopy(
-                why: "A fila inteira, não só a faixa atual.",
-                how: "O nome da playlist fica em cima; a faixa atual está marcada. Toque numa linha para tocar."
+                why: "Aqui aparece a fila inteira que vem a seguir, não só a faixa que está tocando agora.",
+                how: "O nome da playlist fica em cima, e a faixa atual é destacada. Toque em qualquer faixa da lista para tocá-la."
             )
         case .end:
             return GuideCopy(
-                why: "Dá para fechar o tour e usar a ilha.",
-                how: "Bom uso. O botão do guia abre isto de novo."
+                why: "Esse foi o tour todo — agora você já pode usar Insula por conta própria.",
+                how: "Bom uso. Você pode abrir este guia de novo quando quiser, pelo botão de guia."
             )
         }
     }

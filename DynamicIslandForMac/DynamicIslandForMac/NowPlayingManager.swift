@@ -181,9 +181,15 @@ final class NowPlayingManager: ObservableObject {
     }
 
     deinit {
+        shutdown()
+    }
+
+    func shutdown() {
         stopHelper()
         fallbackPollTimer?.invalidate()
+        fallbackPollTimer = nil
         musicPollTimer?.invalidate()
+        musicPollTimer = nil
     }
 
     private func loadCommandFunctions() {

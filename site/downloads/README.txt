@@ -1,6 +1,7 @@
-Положить сюда подписанный и нотаризованный Island.dmg.
+Insula.dmg — кнопка «Скачать для Mac» на сайте.
 
-Имя файла на сайте: Island.dmg
-Кнопка «Скачать для Mac» берёт этот файл.
+Внутри: Insula.app, ярлык в Программы, «Как открыть.txt», «Открыть Insula.command».
+Клиентам отправлять этот .dmg.
 
-Не класть zip исходников, xcuserdata и team id в readme диска.
+Без Developer ID + нотаризации на чужом Mac: правый клик → Открыть,
+или xattr -cr /Applications/Insula.app
