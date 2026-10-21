@@ -182,7 +182,7 @@ struct PlaylistView: View {
 
 protocol PlaylistHost {}
 
-final class PlaylistHostingView<Content: View>: NSHostingView<Content>, PlaylistHost {
+final class PlaylistHostingView: NSHostingView<AnyView>, PlaylistHost {
     override func hitTest(_ point: NSPoint) -> NSView? {
         bounds.contains(point) ? super.hitTest(point) : nil
     }

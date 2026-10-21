@@ -60,7 +60,7 @@ final class TodoPanelWindow: NSWindow {
 final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     var notchWindow: NSWindow!
-    var hostingView: PillHostingView<IslandView>!
+    var hostingView: PillHostingView!
     var statusItem: NSStatusItem!
     let hoverMonitor = NotchHoverMonitor()
     let relocator = IslandRelocator()
@@ -435,7 +435,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             micMute: micMute,
             guide: guide
         )
-        let hosting = PillHostingView(rootView: rootView)
+        let hosting = PillHostingView(rootView: AnyView(rootView))
         hosting.state = islandState
         hosting.frame = NSRect(origin: .zero, size: frame.size)
 
@@ -570,7 +570,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
 
     private func setupLyricsWindow() {
-        let host = LyricsHostingView(rootView: LyricsView(lyrics: lyrics, nowPlaying: nowPlaying, guide: guide))
+        let host = LyricsHostingView(rootView: AnyView(LyricsView(lyrics: lyrics, nowPlaying: nowPlaying, guide: guide)))
         host.frame = NSRect(origin: .zero, size: lyrics.panelSize)
 
         let window = LyricsPanelWindow(
@@ -692,7 +692,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
 
     private func setupPlaylistWindow() {
-        let host = PlaylistHostingView(rootView: PlaylistView(playlist: playlist, guide: guide))
+        let host = PlaylistHostingView(rootView: AnyView(PlaylistView(playlist: playlist, guide: guide)))
         host.frame = NSRect(origin: .zero, size: playlist.panelSize)
 
         let window = LyricsPanelWindow(
@@ -800,7 +800,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
 
     private func setupTodoWindow() {
-        let host = TodoHostingView(rootView: TodoView(todo: todo))
+        let host = TodoHostingView(rootView: AnyView(TodoView(todo: todo)))
         host.frame = NSRect(origin: .zero, size: todo.panelSize)
 
         let window = TodoPanelWindow(

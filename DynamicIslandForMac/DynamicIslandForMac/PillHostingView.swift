@@ -1,7 +1,7 @@
 import Cocoa
 import SwiftUI
 
-final class PillHostingView<Content: View>: NSHostingView<Content> {
+final class PillHostingView: NSHostingView<AnyView> {
 
     var state: IslandState!
 
@@ -43,7 +43,8 @@ final class PillHostingView<Content: View>: NSHostingView<Content> {
         if !chrome.isNull, chrome.width > 0 {
             hitRect = hitRect.union(chrome.insetBy(dx: -2, dy: -2))
         }
-        let inside = hitRect.contains(point)
-        return inside ? super.hitTest(point) : nil
+        // Однострочная форма: разбиение на let-локал вызывает краш компилятора
+        // Swift 6.3 (EarlyPerfInliner) на deinit этого класса.
+        return hitRect.contains(point) ? super.hitTest(point) : nil
     }
 }

@@ -280,7 +280,7 @@ struct LyricsView: View {
 
 protocol LyricsHost {}
 
-final class LyricsHostingView<Content: View>: NSHostingView<Content>, LyricsHost {
+final class LyricsHostingView: NSHostingView<AnyView>, LyricsHost {
     var handleLength: CGFloat = 28
 
     override func viewDidMoveToWindow() {

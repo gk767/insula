@@ -371,7 +371,7 @@ struct TodoView: View {
 
 protocol TodoHost {}
 
-final class TodoHostingView<Content: View>: NSHostingView<Content>, TodoHost {
+final class TodoHostingView: NSHostingView<AnyView>, TodoHost {
     override func hitTest(_ point: NSPoint) -> NSView? {
         bounds.contains(point) ? super.hitTest(point) : nil
     }

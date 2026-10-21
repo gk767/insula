@@ -323,9 +323,9 @@ final class IslandRelocator {
 
     private func makeHomeWindow() -> NSWindow {
         let host = HomeDockHostingView(
-            rootView: HomeDockView { [weak self] in
+            rootView: AnyView(HomeDockView { [weak self] in
                 self?.goHome()
-            }
+            })
         )
         host.frame = NSRect(origin: .zero, size: CGSize(width: 22, height: 22))
         let window = HomeDockWindow(
@@ -350,7 +350,7 @@ private final class HomeDockWindow: NSWindow {
     override var canBecomeMain: Bool { false }
 }
 
-private final class HomeDockHostingView<Content: View>: NSHostingView<Content> {
+private final class HomeDockHostingView: NSHostingView<AnyView> {
     override var safeAreaInsets: NSEdgeInsets { NSEdgeInsets() }
 
     override func hitTest(_ point: NSPoint) -> NSView? {
