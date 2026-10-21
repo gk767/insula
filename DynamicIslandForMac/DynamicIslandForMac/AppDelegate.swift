@@ -36,6 +36,27 @@ final class LyricsPanelWindow: NSWindow {
     }
 }
 
+final class TodoPanelWindow: NSWindow {
+    override var canBecomeKey: Bool { true }
+    override var canBecomeMain: Bool { false }
+
+    override func constrainFrameRect(_ frameRect: NSRect, to screen: NSScreen?) -> NSRect {
+        if (NSApp.delegate as? AppDelegate)?.todo.isResizing == true {
+            return frameRect
+        }
+        guard let screen = screen ?? self.screen ?? NSScreen.main else { return frameRect }
+        var frame = frameRect
+        let visible = screen.visibleFrame
+        if frame.width > visible.width { frame.size.width = visible.width }
+        if frame.height > visible.height { frame.size.height = visible.height }
+        if frame.maxX > visible.maxX { frame.origin.x = visible.maxX - frame.width }
+        if frame.minX < visible.minX { frame.origin.x = visible.minX }
+        if frame.maxY > visible.maxY { frame.origin.y = visible.maxY - frame.height }
+        if frame.minY < visible.minY { frame.origin.y = visible.minY }
+        return frame
+    }
+}
+
 final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     var notchWindow: NSWindow!
@@ -52,6 +73,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     let clipboard = ClipboardHistory()
     let lyrics = LyricsManager()
     let playlist = PlaylistManager()
+    let todo = TodoManager()
     let audioOutput = AudioOutputManager()
     let micMute = MicMuteManager()
     let guide = IslandGuide()
@@ -60,15 +82,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     var lyricsWindow: NSWindow?
     private var playlistWindow: NSWindow?
+    private var todoWindow: NSWindow?
+    private var confettiWindow: NSWindow?
     private var scheduleSettingsWindow: NSWindow?
     private var guideWindow: NSWindow?
     private var guideHost: GuideHostingView?
     private var lyricsCancellables = Set<AnyCancellable>()
     private var playlistCancellables = Set<AnyCancellable>()
+    private var todoCancellables = Set<AnyCancellable>()
+    private var confettiHideWorkItem: DispatchWorkItem?
     private var guideCancellables = Set<AnyCancellable>()
+    private var mouseWatchdog: Timer?
     private var guideKeyMonitor: Any?
     private let lyricsWindowDelegate = LyricsWindowDelegate()
     private let playlistWindowDelegate = PlaylistWindowDelegate()
+    private let todoWindowDelegate = TodoWindowDelegate()
     private let lyricsGap: CGFloat = 22
 
     func applicationWillFinishLaunching(_ notification: Notification) {
@@ -123,15 +151,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         setupNotchWindow()
         setupLyricsWindow()
         setupPlaylistWindow()
+        setupTodoWindow()
+        setupConfettiWindow()
         setupScheduleSettingsWindow()
         setupGuideWindow()
-        hoverMonitor.onHoveringChange = { [weak self] hovering in
+        hoverMonitor.onHoveringChange = { [weak self] _ in
             guard let self else { return }
             if self.islandState.isRelocating {
                 self.notchWindow.ignoresMouseEvents = false
                 return
             }
-            self.notchWindow.ignoresMouseEvents = !hovering
+            // Источник правды — не флаг наведения, а «остров раскрыт». Иначе во время
+            // правки/гайда окно оставалось с глухой мышью и остров нельзя было закрыть.
+            self.notchWindow.ignoresMouseEvents = !(self.islandState.isExpanded || self.islandState.isRelocating)
         }
         hoverMonitor.extraStayInside = { [weak self] in
             guard let self else { return false }
@@ -144,6 +176,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
                 return true
             }
             if self.playlist.isOpen, let window = self.playlistWindow, window.isVisible, window.frame.contains(point) {
+                return true
+            }
+            if self.todo.isOpen, let window = self.todoWindow, window.isVisible, window.frame.contains(point) {
                 return true
             }
             if self.islandState.guideHold != .off { return true }
@@ -163,6 +198,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             return false
         }
         hoverMonitor.start(state: islandState)
+        // Страховка на случай рассинхрона: пока остров раскрыт, окно обязано
+        // принимать мышь, иначе он «висит» и ничего не нажимается.
+        let watchdog = Timer(timeInterval: 0.25, repeats: true) { [weak self] _ in
+            guard let self else { return }
+            let wantIgnore = !(self.islandState.isExpanded || self.islandState.isRelocating)
+            if self.notchWindow.ignoresMouseEvents != wantIgnore {
+                self.notchWindow.ignoresMouseEvents = wantIgnore
+            }
+        }
+        RunLoop.main.add(watchdog, forMode: .common)
+        mouseWatchdog = watchdog
         relocator.start(window: notchWindow, state: islandState)
         relocator.onMove = { [weak self] in
             self?.repositionWindow()
@@ -238,9 +284,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
         menu.addItem(.separator())
 
-        let editItem = NSMenuItem(title: "Редакт Insula", action: #selector(beginIslandEdit), keyEquivalent: "")
+        let editItem = NSMenuItem(
+            title: islandState.isEditing ? "Готово — выйти из редакта" : "Редакт Insula",
+            action: #selector(beginIslandEdit),
+            keyEquivalent: ""
+        )
         editItem.target = self
         menu.addItem(editItem)
+
+        let todoItem = NSMenuItem(title: "Список дел", action: #selector(openTodoList), keyEquivalent: "")
+        todoItem.target = self
+        menu.addItem(todoItem)
+
+        let closeItem = NSMenuItem(title: "Закрыть остров", action: #selector(closeIsland), keyEquivalent: "")
+        closeItem.target = self
+        menu.addItem(closeItem)
 
         let scheduleSettings = NSMenuItem(title: "Календари и напоминания…", action: #selector(openScheduleSettings), keyEquivalent: "")
         scheduleSettings.target = self
@@ -289,19 +347,43 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         scheduleManager.isSettingsOpen = true
     }
 
+    @objc private func openTodoList() {
+        todo.isOpen = true
+    }
+
     @objc private func beginIslandEdit() {
-        islandState.beginEditing()
-        notchWindow.ignoresMouseEvents = false
+        if islandState.isEditing {
+            islandState.endEditing()
+            notchWindow.ignoresMouseEvents = !islandState.isHovering
+        } else {
+            islandState.beginEditing()
+            notchWindow.ignoresMouseEvents = false
+        }
     }
 
     @objc private func stopIslandGuide() {
         guide.stop()
     }
 
+    /// Аварийный выход: принудительно закрыть остров, чем бы он ни был раскрыт —
+    /// наведением, правкой или шагом гайда. Нужен на случай, если окно осталось
+    /// с «глухой» мышью и по острову нельзя попасть.
+    @objc private func closeIsland() {
+        guide.stop()
+        islandState.endEditing()
+        islandState.isHovering = false
+        if islandState.placement != .home {
+            islandState.goHome()
+        }
+        islandState.approachSquish = 0
+        notchWindow.ignoresMouseEvents = true
+    }
+
     @objc private func quit() {
         guide.stop()
         lyrics.isOpen = false
         playlist.isOpen = false
+        todo.isOpen = false
         islandState.isHovering = false
         islandState.isEditing = false
         islandState.isRelocating = false
@@ -310,6 +392,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         notchWindow.orderOut(nil)
         lyricsWindow?.orderOut(nil)
         playlistWindow?.orderOut(nil)
+        todoWindow?.orderOut(nil)
+        confettiWindow?.orderOut(nil)
         guideWindow?.orderOut(nil)
         if let statusItem {
             NSStatusBar.system.removeStatusItem(statusItem)
@@ -346,6 +430,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             clipboard: clipboard,
             lyrics: lyrics,
             playlist: playlist,
+            todo: todo,
             audioOutput: audioOutput,
             micMute: micMute,
             guide: guide
@@ -381,6 +466,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         hostingView.frame = NSRect(origin: .zero, size: frame.size)
         applyLyricsWindowFrame()
         applyPlaylistWindowFrame()
+        applyTodoWindowFrame()
         applyGuideWindowFrame()
         relocator.updateHomeWindow()
     }
@@ -422,13 +508,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
         if guideKeyMonitor == nil {
             guideKeyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
-                guard self?.guide.isActive == true else { return event }
-                if event.keyCode == 53 {
-                    self?.guide.skip()
-                    return nil
+                guard let self else { return event }
+                if self.guide.isActive {
+                    if event.keyCode == 53 {
+                        self.guide.skip()
+                        return nil
+                    }
+                    if event.keyCode == 36 || event.keyCode == 76 {
+                        self.guide.next()
+                        return nil
+                    }
+                    return event
                 }
-                if event.keyCode == 36 || event.keyCode == 76 {
-                    self?.guide.next()
+                // Запасной выход из редакта: Esc, пока окно ещё принимает клавиши.
+                if event.keyCode == 53, self.islandState.isEditing {
+                    self.islandState.endEditing()
+                    self.notchWindow.ignoresMouseEvents = !self.islandState.isHovering
                     return nil
                 }
                 return event
@@ -704,6 +799,164 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         )
     }
 
+    private func setupTodoWindow() {
+        let host = TodoHostingView(rootView: TodoView(todo: todo))
+        host.frame = NSRect(origin: .zero, size: todo.panelSize)
+
+        let window = TodoPanelWindow(
+            contentRect: NSRect(origin: .zero, size: todo.panelSize),
+            styleMask: [.borderless],
+            backing: .buffered,
+            defer: false
+        )
+        window.isOpaque = false
+        window.backgroundColor = .clear
+        window.appearance = NSAppearance(named: .darkAqua)
+        window.hasShadow = true
+        window.isMovable = false
+        window.isMovableByWindowBackground = false
+        window.level = .floating
+        window.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
+        window.acceptsMouseMovedEvents = true
+        window.ignoresMouseEvents = true
+        window.alphaValue = 0
+        window.contentView = host
+        window.delegate = todoWindowDelegate
+        window.orderOut(nil)
+        todoWindow = window
+
+        todo.$isOpen
+            .receive(on: RunLoop.main)
+            .sink { [weak self] open in
+                self?.setTodoWindowVisible(open)
+            }
+            .store(in: &todoCancellables)
+
+        todo.$confettiToken
+            .dropFirst()
+            .receive(on: RunLoop.main)
+            .sink { [weak self] _ in
+                guard let self, self.islandState.transportAnimationsOn else { return }
+                self.showConfetti()
+            }
+            .store(in: &todoCancellables)
+
+        todo.onLiveFrame = { [weak self] in
+            self?.applyTodoWindowFrame()
+        }
+    }
+
+    private func setTodoWindowVisible(_ visible: Bool) {
+        guard let todoWindow, let target = todoFrame() else { return }
+        if visible {
+            let appearing = !todoWindow.isVisible || todoWindow.alphaValue < 0.05
+            guard appearing else { return }
+            var start = target
+            start.origin.y -= 10
+            todoWindow.ignoresMouseEvents = false
+            todoWindow.setFrame(start, display: true)
+            todoWindow.alphaValue = 0
+            todoWindow.orderFrontRegardless()
+            NSApp.activate(ignoringOtherApps: true)
+            todoWindow.makeKey()
+            animateLyricsWindow {
+                todoWindow.animator().alphaValue = 1
+                todoWindow.animator().setFrame(target, display: true)
+            }
+            if !todo.userPlaced {
+                todo.userPlaced = true
+                todo.rememberOrigin(target.origin)
+            }
+        } else if todoWindow.isVisible {
+            animateLyricsWindow({
+                todoWindow.animator().alphaValue = 0
+            }, completion: { [weak self] in
+                guard let self, !self.todo.isOpen else { return }
+                todoWindow.ignoresMouseEvents = true
+                todoWindow.orderOut(nil)
+            })
+        }
+    }
+
+    private func applyTodoWindowFrame() {
+        guard todoWindow?.isVisible == true, (todoWindow?.alphaValue ?? 0) > 0.05 else { return }
+        guard let todoWindow, let target = todoFrame() else { return }
+        todoWindow.setFrame(target, display: true, animate: false)
+        todoWindow.contentView?.frame = NSRect(origin: .zero, size: target.size)
+    }
+
+    private func todoFrame() -> NSRect? {
+        guard let screen = NotchGeometry.targetScreen else { return nil }
+        let size = todo.panelSize
+        if todo.isResizing {
+            return NSRect(
+                x: todo.pinnedLeft,
+                y: todo.pinnedTop - size.height,
+                width: size.width,
+                height: size.height
+            )
+        }
+        if todo.userPlaced, let origin = todo.panelOrigin {
+            return NSRect(origin: origin, size: size)
+        }
+        let pill = NotchGeometry.pillScreenFrame(
+            expanded: islandState.isExpanded,
+            activity: islandState.showsActivity,
+            expandedHeight: islandState.expandedHeight,
+            collapsed: islandState.collapsedSize,
+            placement: islandState.dockedPlacement,
+            along: islandState.along,
+            on: screen
+        )
+        return NotchGeometry.accessoryFrame(
+            size: size,
+            gap: lyricsGap,
+            offsetX: islandState.dockedPlacement == .left || islandState.dockedPlacement == .right ? 0 : 36,
+            pill: pill,
+            placement: islandState.dockedPlacement
+        )
+    }
+
+    private func setupConfettiWindow() {
+        let frame = NotchGeometry.targetScreen?.frame
+            ?? NSRect(x: 0, y: 0, width: 1440, height: 900)
+        let host = NSHostingView(rootView: ConfettiOverlayView(todo: todo))
+        host.frame = NSRect(origin: .zero, size: frame.size)
+
+        let window = NSWindow(
+            contentRect: frame,
+            styleMask: [.borderless],
+            backing: .buffered,
+            defer: false
+        )
+        window.isOpaque = false
+        window.backgroundColor = .clear
+        window.hasShadow = false
+        window.isMovable = false
+        window.level = NSWindow.Level(rawValue: NSWindow.Level.statusBar.rawValue + 5)
+        window.collectionBehavior = [.canJoinAllSpaces, .stationary, .fullScreenAuxiliary]
+        window.ignoresMouseEvents = true
+        window.contentView = host
+        window.orderOut(nil)
+        confettiWindow = window
+    }
+
+    private func showConfetti() {
+        guard let screen = NotchGeometry.targetScreen, let confettiWindow else { return }
+        let frame = screen.frame
+        confettiWindow.setFrame(frame, display: true)
+        confettiWindow.contentView?.frame = NSRect(origin: .zero, size: frame.size)
+        confettiWindow.alphaValue = 1
+        confettiWindow.orderFrontRegardless()
+
+        confettiHideWorkItem?.cancel()
+        let hide = DispatchWorkItem { [weak self] in
+            self?.confettiWindow?.orderOut(nil)
+        }
+        confettiHideWorkItem = hide
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.8, execute: hide)
+    }
+
     private func setupScheduleSettingsWindow() {
         let hosting = NSHostingView(rootView: ScheduleSettingsView(schedule: scheduleManager))
         let window = NSWindow(
@@ -759,5 +1012,15 @@ private final class PlaylistWindowDelegate: NSObject, NSWindowDelegate {
         guard app.playlist.userPlaced, !app.playlist.isResizing else { return }
         app.playlist.rememberOrigin(window.frame.origin)
         app.playlist.persistPanel()
+    }
+}
+
+private final class TodoWindowDelegate: NSObject, NSWindowDelegate {
+    func windowDidMove(_ notification: Notification) {
+        guard let window = notification.object as? NSWindow,
+              let app = NSApp.delegate as? AppDelegate else { return }
+        guard app.todo.userPlaced, !app.todo.isResizing else { return }
+        app.todo.rememberOrigin(window.frame.origin)
+        app.todo.persistPanel()
     }
 }

@@ -14,6 +14,7 @@ final class NotchHoverMonitor {
     private var lastTick: TimeInterval = 0
     private var fastUntil: TimeInterval = 0
     private var pollFast = false
+    private var lastSentHover: Bool?
 
     private let expandDelay: TimeInterval = 0.1
     private let collapseDelay: TimeInterval = 0.16
@@ -57,6 +58,15 @@ final class NotchHoverMonitor {
         installTimer(fast: fast)
     }
 
+    /// Единая точка отправки состояния наведения.
+    /// Повторяем отправку только при смене значения, но по запросу (force)
+    /// — иначе окно может навсегда остаться с глухой мышью.
+    private func emitHover(_ value: Bool, force: Bool = false) {
+        if !force, lastSentHover == value { return }
+        lastSentHover = value
+        onHoveringChange?(value)
+    }
+
     private func isInsideNotch(_ state: IslandState, expanded: Bool) -> Bool {
         guard let screen = NotchGeometry.targetScreen else { return false }
         return NotchGeometry.containsCursor(
@@ -78,15 +88,28 @@ final class NotchHoverMonitor {
             state.approachSquish = 0
             if state.isHovering {
                 state.isHovering = false
-                onHoveringChange?(false)
+                emitHover(false)
             }
+            updatePollRate(for: state)
+            return
+        }
+        // Правка важнее демо-шагов гайда. Раньше эта ветка стояла ниже и
+        // guideHold == .collapsed/.moses гасил мышь: панель правки переставала
+        // кликаться, «Done» не нажимался и остров невозможно было закрыть.
+        if state.isEditing {
+            state.approachSquish = 0
+            cancelCollapse()
+            if !state.isHovering {
+                state.isHovering = true
+            }
+            emitHover(true, force: true)
             updatePollRate(for: state)
             return
         }
         if state.guideHold == .collapsed || state.guideHold == .moses {
             if state.isHovering {
                 state.isHovering = false
-                onHoveringChange?(false)
+                emitHover(false)
             }
             if state.guideHold == .moses, state.placement == .home {
                 let demo: CGFloat = 0.72
@@ -104,43 +127,35 @@ final class NotchHoverMonitor {
             cancelCollapse()
             if !state.isHovering {
                 state.isHovering = true
-                onHoveringChange?(true)
-            }
-            updatePollRate(for: state)
-            return
-        }
-        if state.isEditing {
-            state.approachSquish = 0
-            cancelCollapse()
-            if !state.isHovering {
-                state.isHovering = true
-                onHoveringChange?(true)
+                emitHover(true)
             }
             updatePollRate(for: state)
             return
         }
         guard let screen = NotchGeometry.targetScreen else { return }
         let point = NSEvent.mouseLocation
-        if point == lastPoint {
-            updatePollRate(for: state, point: point, screen: screen)
-            return
-        }
+        let moved = point != lastPoint
         let activity = state.showsActivity
         let placement = state.placement
         let along = state.along
         let now = ProcessInfo.processInfo.systemUptime
         var speed: CGFloat = 0
-        if let lastPoint, lastTick > 0 {
+        if moved, let lastPoint, lastTick > 0 {
             let dt = max(now - lastTick, 1.0 / 120.0)
             speed = hypot(point.x - lastPoint.x, point.y - lastPoint.y) / CGFloat(dt)
         }
-        lastPoint = point
-        lastTick = now
+        if moved {
+            lastPoint = point
+            lastTick = now
+        }
         let inApproach = state.approachSquish > 0.02
-        if !inApproach, speed >= fastApproach {
+        if moved, !inApproach, speed >= fastApproach {
             fastUntil = now + 0.12
         }
 
+        // Раскрытый остров обязан пересчитывать своё состояние даже при неподвижном
+        // курсоре: раньше тут стоял ранний выход, и остров не закрывался, пока
+        // пользователь не шевельнёт мышью.
         if state.isHovering {
             state.approachSquish = 0
             let inside = isInsideNotch(state, expanded: true) || (extraStayInside?() ?? false)
@@ -150,6 +165,11 @@ final class NotchHoverMonitor {
                 cancelExpand()
                 scheduleCollapse()
             }
+            updatePollRate(for: state, point: point, screen: screen)
+            return
+        }
+
+        if !moved {
             updatePollRate(for: state, point: point, screen: screen)
             return
         }
@@ -240,7 +260,7 @@ final class NotchHoverMonitor {
             }
             state.isHovering = true
             state.approachSquish = 0
-            self.onHoveringChange?(true)
+            self.emitHover(true)
         }
         expandWork = work
         DispatchQueue.main.asyncAfter(deadline: .now() + expandDelay, execute: work)
@@ -254,7 +274,7 @@ final class NotchHoverMonitor {
             if state.isEditing { return }
             if self.isInsideNotch(state, expanded: true) { return }
             state.isHovering = false
-            self.onHoveringChange?(false)
+            self.emitHover(false)
         }
         collapseWork = work
         DispatchQueue.main.asyncAfter(deadline: .now() + collapseDelay, execute: work)

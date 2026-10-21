@@ -86,6 +86,7 @@ enum GuideSpot: Hashable {
     case audio
     case lyrics
     case playlist
+    case todo
     case progress
     case editTray
     case lyricsPanel
@@ -359,6 +360,9 @@ final class IslandGuide: ObservableObject {
         }
         if state.shows(.playlist), playlist?.available == true {
             next.append(.playlist)
+        }
+        if state.shows(.todo) {
+            next.append(.todo)
         }
         if (nowPlaying?.duration ?? 0) > 1 {
             next.append(.progress)
@@ -761,6 +765,11 @@ extension GuideCopy {
                 why: "Insula показывает только текущий трек, а не то, что будет играть дальше.",
                 how: "Значок списка появляется, только если Music поделился текущим плейлистом. Нажмите на него, чтобы открыть окно со всей очередью; играющий сейчас трек подсвечен."
             )
+        case .todo:
+            return GuideCopy(
+                why: "Список дел живёт прямо на Insula — не нужно открывать заметки или отдельное приложение.",
+                how: "Кнопка с галочками рядом с плейлистом открывает окно. Впишите дело, отметьте кружок и нажмите «Отметить как выполненные»: галочка станет зелёной, текст исчезнет, а по экрану пройдёт лёгкое конфетти. Конфетти выключается кнопкой анимаций в редакте."
+            )
         case .progress:
             return GuideCopy(
                 why: "Видно, сколько трека уже прошло и сколько осталось, — без открытия полноценного плеера.",
@@ -900,6 +909,11 @@ extension GuideCopy {
             return GuideCopy(
                 why: "Insula muestra el tema actual, no lo que viene después.",
                 how: "El icono de lista solo aparece si Music comparte la lista de reproducción actual. Tócalo para abrir una ventana con toda la cola; el tema actual queda resaltado."
+            )
+        case .todo:
+            return GuideCopy(
+                why: "La lista de tareas vive en Insula: no hace falta abrir Notas ni otra app.",
+                how: "El botón con casillas junto a la lista de reproducción abre una ventana. Escribe una tarea, marca el círculo y pulsa «Marcar como hechas»: la marca se vuelve verde, el texto desaparece y cae un confeti suave por la pantalla. Se desactiva con el botón de animaciones en el modo de edición."
             )
         case .progress:
             return GuideCopy(
@@ -1041,6 +1055,11 @@ extension GuideCopy {
                 why: "Insula shows you the current track, not what's coming up next.",
                 how: "The list icon only appears if Music shares its current playlist. Tap it to open a window with the full queue; the current track is highlighted."
             )
+        case .todo:
+            return GuideCopy(
+                why: "Your to-do list lives on Insula — no need to open Notes or another app.",
+                how: "The checklist button next to the playlist opens a window. Type a task, tap the circle, then press “Mark as done”: the check turns green, the text disappears, and light confetti falls across the screen. You can turn the confetti off with the animations button in edit mode."
+            )
         case .progress:
             return GuideCopy(
                 why: "See how far into the track you are, and how much is left, without opening the full player.",
@@ -1180,6 +1199,11 @@ extension GuideCopy {
             return GuideCopy(
                 why: "Insula 上只显示当前这一首歌，不会显示接下来要播放的内容。",
                 how: "只有当“音乐”App 提供了当前播放列表时，列表图标才会出现。点开会显示整个播放队列的窗口，正在播放的曲目会高亮显示。"
+            )
+        case .todo:
+            return GuideCopy(
+                why: "待办清单就放在 Insula 上，不必打开备忘录或其他应用。",
+                how: "点播放列表旁边带勾选的按钮即可打开窗口。输入事项，点圆圈选中，再按“标记为已完成”：勾选会变绿，文字消失，屏幕上落下轻柔的彩纸。可在编辑模式里用动画按钮关闭彩纸。"
             )
         case .progress:
             return GuideCopy(
@@ -1321,6 +1345,11 @@ extension GuideCopy {
                 why: "Insula に表示されるのは今の1曲だけで、次に流れる曲まではわかりません。",
                 how: "リストアイコンは、ミュージックが現在のプレイリスト情報を渡しているときだけ表示されます。タップするとキュー全体のウィンドウが開き、再生中の曲がハイライトされます。"
             )
+        case .todo:
+            return GuideCopy(
+                why: "やることリストは Insula の中に。メモや別のアプリを開く必要はありません。",
+                how: "プレイリストの隣にあるチェックリストのボタンでウィンドウが開きます。項目を入力して丸を選び、「完了にする」を押すと、チェックが緑になり、文字が消え、画面に軽い紙吹雪が舞います。紙吹雪は編集モードのアニメーションボタンでオフにできます。"
+            )
         case .progress:
             return GuideCopy(
                 why: "フルプレーヤーを開かなくても、曲がどこまで進んでどれくらい残っているかがわかります。",
@@ -1460,6 +1489,11 @@ extension GuideCopy {
             return GuideCopy(
                 why: "Insula mostra a faixa atual, não o que vem a seguir.",
                 how: "O ícone de lista só aparece se o Music estiver compartilhando a playlist atual. Toque nele para abrir uma janela com a fila inteira; a faixa atual fica destacada."
+            )
+        case .todo:
+            return GuideCopy(
+                why: "A lista de tarefas fica na Insula — sem abrir Notas ou outro app.",
+                how: "O botão com checkmarks ao lado da playlist abre uma janela. Digite a tarefa, marque o círculo e toque em «Marcar como concluídas»: o check fica verde, o texto desaparece e um confete leve cai pela tela. Ele pode ser desligado pelo botão de animações no modo de edição."
             )
         case .progress:
             return GuideCopy(

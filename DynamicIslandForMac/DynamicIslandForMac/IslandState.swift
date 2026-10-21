@@ -8,11 +8,20 @@ enum IslandPlacement: String {
     case bottom
 }
 
+/// Как выглядит свёрнутый остров слева от чёлки (родная раскладка).
+enum IslandCollapsedStyle: String {
+    /// Компактная капсула: трек, время, таймер.
+    case compact
+    /// Совсем маленький квадратик: обложка с кольцом прогресса и время.
+    case tile
+}
+
 enum IslandModule: String, CaseIterable, Identifiable {
     case timer
     case clipboard
     case lyrics
     case playlist
+    case todo
     case audioOutput
     case micMute
     case guide
@@ -26,6 +35,7 @@ enum IslandModule: String, CaseIterable, Identifiable {
         case .clipboard: return "Буфер обмена"
         case .lyrics: return "Текст песни"
         case .playlist: return "Актуальный плейлист"
+        case .todo: return "Список дел"
         case .audioOutput: return "Куда играет звук"
         case .micMute: return "Микрофон"
         case .guide: return "Guide"
@@ -39,6 +49,7 @@ enum IslandModule: String, CaseIterable, Identifiable {
         case .clipboard: return "doc.on.clipboard"
         case .lyrics: return "quote.bubble"
         case .playlist: return "music.note.list"
+        case .todo: return "checklist"
         case .audioOutput: return "headphones"
         case .micMute: return "mic.fill"
         case .guide: return "questionmark"
@@ -66,6 +77,7 @@ final class IslandState: ObservableObject {
     /// 0…1 — сжатие капсулы вверх при медленном подходе курсора снизу (только home).
     @Published var approachSquish: CGFloat = 0
     @Published var transportAnimationsOn: Bool
+    @Published var collapsedStyle: IslandCollapsedStyle
     @Published var placement: IslandPlacement
     @Published var along: CGFloat
     @Published var isRelocating = false
@@ -91,12 +103,21 @@ final class IslandState: ObservableObject {
     }
 
     var hiddenModules: [IslandModule] {
-        IslandModule.allCases.filter { !modules.contains($0) }
+        IslandModule.allCases.filter { module in
+            if !modules.contains(module) { return true }
+            // Модуль включён, но не стоит ни в одном слоте ушка — он нигде не виден,
+            // поэтому показываем его в поддоне, чтобы его можно было вернуть.
+            if module.isUtilityEar, !earSlots.compactMap({ $0 }).contains(module) { return true }
+            return false
+        }
     }
 
     init() {
         let stored = UserDefaults.standard.object(forKey: Self.animationsKey)
         transportAnimationsOn = (stored as? Bool) ?? true
+        let storedStyle = UserDefaults.standard.string(forKey: Self.collapsedStyleKey) ?? ""
+        let style = IslandCollapsedStyle(rawValue: storedStyle) ?? .compact
+        collapsedStyle = style
         let raw = UserDefaults.standard.string(forKey: Self.placementKey) ?? ""
         placement = IslandPlacement(rawValue: raw) ?? .home
         let storedAlong = UserDefaults.standard.double(forKey: Self.alongKey)
@@ -128,6 +149,13 @@ final class IslandState: ObservableObject {
             UserDefaults.standard.set(true, forKey: Self.scheduleAddedKey)
             persistModules()
         }
+        if !UserDefaults.standard.bool(forKey: Self.todoAddedKey) {
+            modules.insert(.todo)
+            UserDefaults.standard.set(true, forKey: Self.todoAddedKey)
+            persistModules()
+        }
+        // Геометрия читает свёрнутый вид как статик (как и раскладку владельца).
+        NotchGeometry.collapsedStyle = style
     }
 
     func module(atEarSlot index: Int) -> IslandModule? {
@@ -174,16 +202,20 @@ final class IslandState: ObservableObject {
     }
 
     private func firstEmptyEarSlot() -> Int? {
-        earSlots.firstIndex(where: { $0 == nil })
+        earSlots.firstIndex { slot in
+            guard let slot else { return true }
+            // Слот, в котором стоит выключенный модуль, фактически пустой.
+            return !modules.contains(slot)
+        }
     }
 
     private static func loadEarSlots() -> [IslandModule?] {
-        guard let raw = UserDefaults.standard.array(forKey: earSlotsKey) as? [String?] else {
+        guard let raw = UserDefaults.standard.array(forKey: earSlotsKey) else {
             return [.schedule, .clipboard, .micMute]
         }
         let parsed = raw.prefix(3).map { value -> IslandModule? in
-            guard let value else { return nil }
-            return IslandModule(rawValue: value)
+            guard let name = value as? String, !name.isEmpty else { return nil }
+            return IslandModule(rawValue: name)
         }
         var slots = Array(parsed)
         while slots.count < 3 {
@@ -193,8 +225,10 @@ final class IslandState: ObservableObject {
     }
 
     func persistEarSlots() {
+        // Пустой слот пишем пустой строкой: UserDefaults (CFPreferences) не умеет
+        // хранить nil внутри массива и падает с исключением при setObject:.
         UserDefaults.standard.set(
-            earSlots.map { $0?.rawValue },
+            earSlots.map { $0?.rawValue ?? "" },
             forKey: Self.earSlotsKey
         )
     }
@@ -219,8 +253,16 @@ final class IslandState: ObservableObject {
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
             self.modules.insert(module)
-            if module.isUtilityEar, !self.earSlots.compactMap({ $0 }).contains(module), let empty = self.firstEmptyEarSlot() {
-                self.earSlots[empty] = module
+            if module.isUtilityEar, !self.earSlots.compactMap({ $0 }).contains(module) {
+                if let empty = self.firstEmptyEarSlot() {
+                    self.earSlots[empty] = module
+                } else {
+                    // Все слоты заняты: освобождаем первый, иначе модуль останется невидимым.
+                    if let evicted = self.earSlots[0] {
+                        self.modules.remove(evicted)
+                    }
+                    self.earSlots[0] = module
+                }
                 self.persistEarSlots()
             }
             self.persistModules()
@@ -269,7 +311,15 @@ final class IslandState: ObservableObject {
         UserDefaults.standard.set(transportAnimationsOn, forKey: Self.animationsKey)
     }
 
+    /// Переключает свёрнутый вид родной раскладки: компактная капсула ↔ квадратик.
+    func toggleCollapsedStyle() {
+        collapsedStyle = collapsedStyle == .tile ? .compact : .tile
+        NotchGeometry.collapsedStyle = collapsedStyle
+        UserDefaults.standard.set(collapsedStyle.rawValue, forKey: Self.collapsedStyleKey)
+    }
+
     private static let animationsKey = "island.transportAnimations"
+    private static let collapsedStyleKey = "island.collapsedStyle"
     private static let placementKey = "island.placement"
     private static let alongKey = "island.placementAlong"
     private static let modulesKey = "island.modules"
@@ -277,5 +327,6 @@ final class IslandState: ObservableObject {
     private static let micMuteAddedKey = "island.modules.micMute.added"
     private static let guideAddedKey = "island.modules.guide.added"
     private static let scheduleAddedKey = "island.modules.schedule.added"
+    private static let todoAddedKey = "island.modules.todo.added"
     private static let earSlotsKey = "island.earSlots"
 }

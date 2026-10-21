@@ -43,6 +43,7 @@ final class PillHostingView<Content: View>: NSHostingView<Content> {
         if !chrome.isNull, chrome.width > 0 {
             hitRect = hitRect.union(chrome.insetBy(dx: -2, dy: -2))
         }
-        return hitRect.contains(point) ? super.hitTest(point) : nil
+        let inside = hitRect.contains(point)
+        return inside ? super.hitTest(point) : nil
     }
 }

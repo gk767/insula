@@ -29,6 +29,16 @@ DerivedData/
 *.ipa
 *.dSYM.zip
 *.dSYM
+.build/
+.build-*/
+Build/
+*.xcodeproj/xcuserdata/
+
+# Staging folders for packaging (dmg / zip / site zip)
+.dmg-stage/
+.site-zip-stage/
+.zip-stage/
+.resize-frames/
 
 # Compiled apps, disks, archives (source only in git)
 *.app/
@@ -44,6 +54,7 @@ DerivedData/
 # Local notes / leftover folders (not product source)
 проикт/
 ДЛЯ_НОВОГО_ЧАТА.md
+Island для пробы/
 
 # Editor
 .cursor/

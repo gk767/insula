@@ -9,6 +9,7 @@ struct IslandView: View {
     @ObservedObject var clipboard: ClipboardHistory
     @ObservedObject var lyrics: LyricsManager
     @ObservedObject var playlist: PlaylistManager
+    @ObservedObject var todo: TodoManager
     @ObservedObject var audioOutput: AudioOutputManager
     @ObservedObject var micMute: MicMuteManager
     @ObservedObject var guide: IslandGuide
@@ -143,6 +144,28 @@ struct IslandView: View {
         return NotchGeometry.collapsedVisualSize(notch: state.collapsedSize, activity: true, placement: place)
     }
 
+    /// Родная раскладка: свёрнутый остров стоит слева от чёлки, а не под ней.
+    private var collapsedLeftOfNotch: Bool {
+        collapsedLeftOffsetX != 0
+    }
+
+    /// Свёрнутый вид «квадратик» (родная раскладка, слева от чёлки).
+    private var collapsedTile: Bool {
+        !expanded
+            && !isSideDock
+            && state.useOwnerLayout
+            && NotchGeometry.hasPhysicalNotch
+            && state.collapsedStyle == .tile
+    }
+
+    /// На сколько сдвинуть свёрнутую капсулу влево: пол-чёлки + зазор + пол-капсулы.
+    private var collapsedLeftOffsetX: CGFloat {
+        // Свободное перетаскивание рисует капсулу по центру окна — там сдвига нет.
+        guard !(state.isRelocating && state.magnet == nil) else { return 0 }
+        guard NotchGeometry.collapsedLeftOfNotch(expanded: expanded) else { return 0 }
+        return -(state.collapsedSize.width / 2 + NotchGeometry.collapsedHomeGap + islandWidth / 2)
+    }
+
     private var stackAlignment: Alignment {
         if state.isRelocating, state.magnet == nil { return .center }
         switch state.dockedPlacement {
@@ -181,6 +204,7 @@ struct IslandView: View {
         if isSideDock {
             return expanded ? NotchGeometry.sideExpandedRadius : NotchGeometry.sideCollapsedRadius
         }
+        if collapsedTile { return 20.0 }
         return expanded ? 20.0 : islandHeight / 2
     }
 
@@ -244,12 +268,12 @@ struct IslandView: View {
                 .clipShape(shape)
 
             miniPlayerRow
-                .padding(.horizontal, isSideDock ? 10 : 16)
-                .padding(.vertical, isSideDock ? 8 : (state.useOwnerLayout ? 4 : 0))
+                .padding(.horizontal, collapsedRowHorizontalPadding)
+                .padding(.vertical, collapsedRowVerticalPadding)
                 .frame(
                     width: width,
                     height: height,
-                    alignment: .center
+                    alignment: collapsedLeftOfNotch ? .center : (state.useOwnerLayout ? .bottom : .center)
                 )
                 .compositingGroup()
                 .opacity(expanded ? 0 : 1)
@@ -281,7 +305,7 @@ struct IslandView: View {
             .allowsHitTesting(false)
         }
         .scaleEffect(x: 1, y: squishFactor * (1 + 0.08 * pulseDown), anchor: pulseAnchor)
-        .offset(x: state.shakeOffset)
+        .offset(x: state.shakeOffset + collapsedLeftOffsetX)
         .guideTarget(.capsule)
         .animation(.spring(response: 0.42, dampingFraction: 0.86), value: expanded)
         .animation(.spring(response: 0.36, dampingFraction: 0.88), value: hasActivity)
@@ -337,17 +361,28 @@ struct IslandView: View {
             if side {
                 VStack(spacing: 8) {
                     animationTrayButton
-                    ForEach(state.hiddenModules) { module in
-                        trayChip(module)
+                    if canPickCollapsedStyle {
+                        collapsedStyleTrayButton
                     }
-                    Spacer(minLength: 4)
-                    editDoneButton
+                    ScrollView(.vertical, showsIndicators: false) {
+                        VStack(spacing: 8) {
+                            ForEach(state.hiddenModules) { module in
+                                trayChip(module)
+                            }
+                        }
+                        .frame(maxWidth: .infinity)
+                    }
+                    .frame(maxHeight: .infinity)
+                    editDoneButtonSide
                 }
                 .padding(.vertical, 10)
                 .padding(.horizontal, 8)
             } else {
                 HStack(spacing: 8) {
                     animationTrayButton
+                    if canPickCollapsedStyle {
+                        collapsedStyleTrayButton
+                    }
                     ForEach(state.hiddenModules) { module in
                         trayChip(module)
                     }
@@ -400,7 +435,36 @@ struct IslandView: View {
             .contentShape(Circle())
         }
         .buttonStyle(.plain)
-        .help(on ? "Анимация паузы и перемотки: вкл" : "Анимация паузы и перемотки: выкл")
+        .help(on ? "Анимация паузы, перемотки и конфетти: вкл" : "Анимация паузы, перемотки и конфетти: выкл")
+    }
+
+    /// Кнопка размера меняет только свёрнутый вид родной раскладки — если она ни на что
+    /// не влияет (другая машина, боковой док), её не показываем.
+    private var canPickCollapsedStyle: Bool {
+        state.useOwnerLayout && NotchGeometry.hasPhysicalNotch
+    }
+
+    private var collapsedStyleTrayButton: some View {
+        let tile = state.collapsedStyle == .tile
+        return Button {
+            state.toggleCollapsedStyle()
+        } label: {
+            ZStack {
+                Circle()
+                    .strokeBorder(Color.white.opacity(tile ? 0.62 : 0.28), lineWidth: 0.7)
+                    .frame(width: 18, height: 18)
+                Image(systemName: tile ? "square" : "rectangle")
+                    .font(.system(size: 8, weight: .semibold))
+                    .foregroundColor(.white.opacity(tile ? 0.88 : 0.32))
+            }
+            .frame(width: 26, height: 26)
+            .background(Circle().fill(Color.white.opacity(tile ? 0.12 : 0.06)))
+            .contentShape(Circle())
+        }
+        .buttonStyle(.plain)
+        .help(tile
+              ? "Свёрнутый остров: квадратик (нажми — вернуть капсулу)"
+              : "Свёрнутый остров: капсула (нажми — сделать квадратик)")
     }
 
     private func trayChip(_ module: IslandModule) -> some View {
@@ -427,6 +491,26 @@ struct IslandView: View {
                 .padding(.horizontal, 8)
                 .padding(.vertical, 5)
                 .background(Capsule(style: .continuous).fill(Color.white.opacity(0.12)))
+        }
+        .buttonStyle(.plain)
+        .help("Done")
+    }
+
+    private var editDoneButtonSide: some View {
+        Button {
+            state.endEditing()
+        } label: {
+            ZStack {
+                Circle()
+                    .strokeBorder(Color.white.opacity(0.28), lineWidth: 0.7)
+                    .frame(width: 18, height: 18)
+                Image(systemName: "checkmark")
+                    .font(.system(size: 8, weight: .bold))
+                    .foregroundColor(.white.opacity(0.92))
+            }
+            .frame(width: 26, height: 26)
+            .background(Circle().fill(Color.white.opacity(0.12)))
+            .contentShape(Circle())
         }
         .buttonStyle(.plain)
         .help("Done")
@@ -486,6 +570,9 @@ struct IslandView: View {
             }
             if !state.shows(.playlist) {
                 playlist.isOpen = false
+            }
+            if !state.shows(.todo) {
+                todo.isOpen = false
             }
             if !state.shows(.guide) {
                 guide.stop()
@@ -640,11 +727,79 @@ struct IslandView: View {
         Group {
             if isSideDock {
                 sideMiniPlayer
+            } else if collapsedTile {
+                tileMiniPlayer
             } else {
                 horizontalMiniPlayer
             }
         }
         .foregroundStyle(.white)
+    }
+
+    private var collapsedRowHorizontalPadding: CGFloat {
+        if isSideDock { return 10 }
+        if collapsedTile { return 8 }
+        return state.useOwnerLayout ? 12 : 16
+    }
+
+    private var collapsedRowVerticalPadding: CGFloat {
+        if isSideDock { return 8 }
+        if collapsedTile { return 6 }
+        return state.useOwnerLayout ? 4 : 0
+    }
+
+    /// Маленький квадратик: обложка с кольцом прогресса и одна подпись —
+    /// таймер, если он идёт, иначе прошедшее время (или название трека).
+    private var tileMiniPlayer: some View {
+        VStack(spacing: 3) {
+            TimelineView(.animation(
+                minimumInterval: 1.0,
+                paused: collapsedProgressPaused
+            )) { context in
+                let elapsed = nowPlaying.elapsed(at: context.date)
+                ZStack {
+                    if let artwork = nowPlaying.artwork {
+                        Image(nsImage: artwork)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 30, height: 30)
+                            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                    } else if nowPlaying.isPlaying {
+                        PlayingBars(barCount: 4, maxHeight: 14, paused: expanded)
+                    } else {
+                        Image(systemName: "music.note")
+                            .font(.system(size: 12, weight: .semibold))
+                            .foregroundColor(.white.opacity(0.38))
+                    }
+                    if showProgress {
+                        TrackProgressRing(
+                            progress: progressValue(elapsed: elapsed),
+                            size: 36,
+                            line: 1.6
+                        )
+                    }
+                }
+                .frame(width: 36, height: 36)
+
+                Text(tileLabel(elapsed: elapsed))
+                    .font(.system(size: 9, weight: .semibold, design: .rounded).monospacedDigit())
+                    .foregroundColor(.white.opacity(0.82))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
+                    .frame(maxWidth: 48)
+            }
+        }
+        .guideTarget(.collapsedMusic)
+    }
+
+    private func tileLabel(elapsed: TimeInterval) -> String {
+        if state.shows(.timer), timerManager.isRunning || timerManager.didFinish {
+            return collapsedTimerText
+        }
+        if showProgress {
+            return formatTime(elapsed)
+        }
+        return nowPlaying.title.isEmpty ? "Тишина" : nowPlaying.title
     }
 
     private var horizontalMiniPlayer: some View {
@@ -1056,6 +1211,27 @@ struct IslandView: View {
                 .help(state.isEditing ? "Убрать с островка" : "Актуальный плейлист")
                 .guideTarget(.playlist)
             }
+
+            if state.shows(.todo) {
+                Button {
+                    if state.isEditing {
+                        state.hide(.todo)
+                    } else {
+                        todo.toggle()
+                    }
+                } label: {
+                    Image(systemName: "checklist")
+                        .frame(width: 24, height: 24)
+                        .contentShape(Rectangle())
+                        .symbolEffect(.bounce, value: todo.isOpen)
+                        .overlay(alignment: .topTrailing) {
+                            if state.isEditing { editMinus }
+                        }
+                }
+                .buttonStyle(.plain)
+                .help(state.isEditing ? "Убрать с островка" : "Список дел")
+                .guideTarget(.todo)
+            }
         }
         .buttonStyle(.plain)
         .foregroundColor(.white.opacity(0.88))
@@ -1111,11 +1287,6 @@ struct IslandView: View {
             }
         }
         .allowsHitTesting(!state.isEditing)
-        .overlay(alignment: .topTrailing) {
-            if state.isEditing {
-                utilitySlotEditOverlay(module, slot: index)
-            }
-        }
         .overlay {
             if state.isEditing {
                 Button {
@@ -1129,6 +1300,11 @@ struct IslandView: View {
                 .help("Сменить кнопку")
             }
         }
+        .overlay(alignment: .topTrailing) {
+            if state.isEditing {
+                utilitySlotEditOverlay(module, slot: index)
+            }
+        }
     }
 
     private func utilitySlotEditOverlay(_ module: IslandModule, slot index: Int) -> some View {
@@ -1139,7 +1315,9 @@ struct IslandView: View {
                 .symbolRenderingMode(.palette)
                 .foregroundStyle(.white, Color.black.opacity(0.55))
                 .font(.system(size: 11, weight: .semibold))
-                .offset(x: 5, y: -5)
+                .frame(width: 18, height: 18)
+                .contentShape(Circle())
+                .offset(x: 2, y: 8)
         }
         .buttonStyle(.plain)
         .help("Убрать с островка")
@@ -1408,7 +1586,7 @@ struct IslandView: View {
                     HStack(spacing: 4) {
                         Text(formatTime(elapsed))
                             .frame(maxWidth: .infinity, alignment: .leading)
-                        Text(formatTime(nowPlaying.duration))
+                Text(formatTime(nowPlaying.duration))
                             .frame(maxWidth: .infinity, alignment: .trailing)
                     }
                     .font(playbackTimeFont)
@@ -1505,7 +1683,7 @@ struct IslandView: View {
                         .font(.system(size: 10, weight: .semibold, design: .rounded))
                         .foregroundColor(.white.opacity(0.72))
                 }
-                .buttonStyle(.plain)
+            .buttonStyle(.plain)
             } else if scheduleManager.timelineItems.isEmpty {
                 Text("Сегодня свободно")
                     .font(.system(size: 10, weight: .medium, design: .rounded))
@@ -1533,7 +1711,7 @@ struct IslandView: View {
                                 .font(.system(size: 8, weight: .semibold))
                                 .foregroundColor(.white.opacity(0.28))
                         }
-                        .padding(.horizontal, 8)
+            .padding(.horizontal, 8)
                         .padding(.vertical, 3)
                         .background(Capsule(style: .continuous).fill(Color.white.opacity(0.05)))
                     }

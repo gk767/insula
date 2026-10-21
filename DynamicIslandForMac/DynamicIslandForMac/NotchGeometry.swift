@@ -9,6 +9,14 @@ enum NotchGeometry {
     static let floatingTopGap: CGFloat = 0
     static let activityDrop: CGFloat = 26
     static let activityExtraWidth: CGFloat = 8
+    /// Зазор между свёрнутой капсулой и левой кромкой чёлки (раскладка владельца).
+    static let collapsedHomeGap: CGFloat = 8
+    /// Родная раскладка: свёрнутый остров слева от чёлки — компактная капсула.
+    static let collapsedHomeCompactSize = CGSize(width: 200, height: 38)
+    /// Родная раскладка: совсем маленький квадратик слева от чёлки.
+    static let collapsedHomeTileSize = CGSize(width: 64, height: 64)
+    /// Какой из размеров выбран (ставит IslandState; читается всей геометрией).
+    static var collapsedStyle: IslandCollapsedStyle = .compact
     static let sideCollapsedSize: CGFloat = 96
     static let sideExpandedSize: CGFloat = 268
     static let sideCollapsedRadius: CGFloat = 24
@@ -40,6 +48,9 @@ enum NotchGeometry {
     ) -> CGSize {
         if isSide(placement) {
             return CGSize(width: sideCollapsedSize, height: sideCollapsedSize)
+        }
+        if hasPhysicalNotch, placement == .home, keepsOwnerLayout {
+            return collapsedStyle == .tile ? collapsedHomeTileSize : collapsedHomeCompactSize
         }
         if hasPhysicalNotch, placement == .home {
             return CGSize(
@@ -152,6 +163,12 @@ enum NotchGeometry {
         placement == .left || placement == .right
     }
 
+    /// В раскладке владельца свёрнутая капсула стоит слева от чёлки, а не под ней.
+    /// При раскрытии она уезжает вправо — к обычному центрированному виду.
+    static func collapsedLeftOfNotch(expanded: Bool) -> Bool {
+        keepsOwnerLayout && hasPhysicalNotch && !expanded
+    }
+
     static func windowFrame(for screen: NSScreen) -> NSRect {
         windowFrame(for: screen, state: nil, mouse: nil)
     }
@@ -176,10 +193,20 @@ enum NotchGeometry {
         if placement == .home {
             let anchor = islandAnchor(on: screen)
             let topGap = hasPhysicalNotch(on: screen) ? 0 : floatingTopGap
+            var windowWidth = width
+            if keepsOwnerLayout {
+                // Свёрнутый остров стоит слева от чёлки — окно должно быть достаточно
+                // широким, чтобы он целиком в него помещался (окно центрировано на чёлке).
+                // Берём самую широкую из капсул родной раскладки, чтобы переключение
+                // «капсула ↔ квадратик» не требовало менять кадр окна.
+                let widest = max(collapsedHomeCompactSize.width, collapsedHomeTileSize.width)
+                let needed = (anchor.width / 2 + collapsedHomeGap + widest + 28) * 2
+                windowWidth = max(windowWidth, needed)
+            }
             return NSRect(
-                x: anchor.midX - width / 2,
+                x: anchor.midX - windowWidth / 2,
                 y: screen.frame.maxY - height - topGap,
-                width: width,
+                width: windowWidth,
                 height: height
             )
         }
@@ -250,8 +277,15 @@ enum NotchGeometry {
         }
         switch edge ?? .home {
         case .home:
+            let originX: CGFloat
+            if collapsedLeftOfNotch(expanded: expanded) {
+                // Прижата справа к левой кромке чёлки: конец капсулы — у чёлки, сама она слева.
+                originX = bounds.midX - collapsed.width / 2 - collapsedHomeGap - size.width
+            } else {
+                originX = bounds.midX - size.width / 2
+            }
             return NSRect(
-                x: bounds.midX - size.width / 2,
+                x: originX,
                 y: bounds.maxY - size.height,
                 width: size.width,
                 height: size.height
@@ -300,15 +334,30 @@ enum NotchGeometry {
             let fromCenter = abs(point.x - notch.midX)
 
             if expanded {
-                return fromTop >= -4
+                let inside = fromTop >= -4
                     && fromTop <= expandedHeight + 10
                     && fromCenter <= expandedWidth / 2 + 6
+                if inside { return true }
+                // Свёрнутая капсула уезжает вправо — если курсор остался там, где
+                // она была, остров нельзя закрывать: иначе он мигает на месте.
+                guard collapsedLeftOfNotch(expanded: false) else { return false }
+                let visual = collapsedVisualSize(notch: notch.size, activity: activity, placement: .home)
+                let left = notch.minX - collapsedHomeGap - visual.width
+                return fromTop >= -4
+                    && fromTop <= visual.height + 16
+                    && point.x >= left - 8
+                    && point.x <= left + visual.width + 8
             }
 
             let visual = collapsedVisualSize(notch: notch.size, activity: activity, placement: .home)
+            // В раскладке владельца свёрнутая капсула стоит слева от чёлки — зона наведения уезжает вместе с ней.
+            let left = collapsedLeftOfNotch(expanded: false)
+                ? notch.minX - collapsedHomeGap - visual.width
+                : notch.midX - visual.width / 2
             return fromTop >= -4
                 && fromTop <= visual.height + 16
-                && fromCenter <= visual.width / 2 + 8
+                && point.x >= left - 8
+                && point.x <= left + visual.width + 8
         }
 
         let pill = pillScreenFrame(
@@ -450,8 +499,14 @@ enum NotchGeometry {
         if placement == .home {
             let notch = islandAnchor(on: screen)
             let gap = hasPhysicalNotch(on: screen) ? 0 : floatingTopGap
+            let originX: CGFloat
+            if collapsedLeftOfNotch(expanded: expanded) {
+                originX = notch.minX - collapsedHomeGap - size.width
+            } else {
+                originX = notch.midX - size.width / 2
+            }
             return NSRect(
-                x: notch.midX - size.width / 2,
+                x: originX,
                 y: screen.frame.maxY - size.height - gap,
                 width: size.width,
                 height: size.height
@@ -623,7 +678,10 @@ enum NotchGeometry {
     }
 
     static let editPencilSize = CGSize(width: 26, height: 26)
-    static let editTraySize = CGSize(width: 300, height: 50)
+    /// Поддон правки. В родной раскладке он шире: там есть кнопка размера свёрнутого вида.
+    static var editTraySize: CGSize {
+        CGSize(width: keepsOwnerLayout ? 336 : 300, height: 50)
+    }
     static let editSideTraySize = CGSize(width: 52, height: 220)
     static let editChromeGap: CGFloat = 10
 
