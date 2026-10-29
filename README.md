@@ -26,6 +26,8 @@ Works on Macs with a notch and without one (floating pill on non-notch displays)
 - Editable layout (add/remove modules)
 - Multi-language interactive guide (RU / EN / ES / ZH / JA / PT)
 - Relocatable island (notch / dock / custom position)
+- Compact square tile mode with cover art, timer progress, and time
+- To-do list module with task selection and completion
 
 ### Requirements
 
@@ -125,6 +127,8 @@ The project is still early — feedback helps a lot.
 - Редактируемый набор модулей
 - Интерактивный гайд на нескольких языках (RU / EN / ES / ZH / JA / PT)
 - Перемещаемый остров (notch / dock / произвольная позиция)
+- Компактный режим-квадрат с обложкой, прогрессом таймера и временем
+- Список дел с выбором задач и отметкой выполненных
 
 ### Требования
 
